@@ -24,3 +24,7 @@ NEUban is a Java EE project as an assignment for a course at the University of D
 * Erdei Krisztián
 * Fekete Attila
 * Iványi-Nagy Gábor
+
+## Development progress
+
+Trello: https://trello.com/b/iX8giolP
