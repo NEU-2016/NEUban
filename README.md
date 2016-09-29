@@ -58,3 +58,7 @@ Our goal is to make a user-friendly tool to visualize works and workflows on a K
 * Erdei Krisztián
 * Fekete Attila
 * Iványi-Nagy Gábor
+
+## Development progress
+
+Trello: https://trello.com/b/iX8giolP
