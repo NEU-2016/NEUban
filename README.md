@@ -51,6 +51,15 @@ Our goal is to make a user-friendly tool to visualize works and workflows on a K
 * AngularJS
 * Bootstrap CSS
 
+## Continuous integration
+
+WIP
+
+## Development progress
+
+* [Trello](https://trello.com/b/iX8giolP)
+* [Documentations](https://drive.google.com/drive/folders/0B-X0ddF3Q-BOUERZQXhsTlhLMW8)
+
 ## Contributors
 
 ### Developers
@@ -58,7 +67,3 @@ Our goal is to make a user-friendly tool to visualize works and workflows on a K
 * Erdei Krisztián
 * Fekete Attila
 * Iványi-Nagy Gábor
-
-## Development progress
-
-Trello: https://trello.com/b/iX8giolP
