@@ -61,10 +61,10 @@ WIP
 * [Documentations](https://drive.google.com/drive/folders/0B-X0ddF3Q-BOUERZQXhsTlhLMW8)
 
 ## Building the project:
-* mvn clean install
+``mvn clean install``
 
 ## Running NEUban locally:
-* mvn tomcat7:run
+``mvn tomcat7:run``
 
 ## Contributors
 
