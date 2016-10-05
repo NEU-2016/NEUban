@@ -35,6 +35,17 @@ Go on the project's root folder, then type:
 
 Import as Existing Maven Project and run it as Spring Boot App.
 
+
+### Lombok
+
+1. home page: https://projectlombok.org/index.html
+
+1. features: https://projectlombok.org/features/
+
+1. download: https://projectlombok.org/download.html
+
+1. installation details: https://github.com/mplushnikov/lombok-intellij-plugin
+
 ## About
 
 NEUban is an open source Java EE project as an assignment for a course at the University of Debrecen. It implements the sprint oriented agile development methodology.
