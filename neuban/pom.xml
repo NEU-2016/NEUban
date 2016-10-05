@@ -6,7 +6,15 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.4.1.RELEASE</version>
+		<relativePath />
+	</parent>
+
 	<properties>
+		<start-class>hu.unideb.inf.rft.neuban.web.configuration.Application</start-class>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.plugin.version>3.5.1</maven.compiler.plugin.version>
 		<maven.war.plugin.version>3.0.0</maven.war.plugin.version>
@@ -26,33 +34,22 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven.compiler.plugin.version}</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
 				</configuration>
 			</plugin>
+
 			<plugin>
-				<groupId>org.apache.tomcat.maven</groupId>
-				<artifactId>tomcat7-maven-plugin</artifactId>
-				<version>${tomcat7.maven.plugin.version}</version>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<path>/neuban</path>
-					<uriEncoding>UTF-8</uriEncoding>
+					<skip>true</skip>
 				</configuration>
 			</plugin>
 		</plugins>
-		
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-war-plugin</artifactId>
-					<version>${maven.war.plugin.version}</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
+
 
 	<dependencyManagement>
 		<dependencies>
