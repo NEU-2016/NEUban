@@ -1,6 +1,12 @@
 # NEUban
 
-# Build and run
+## About
+
+NEUban is an open source Java EE project as an assignment for a course at the University of Debrecen. It implements the sprint oriented agile development methodology.
+
+Our goal is to make a user-friendly tool to visualize works and workflows on a Kanban board environment.
+
+## Build and run
 
 #### Configurations
 
@@ -46,11 +52,7 @@ Import as Existing Maven Project and run it as Spring Boot App.
 
 1. installation details: https://github.com/mplushnikov/lombok-intellij-plugin
 
-## About
 
-NEUban is an open source Java EE project as an assignment for a course at the University of Debrecen. It implements the sprint oriented agile development methodology.
-
-Our goal is to make a user-friendly tool to visualize works and workflows on a Kanban board environment.
 
 ## Functionality
 
