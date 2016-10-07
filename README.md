@@ -41,6 +41,11 @@ Go on the project's root folder, then type:
 
 Import as Existing Maven Project and run it as Spring Boot App.
 
+#### In browser
+
+`http://localhost:8080/`
+or
+`http://localhost:8080/neuban`
 
 ### Lombok
 

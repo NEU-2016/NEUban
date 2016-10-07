@@ -7,8 +7,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Slf4j
 @Controller
 public class WebController {
-	@RequestMapping(path = "/neuban")
+	@RequestMapping(path = "/")
 	public String defaultPath() {
+		return "index.html";
+	}
+
+	@RequestMapping(path = "/neuban")
+	public String neubanPath() {
 		return "index.html";
 	}
 }
