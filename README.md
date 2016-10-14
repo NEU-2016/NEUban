@@ -37,6 +37,16 @@ Go on the project's root folder, then type:
 
 `$ mvn spring-boot:run`
 
+#### Tests
+
+Development profile for unit tests (default):
+
+`$ mvn clean install -Pdev`
+
+Development profile for integration and unit tests:
+
+`$ mvn clean install -Pintegration`
+
 #### From Eclipse (Spring Tool Suite)
 
 Import as Existing Maven Project and run it as Spring Boot App.
