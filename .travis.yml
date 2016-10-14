@@ -1,0 +1,19 @@
+language: java
+
+jdk:
+  - oraclejdk8
+before_install:
+  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
+    
+before_cache:
+  - mvn build-helper:remove-project-artifact
+  
+cache:
+  directories:
+  - $HOME/.m2
+
+before_script:
+  - "export DISPLAY=:99.0"
+  - echo "USE mysql;\nUPDATE user SET password=PASSWORD('') WHERE user='travis';\nFLUSH PRIVILEGES;\n" | mysql -u root
+  
+script: mvn clean install
