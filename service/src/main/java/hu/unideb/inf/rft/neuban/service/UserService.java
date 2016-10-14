@@ -1,9 +1,10 @@
 package hu.unideb.inf.rft.neuban.service;
 
+import hu.unideb.inf.rft.neuban.persistence.entities.UserEntity;
 import hu.unideb.inf.rft.service.dto.UserDto;
 
-public interface UserService extends BaseService<UserDto> {
+public interface UserService extends BaseService<UserEntity, UserDto, Long> {
 
-	public UserDto getByUserName(String userName) throws Exception;
-	
+	UserDto getByUserName(String userName) throws Exception;
+
 }

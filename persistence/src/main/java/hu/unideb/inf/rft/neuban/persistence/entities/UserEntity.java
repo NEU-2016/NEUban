@@ -7,6 +7,7 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -19,8 +20,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 @Entity
+@EqualsAndHashCode(callSuper=true)
 @Table(name = "Users")
-public class User extends SuperEntity<Long> {
+public class UserEntity extends SuperEntity<Long> {
 	
 	private static final long serialVersionUID = 1L;
 	
