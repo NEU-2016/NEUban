@@ -1,4 +1,4 @@
-package hu.unideb.inf.rft.neuban.service.impl;
+package hu.unideb.inf.rft.service.validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

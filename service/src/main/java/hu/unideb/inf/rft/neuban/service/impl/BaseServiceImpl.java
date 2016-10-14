@@ -1,4 +1,4 @@
-package hu.unideb.inf.rft.neuban.service;
+package hu.unideb.inf.rft.neuban.service.impl;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
@@ -7,9 +7,11 @@ import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import hu.unideb.inf.rft.neuban.persistence.entities.SuperEntity;
+import hu.unideb.inf.rft.neuban.service.BaseService;
 
 /**
  * 
@@ -47,11 +49,13 @@ public abstract class BaseServiceImpl<E extends SuperEntity<ID>, D, ID extends S
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<D> getAll() {
 		return modelMapper.map(repository.findAll(), listType);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public D getById(ID id) {
 		Assert.notNull(id);
 		E entity = this.repository.findOne(id);
@@ -61,6 +65,7 @@ public abstract class BaseServiceImpl<E extends SuperEntity<ID>, D, ID extends S
 		return modelMapper.map(entity, this.dtoType);
 	}
 
+	@Transactional
 	@Override
 	public void removeById(ID id) {
 		Assert.notNull(id);
@@ -68,6 +73,7 @@ public abstract class BaseServiceImpl<E extends SuperEntity<ID>, D, ID extends S
 	}
 
 	@Override
+	@Transactional
 	public ID saveOrUpdate(D dto) {
 		Assert.notNull(dto);
 		E entity = modelMapper.map(dto, this.entityType);

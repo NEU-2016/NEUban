@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class BaseDto implements Serializable {
+public class BaseDto<ID extends Serializable> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private Long id;
+	private ID id;
+	
 }

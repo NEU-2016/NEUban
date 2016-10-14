@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * User entity with username and password.
@@ -22,6 +23,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @EqualsAndHashCode(callSuper=true)
 @Table(name = "Users")
+@ToString(exclude = "password")
 public class UserEntity extends SuperEntity<Long> {
 	
 	private static final long serialVersionUID = 1L;
