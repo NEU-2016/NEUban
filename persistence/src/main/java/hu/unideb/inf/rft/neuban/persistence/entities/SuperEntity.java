@@ -7,7 +7,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Super entity for the database entities.
@@ -15,6 +17,8 @@ import lombok.Data;
  * @author Erdei Krisztián
  * @param <ID> Generated ID
  */
+@NoArgsConstructor 
+@AllArgsConstructor 
 @Data
 @MappedSuperclass
 public abstract class SuperEntity<ID extends Serializable> implements Serializable {
@@ -22,5 +26,5 @@ public abstract class SuperEntity<ID extends Serializable> implements Serializab
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
-	private Long id;
+	private ID id;
 }

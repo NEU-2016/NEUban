@@ -34,8 +34,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto getById(Long id) throws Exception {
-		ModelMapper modelMapper = new ModelMapper();
-		return modelMapper.map(userRepository.findUserById(id), UserDto.class);
+		UserEntity userEntity = this.userRepository.findUserById(id);
+		if (userEntity == null) {
+		return null;
+		}
+		return modelMapper.map(userEntity, UserDto.class);
 	}
 
 	@Override
@@ -48,13 +51,4 @@ public class UserServiceImpl implements UserService {
 		ModelMapper modelMapper = new ModelMapper();
 		return modelMapper.map(userRepository.findUserByUserName(userName), UserDto.class);
 	}
-
-	public UserRepository getUserRepository() {
-		return userRepository;
-	}
-
-	public void setUserRepository(UserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
-
 }

@@ -27,6 +27,6 @@ public class User extends SuperEntity<Long> {
 	@Column(nullable = false, length = 20, unique = true)
 	private String userName;
 
-	@Column(nullable = false)
+	@Column(nullable = false ,  length = 5)
 	private String password;
 }

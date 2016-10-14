@@ -6,6 +6,4 @@ import hu.unideb.inf.rft.neuban.persistence.entities.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 	User findUserByUserName(String name) ;
-
-	User findUserById(Long id);
 }
