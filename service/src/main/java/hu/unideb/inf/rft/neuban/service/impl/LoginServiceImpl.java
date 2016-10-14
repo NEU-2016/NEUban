@@ -22,19 +22,24 @@ import hu.unideb.inf.rft.service.dto.UserDto;
 public class LoginServiceImpl implements LoginService {
 
 	@Autowired
+	ModelMapper modelMapper;
+
+	@Autowired
 	private UserRepository userRepository;
-	
+
 	/**
-	 * @return Return true if the username and password matches , else returns false 
+	 * @return Return true if the username and password matches , else returns
+	 *         false
 	 *
 	 */
 	@Override
 	public Boolean isItValidLogin(String userName, String password) throws Exception {
 		ModelMapper modelMapper = new ModelMapper();
-		Type listType = new TypeToken<List<UserDto>>() {}.getType();
+		Type listType = new TypeToken<List<UserDto>>() {
+		}.getType();
 		List<UserDto> allUser = modelMapper.map(userRepository.findAll(), listType);
 		for (UserDto userDto : allUser) {
-			if (userDto.getUserName().equalsIgnoreCase(userName)){
+			if (userDto.getUserName().equalsIgnoreCase(userName)) {
 				if (userDto.getPassword().equals(password)) {
 					return true;
 				}

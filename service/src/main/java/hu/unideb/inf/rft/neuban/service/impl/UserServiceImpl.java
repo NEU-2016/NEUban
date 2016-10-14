@@ -8,6 +8,7 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import hu.unideb.inf.rft.neuban.persistence.entities.User;
 import hu.unideb.inf.rft.neuban.persistence.repositories.UserRepository;
 import hu.unideb.inf.rft.neuban.service.UserService;
 import hu.unideb.inf.rft.service.dto.UserDto;
@@ -21,12 +22,14 @@ import hu.unideb.inf.rft.service.dto.UserDto;
 @Service
 public class UserServiceImpl implements UserService {
 
+	@Autowired 
+	ModelMapper modelMapper;
+	
 	@Autowired
 	private UserRepository userRepository;
 
 	@Override
 	public List<UserDto> getAll() throws Exception {
-		ModelMapper modelMapper = new ModelMapper();
 		Type listType = new TypeToken<List<UserDto>>() {
 		}.getType();
 		return modelMapper.map(userRepository.findAll(), listType);
@@ -34,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto getById(Long id) throws Exception {
-		UserEntity userEntity = this.userRepository.findUserById(id);
+		User userEntity = this.userRepository.findOne(id);
 		if (userEntity == null) {
 		return null;
 		}
@@ -48,7 +51,6 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto getByUserName(String userName) throws Exception {
-		ModelMapper modelMapper = new ModelMapper();
 		return modelMapper.map(userRepository.findUserByUserName(userName), UserDto.class);
 	}
 }
