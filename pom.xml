@@ -24,6 +24,7 @@
 		<mockito.all.version>1.10.19</mockito.all.version>
 		<modelmapper.version>0.7.5</modelmapper.version>
 		<maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
+		<cobertura.maven.plugin.version>2.7</cobertura.maven.plugin.version>
 	</properties>
 
 	<modules>
@@ -165,4 +166,14 @@
 			<artifactId>mockito-all</artifactId>
 		</dependency>
 	</dependencies>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>${cobertura.maven.plugin.version}</version>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>

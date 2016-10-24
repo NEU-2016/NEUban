@@ -59,6 +59,12 @@ or
 
 `http://localhost:8080/neuban`
 
+#### Code coverage
+
+The project uses Cobertura for code coverage reporting:
+
+`$ mvn cobertura:cobertura`
+
 ### Lombok
 
 1. home page: https://projectlombok.org/index.html
