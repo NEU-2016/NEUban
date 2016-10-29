@@ -22,7 +22,7 @@ import lombok.ToString;
 @Data
 @Entity
 @EqualsAndHashCode(callSuper=true)
-@Table(name = "Users")
+@Table(name = "User")
 @ToString(exclude = "password")
 public class UserEntity extends SuperEntity<Long> {
 	
