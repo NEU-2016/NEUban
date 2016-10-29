@@ -1,3 +1,5 @@
+delete from user where id>0 and id < 26;
+
 insert into user (id,password,user_name)
 values (25,'wood','aberrant');
 
