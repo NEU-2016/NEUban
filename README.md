@@ -1,4 +1,4 @@
-# NEUban
+# NEUban [![Build Status](https://travis-ci.org/NEU-2016/NEUban.svg?branch=master)](https://travis-ci.org/NEU-2016/NEUban)
 
 ## About
 
