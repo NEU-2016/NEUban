@@ -1,12 +1,12 @@
-package hu.unideb.inf.rft.service.validator;
+package hu.unideb.inf.rft.neuban.service.validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import hu.unideb.inf.rft.neuban.service.UserService;
-import hu.unideb.inf.rft.neuban.service.exceptions.UserNotFoundExepction;
-import hu.unideb.inf.rft.service.dto.UserDto;
+import hu.unideb.inf.rft.neuban.service.exceptions.UserNotFoundException;
+import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 
 /**
  * Validator for login
@@ -25,7 +25,7 @@ public class UserValidator {
 	 *         false
 	 *
 	 */
-	public boolean isValidLogin(String userName, String password) throws Exception {
+	public boolean isValidLogin(String userName, String password) throws UserNotFoundException {
 
 		Assert.notNull(userName);
 		Assert.notNull(password);
@@ -33,7 +33,7 @@ public class UserValidator {
 		UserDto userDto = userService.getByUserName(userName);
 
 		if (userDto == null) {
-			throw new UserNotFoundExepction();
+			throw new UserNotFoundException();
 		}
 		return userDto.getPassword().equals(password);
 	}

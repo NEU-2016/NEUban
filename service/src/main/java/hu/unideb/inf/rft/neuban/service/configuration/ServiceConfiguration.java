@@ -1,4 +1,4 @@
-package hu.unideb.inf.rft.service.configuration;
+package hu.unideb.inf.rft.neuban.service.configuration;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
