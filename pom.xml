@@ -98,12 +98,15 @@
 				<configuration>
 					<instrumentation>
 						<excludes>
+							<exclude>hu/unideb/inf/rft/neuban/persistence/exceptions/**/*.class</exclude>
 							<exclude>hu/unideb/inf/rft/neuban/persistence/configuration/**/*.class</exclude>
 							<exclude>hu/unideb/inf/rft/neuban/persistence/entities/**/*.class</exclude>
 							<exclude>hu/unideb/inf/rft/neuban/persistence/repositories/**/*.class</exclude>
+							<exclude>hu/unideb/inf/rft/neuban/service/exceptions/**/*.class</exclude>
 							<exclude>hu/unideb/inf/rft/neuban/service/interfaces/**/*.class</exclude>
 							<exclude>hu/unideb/inf/rft/neuban/service/domain/**/*.class</exclude>
 							<exclude>hu/unideb/inf/rft/neuban/service/configuration/**/*.class</exclude>
+							<exclude>hu/unideb/inf/rft/neuban/web/exceptions/**/*.class</exclude>
 							<exclude>hu/unideb/inf/rft/neuban/web/configuration/**/*.class</exclude>
 						</excludes>
 					</instrumentation>
