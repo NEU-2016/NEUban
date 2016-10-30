@@ -1,6 +1,6 @@
 package hu.unideb.inf.rft.neuban.service.validator;
 
-import hu.unideb.inf.rft.neuban.service.UserService;
+import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 import hu.unideb.inf.rft.neuban.service.exceptions.UserNotFoundException;
 import org.junit.Rule;

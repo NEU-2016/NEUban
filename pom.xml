@@ -102,8 +102,9 @@
 							<exclude>hu/unideb/inf/rft/neuban/persistence/entities/**/*.class</exclude>
 							<exclude>hu/unideb/inf/rft/neuban/persistence/repositories/**/*.class</exclude>
 							<exclude>hu/unideb/inf/rft/neuban/service/interfaces/**/*.class</exclude>
-							<exclude>hu/unideb/inf/rft/service/dto/**/*.class</exclude>
-							<exclude>hu/unideb/inf/rft/service/configuration/**/*.class</exclude>
+							<exclude>hu/unideb/inf/rft/neuban/service/domain/**/*.class</exclude>
+							<exclude>hu/unideb/inf/rft/neuban/service/configuration/**/*.class</exclude>
+							<exclude>hu/unideb/inf/rft/neuban/web/configuration/**/*.class</exclude>
 						</excludes>
 					</instrumentation>
 				</configuration>
