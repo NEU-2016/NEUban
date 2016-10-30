@@ -1,17 +1,16 @@
 package hu.unideb.inf.rft.neuban.service.impl;
 
-import java.io.Serializable;
-import java.lang.reflect.Type;
-import java.util.List;
-
+import hu.unideb.inf.rft.neuban.persistence.entities.SuperEntity;
+import hu.unideb.inf.rft.neuban.service.interfaces.BaseService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import hu.unideb.inf.rft.neuban.persistence.entities.SuperEntity;
-import hu.unideb.inf.rft.neuban.service.BaseService;
+import java.io.Serializable;
+import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * 

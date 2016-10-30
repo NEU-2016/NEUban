@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import hu.unideb.inf.rft.neuban.service.UserService;
+import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import hu.unideb.inf.rft.neuban.service.exceptions.UserNotFoundException;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 

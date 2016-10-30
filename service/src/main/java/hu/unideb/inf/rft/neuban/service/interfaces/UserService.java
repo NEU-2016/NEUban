@@ -1,4 +1,4 @@
-package hu.unideb.inf.rft.neuban.service;
+package hu.unideb.inf.rft.neuban.service.interfaces;
 
 import hu.unideb.inf.rft.neuban.persistence.entities.UserEntity;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;

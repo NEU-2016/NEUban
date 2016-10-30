@@ -8,7 +8,7 @@ import org.springframework.util.Assert;
 
 import hu.unideb.inf.rft.neuban.persistence.entities.UserEntity;
 import hu.unideb.inf.rft.neuban.persistence.repositories.UserRepository;
-import hu.unideb.inf.rft.neuban.service.UserService;
+import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 
 /**
