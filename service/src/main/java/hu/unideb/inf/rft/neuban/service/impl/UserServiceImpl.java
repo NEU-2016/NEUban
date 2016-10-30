@@ -9,10 +9,10 @@ import org.springframework.util.Assert;
 import hu.unideb.inf.rft.neuban.persistence.entities.UserEntity;
 import hu.unideb.inf.rft.neuban.persistence.repositories.UserRepository;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
-import hu.unideb.inf.rft.service.dto.UserDto;
+import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 
 /**
- * 
+ *
  * @author Headswitcher
  *
  */
@@ -27,10 +27,14 @@ public class UserServiceImpl extends BaseServiceImpl<UserEntity, UserDto, Long> 
 		this.userRepository = userRepository;
 	}
 
-	@Override
 	@Transactional(readOnly = true)
-	public UserDto getByUserName(String userName) throws Exception {
+	@Override
+	public UserDto getByUserName(String userName) {
 		Assert.notNull(userName);
-		return modelMapper.map(userRepository.findUserByUserName(userName), UserDto.class);
+		UserEntity userEntity = this.userRepository.findByUserName(userName);
+		if (userEntity != null) {
+			return this.modelMapper.map(userEntity, UserDto.class);
+		}
+		return null;
 	}
 }

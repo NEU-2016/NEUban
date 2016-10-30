@@ -1,4 +1,4 @@
-package hu.unideb.inf.rft.service.dto;
+package hu.unideb.inf.rft.neuban.service.domain;
 
 import java.io.Serializable;
 
