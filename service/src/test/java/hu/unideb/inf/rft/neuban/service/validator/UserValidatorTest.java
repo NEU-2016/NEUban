@@ -117,7 +117,7 @@ public class UserValidatorTest {
     }
 
     @Test
-    public void checkUsernameExistsShouldReturnFalseWhenParamUsernameNotExists() {
+    public void checkUsernameExistsShouldReturnFalseWhenParamUsernameDoesNotExists() {
         // Given
         given(this.userService.getByUserName(ADMIN_USER_NAME)).willReturn(null);
 
@@ -131,7 +131,7 @@ public class UserValidatorTest {
     }
 
     @Test
-    public void checkUsernameExistsShouldReturnTrueWhenParamUsernameNotExists() {
+    public void checkUsernameExistsShouldReturnTrueWhenParamUsernameDoesExist() {
         // Given
         given(this.userService.getByUserName(ADMIN_USER_NAME)).willReturn(adminUserDto);
 
