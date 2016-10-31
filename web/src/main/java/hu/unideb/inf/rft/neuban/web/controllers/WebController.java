@@ -10,6 +10,6 @@ public class WebController {
 	@RequestMapping(path = "/neuban")
 	public String neubanPath(Model model) {
 		model.addAttribute("recipient", "World");
-		return "index.html";
+		return "index";
 	}
 }
