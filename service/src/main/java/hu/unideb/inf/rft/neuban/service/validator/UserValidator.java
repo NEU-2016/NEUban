@@ -38,4 +38,12 @@ public class UserValidator {
 		return userDto.getPassword().equals(password);
 	}
 
+	public boolean checkUsernameExists(String username) {
+        Assert.notNull(username);
+
+        return this.userService.getByUserName(username) != null;
+    }
+
+
+
 }

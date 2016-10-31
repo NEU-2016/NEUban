@@ -3,6 +3,7 @@ package hu.unideb.inf.rft.neuban.service.validator;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 import hu.unideb.inf.rft.neuban.service.exceptions.UserNotFoundException;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -24,6 +25,8 @@ public class UserValidatorTest {
     private static final String WRONG_USER_NAME = "wrong username";
     private static final String WRONG_PASSWORD = "wrong password";
 
+    private UserDto adminUserDto;
+
     @Rule
     public final ExpectedException expectedException = ExpectedException.none();
 
@@ -32,6 +35,14 @@ public class UserValidatorTest {
 
     @InjectMocks
     private UserValidator userValidator;
+
+    @Before
+    public void setUp() {
+        adminUserDto = UserDto.builder()
+                .userName(ADMIN_USER_NAME)
+                .password(ADMIN_PASSWORD)
+                .build();
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public void isValidLoginShouldThrowIllegalArgumentExceptionWhenUserNameIsNull() throws UserNotFoundException {
@@ -70,9 +81,7 @@ public class UserValidatorTest {
     @Test
     public void isValidLoginShouldReturnFalseWhenParamPasswordAndUserDtoPasswordAreDifferent() throws UserNotFoundException {
         // Given
-        final UserDto expectedUserDto = UserDto.builder().userName(ADMIN_USER_NAME).password(ADMIN_PASSWORD).build();
-
-        given(this.userService.getByUserName(ADMIN_USER_NAME)).willReturn(expectedUserDto);
+        given(this.userService.getByUserName(ADMIN_USER_NAME)).willReturn(adminUserDto);
 
         // When
         final boolean result = this.userValidator.isValidLogin(ADMIN_USER_NAME, WRONG_PASSWORD);
@@ -86,12 +95,48 @@ public class UserValidatorTest {
     @Test
     public void isValidLoginShouldReturnTrueWhenParamPasswordAndUserDtoPasswordAreTheSame() throws UserNotFoundException {
         // Given
-        final UserDto expectedUserDto = UserDto.builder().userName(ADMIN_USER_NAME).password(ADMIN_PASSWORD).build();
-
-        given(this.userService.getByUserName(ADMIN_USER_NAME)).willReturn(expectedUserDto);
+        given(this.userService.getByUserName(ADMIN_USER_NAME)).willReturn(adminUserDto);
 
         // When
         final boolean result = this.userValidator.isValidLogin(ADMIN_USER_NAME, ADMIN_PASSWORD);
+
+        // Then
+        assertThat(result, is(true));
+
+        then(this.userService).should().getByUserName(ADMIN_USER_NAME);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void checkUsernameExistsShouldThrowIllegalArgumentExceptionWhenUsernameIsNull() {
+        // Given
+
+        // When
+        this.userValidator.checkUsernameExists(null);
+
+        // Then
+    }
+
+    @Test
+    public void checkUsernameExistsShouldReturnFalseWhenParamUsernameDoesNotExist() {
+        // Given
+        given(this.userService.getByUserName(ADMIN_USER_NAME)).willReturn(null);
+
+        // When
+        final boolean result = this.userValidator.checkUsernameExists(ADMIN_USER_NAME);
+
+        // Then
+        assertThat(result, is(false));
+
+        then(this.userService).should().getByUserName(ADMIN_USER_NAME);
+    }
+
+    @Test
+    public void checkUsernameExistsShouldReturnTrueWhenParamUsernameDoesExist() {
+        // Given
+        given(this.userService.getByUserName(ADMIN_USER_NAME)).willReturn(adminUserDto);
+
+        // When
+        final boolean result = this.userValidator.checkUsernameExists(ADMIN_USER_NAME);
 
         // Then
         assertThat(result, is(true));
