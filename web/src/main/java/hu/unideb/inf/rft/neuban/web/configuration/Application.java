@@ -7,7 +7,7 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
-@Import(ThymeleafConfiguration.class)
+@Import(WebConfiguration.class)
 public class Application extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
