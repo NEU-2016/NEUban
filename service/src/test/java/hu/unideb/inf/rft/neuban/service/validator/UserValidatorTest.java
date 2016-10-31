@@ -117,7 +117,7 @@ public class UserValidatorTest {
     }
 
     @Test
-    public void checkUsernameExistsShouldReturnFalseWhenParamUsernameDoesNotExists() {
+    public void checkUsernameExistsShouldReturnFalseWhenParamUsernameDoesNotExist() {
         // Given
         given(this.userService.getByUserName(ADMIN_USER_NAME)).willReturn(null);
 
