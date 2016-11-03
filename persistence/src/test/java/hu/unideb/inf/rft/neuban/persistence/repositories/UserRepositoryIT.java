@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Optional;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
@@ -31,7 +33,7 @@ public class UserRepositoryIT {
         // Given
 
         // When
-        final UserEntity actualUserEntity = this.userRepository.findByUserName(null);
+        final UserEntity actualUserEntity = this.userRepository.findByUserName(null).orElse(null);
 
         // Then
         assertThat(actualUserEntity, nullValue());
@@ -42,7 +44,7 @@ public class UserRepositoryIT {
         // Given
 
         // When
-        final UserEntity actualUserEntity = this.userRepository.findByUserName(USER_NAME_NON_EXISTENT);
+        final UserEntity actualUserEntity = this.userRepository.findByUserName(USER_NAME_NON_EXISTENT).orElse(null);
 
         // Then
         assertThat(actualUserEntity, nullValue());
@@ -58,7 +60,7 @@ public class UserRepositoryIT {
                 .build();
 
         // When
-        final UserEntity actualUserEntity = this.userRepository.findByUserName(ADMIN_USER_NAME);
+        final UserEntity actualUserEntity = this.userRepository.findByUserName(ADMIN_USER_NAME).orElse(null);
 
         // Then
         assertThat(actualUserEntity, notNullValue());

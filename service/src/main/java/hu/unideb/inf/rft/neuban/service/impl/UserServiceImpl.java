@@ -11,6 +11,8 @@ import hu.unideb.inf.rft.neuban.persistence.repositories.UserRepository;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 
+import java.util.Optional;
+
 /**
  *
  * @author Headswitcher
@@ -29,12 +31,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserEntity, UserDto, Long> 
 
 	@Transactional(readOnly = true)
 	@Override
-	public UserDto getByUserName(String userName) {
+	public Optional<UserDto> getByUserName(String userName) {
 		Assert.notNull(userName);
-		UserEntity userEntity = this.userRepository.findByUserName(userName);
+		UserEntity userEntity = this.userRepository.findByUserName(userName).orElse(null);
 		if (userEntity != null) {
-			return this.modelMapper.map(userEntity, UserDto.class);
+			return Optional.of(this.modelMapper.map(userEntity, UserDto.class));
 		}
-		return null;
+		return Optional.empty();
 	}
 }
