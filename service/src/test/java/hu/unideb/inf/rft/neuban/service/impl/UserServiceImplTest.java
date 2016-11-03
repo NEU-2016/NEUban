@@ -1,6 +1,7 @@
 package hu.unideb.inf.rft.neuban.service.impl;
 
 import hu.unideb.inf.rft.neuban.persistence.entities.UserEntity;
+import hu.unideb.inf.rft.neuban.persistence.enums.Role;
 import hu.unideb.inf.rft.neuban.persistence.repositories.UserRepository;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 import org.junit.Before;
@@ -13,9 +14,7 @@ import org.modelmapper.ModelMapper;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -68,8 +67,8 @@ public class UserServiceImplTest {
     @Test
     public void getByUserNameShouldReturnAnExistingUserDtoWhenParamUserNameExists() {
         // Given
-        final UserDto expectedUserDto = UserDto.builder().id(ADMIN_ID).userName(ADMIN_USER_NAME).password(ADMIN_PASSWORD).build();
-        final UserEntity userEntity = UserEntity.builder().id(ADMIN_ID).userName(ADMIN_USER_NAME).password(ADMIN_PASSWORD).build();
+        final UserDto expectedUserDto = UserDto.builder().id(ADMIN_ID).userName(ADMIN_USER_NAME).password(ADMIN_PASSWORD).role(Role.ADMIN).build();
+        final UserEntity userEntity = UserEntity.builder().id(ADMIN_ID).userName(ADMIN_USER_NAME).password(ADMIN_PASSWORD).role(Role.ADMIN).build();
 
         given(this.userRepository.findByUserName(ADMIN_USER_NAME)).willReturn(Optional.of(userEntity));
         given(this.modelMapper.map(userEntity, UserDto.class)).willReturn(expectedUserDto);

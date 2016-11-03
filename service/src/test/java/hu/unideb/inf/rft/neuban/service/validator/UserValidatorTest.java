@@ -1,5 +1,6 @@
 package hu.unideb.inf.rft.neuban.service.validator;
 
+import hu.unideb.inf.rft.neuban.persistence.enums.Role;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 import hu.unideb.inf.rft.neuban.service.exceptions.UserNotFoundException;
@@ -43,6 +44,7 @@ public class UserValidatorTest {
         adminUserDto = UserDto.builder()
                 .userName(ADMIN_USER_NAME)
                 .password(ADMIN_PASSWORD)
+                .role(Role.ADMIN)
                 .build();
     }
 
