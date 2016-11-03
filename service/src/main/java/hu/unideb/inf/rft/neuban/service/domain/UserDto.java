@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.Collection;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -26,12 +28,15 @@ public class UserDto extends BaseDto<Long> {
 	@NotNull
 	@Size(min = 5, max = 20)
 	private String password;
+	
+	private Collection<BoardDto> boards;
 
 	@Builder
-	public UserDto(Long id, String userName, String password) {
+	public UserDto(Long id, String userName, String password , Collection<BoardDto> boards) {
 		super(id);
 		this.userName = userName;
 		this.password = password;
+		this.boards = boards;
 	}
 
 }

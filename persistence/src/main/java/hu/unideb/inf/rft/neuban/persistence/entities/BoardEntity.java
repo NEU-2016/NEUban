@@ -21,42 +21,36 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * User entity with username and password.
+ * Board entity , title and column list.
+ * 
  * @author Erdei Krisztián
- *	
+ * 
  */
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@EqualsAndHashCode(callSuper=true)
-@ToString(callSuper = true, exclude = "password")
-@Table(name = "user")
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@Table(name = "board")
 @Entity
-public class UserEntity extends SuperEntity<Long> {
-	
-	private static final long serialVersionUID = 1L;
-	
-	@Column(name = "user_name", unique = true)
-	@NotNull
-	@Size(min = 3, max = 20)
-	private String userName;
+public class BoardEntity extends SuperEntity<Long> {
 
-	@Column(name = "password")
+	private static final long serialVersionUID = 1L;
+
+	@Column(name = "title")
 	@NotNull
-	@Size(min = 5, max = 20)
-	private String password;
+	@Size(min = 2, max = 30)
+	private String title;
 	
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "board_id")
 	@OrderBy("id")
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-	private Collection<BoardEntity> boards;
-
+	private Collection<ColumnEntity> columns;
 
 	@Builder
-	public UserEntity(Long id, String userName, String password , Collection<BoardEntity> boards) {
+	public BoardEntity(Long id, String title, Collection<ColumnEntity> columns) {
 		super(id);
-		this.userName = userName;
-		this.password = password;
-		this.boards = boards;
+		this.title = title;
+		this.columns = columns;
 	}
 }
