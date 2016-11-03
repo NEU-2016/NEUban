@@ -2,6 +2,7 @@ package hu.unideb.inf.rft.neuban.persistence.repositories;
 
 import hu.unideb.inf.rft.neuban.persistence.annotations.JPARepositoryTest;
 import hu.unideb.inf.rft.neuban.persistence.entities.UserEntity;
+import hu.unideb.inf.rft.neuban.persistence.enums.Role;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,7 @@ public class UserRepositoryIT {
                 .id(ADMIN_ID)
                 .userName(ADMIN_USER_NAME)
                 .password(ADMIN_PASSWORD)
+                .role(Role.ADMIN)
                 .build();
 
         // When
