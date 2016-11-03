@@ -30,11 +30,7 @@ public class UserValidator {
 		Assert.notNull(userName);
 		Assert.notNull(password);
 
-		UserDto userDto = userService.getByUserName(userName);
-
-		if (userDto == null) {
-			throw new UserNotFoundException();
-		}
+		UserDto userDto = userService.getByUserName(userName).orElseThrow(UserNotFoundException::new);
 		return userDto.getPassword().equals(password);
 	}
 

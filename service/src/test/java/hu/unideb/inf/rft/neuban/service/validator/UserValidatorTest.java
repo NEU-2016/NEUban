@@ -12,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Optional;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -44,6 +46,7 @@ public class UserValidatorTest {
                 .build();
     }
 
+
     @Test(expected = IllegalArgumentException.class)
     public void isValidLoginShouldThrowIllegalArgumentExceptionWhenUserNameIsNull() throws UserNotFoundException {
         // Given
@@ -67,7 +70,7 @@ public class UserValidatorTest {
     @Test
     public void isValidLoginShouldThrowUserNotFoundExceptionWhenUserNameDoesNotExist() throws UserNotFoundException {
         // Given
-        given(this.userService.getByUserName(WRONG_USER_NAME)).willReturn(null);
+        given(this.userService.getByUserName(WRONG_USER_NAME)).willReturn(Optional.empty());
 
         expectedException.expect(UserNotFoundException.class);
 
@@ -81,7 +84,7 @@ public class UserValidatorTest {
     @Test
     public void isValidLoginShouldReturnFalseWhenParamPasswordAndUserDtoPasswordAreDifferent() throws UserNotFoundException {
         // Given
-        given(this.userService.getByUserName(ADMIN_USER_NAME)).willReturn(adminUserDto);
+        given(this.userService.getByUserName(ADMIN_USER_NAME)).willReturn(Optional.of(adminUserDto));
 
         // When
         final boolean result = this.userValidator.isValidLogin(ADMIN_USER_NAME, WRONG_PASSWORD);
@@ -95,7 +98,7 @@ public class UserValidatorTest {
     @Test
     public void isValidLoginShouldReturnTrueWhenParamPasswordAndUserDtoPasswordAreTheSame() throws UserNotFoundException {
         // Given
-        given(this.userService.getByUserName(ADMIN_USER_NAME)).willReturn(adminUserDto);
+        given(this.userService.getByUserName(ADMIN_USER_NAME)).willReturn(Optional.of(adminUserDto));
 
         // When
         final boolean result = this.userValidator.isValidLogin(ADMIN_USER_NAME, ADMIN_PASSWORD);
@@ -133,7 +136,7 @@ public class UserValidatorTest {
     @Test
     public void checkUsernameExistsShouldReturnTrueWhenParamUsernameDoesExist() {
         // Given
-        given(this.userService.getByUserName(ADMIN_USER_NAME)).willReturn(adminUserDto);
+        given(this.userService.getByUserName(ADMIN_USER_NAME)).willReturn(Optional.of(adminUserDto));
 
         // When
         final boolean result = this.userValidator.checkUsernameExists(ADMIN_USER_NAME);
@@ -143,4 +146,5 @@ public class UserValidatorTest {
 
         then(this.userService).should().getByUserName(ADMIN_USER_NAME);
     }
+
 }
