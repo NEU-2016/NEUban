@@ -65,6 +65,10 @@ The project uses Cobertura for code coverage reporting:
 
 `$ mvn cobertura:cobertura`
 
+#### Style checking
+
+`$ mvn clean site`
+
 ### Lombok
 
 1. home page: https://projectlombok.org/index.html
