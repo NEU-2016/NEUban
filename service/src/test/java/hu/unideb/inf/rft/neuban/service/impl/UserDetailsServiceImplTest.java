@@ -33,7 +33,7 @@ public class UserDetailsServiceImplTest {
     private static final String USER_PASSWORD = "password";
     private static final String USER_ROLE_AS_STRING = "USER";
     private static final Role USER_ROLE = Role.USER;
-    private static final String USERNAME_NOT_FOUND_ERROR_MESSAGE = "Username does not found: unknown";
+    private static final String USERNAME_NOT_FOUND_ERROR_MESSAGE = "Username not found: unknown";
 
     private final Set<GrantedAuthority> grantedAuthorities = Sets.newHashSet(new SimpleGrantedAuthority(USER_ROLE_AS_STRING));
 
