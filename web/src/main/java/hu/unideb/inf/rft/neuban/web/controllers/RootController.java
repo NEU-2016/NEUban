@@ -8,10 +8,10 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class RootController {
 	
-	private static final String REDIRECT_URL_TO_NEUBAN_PATH = "redirect:/neuban";
+	private static final String REDIRECT_URL_TO_NEUBAN_PATH = "redirect:/index";
 
-	@RequestMapping(path = "/", method = RequestMethod.GET)
-	public ModelAndView redirectToNeubanPath() {
-		return new ModelAndView(REDIRECT_URL_TO_NEUBAN_PATH);
+	@RequestMapping(path = {"", "/"}, method = RequestMethod.GET)
+	public String redirectToNeubanPath() {
+		return REDIRECT_URL_TO_NEUBAN_PATH;
 	}
 }
