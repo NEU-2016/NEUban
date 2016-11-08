@@ -3,15 +3,31 @@ package hu.unideb.inf.rft.neuban.web.controllers;
 import org.junit.Before;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 public abstract class AbstractControllerTest {
 
-	protected MockMvc mockMvc;
+    protected static final String VIEW_PREFIX = "/templates/";
+    protected static final String VIEW_SUFFIX = ".html";
 
-	@Before
-	public void setUp() {
-		this.mockMvc = MockMvcBuilders.standaloneSetup(this.controllerUnderTest()).build();
-	}
+    protected MockMvc mockMvc;
 
-	protected abstract Object[] controllerUnderTest();
+    @Before
+    public void setUp() {
+        this.mockMvc = MockMvcBuilders.standaloneSetup(this.controllerUnderTest()).setViewResolvers(viewResolver()).build();
+    }
+
+    protected abstract Object[] controllerUnderTest();
+
+    protected ViewResolver viewResolver() {
+        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+
+        viewResolver.setPrefix(VIEW_PREFIX);
+        viewResolver.setSuffix(VIEW_SUFFIX);
+
+        return viewResolver;
+    }
 }

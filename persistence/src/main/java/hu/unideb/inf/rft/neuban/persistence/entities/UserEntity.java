@@ -35,7 +35,7 @@ public class UserEntity extends SuperEntity<Long> {
 
 	@Column(name = "password")
 	@NotNull
-	@Size(min = 5, max = 20)
+	@Size(min = 5)
 	private String password;
 
 	@Column(name = "role")
