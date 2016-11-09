@@ -13,6 +13,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
+import java.util.HashSet;
+
+import org.hibernate.collection.internal.PersistentSet;
+
 @RunWith(SpringRunner.class)
 @JPARepositoryTest
 @Sql(scripts = "classpath:sql/data-insert-user.sql")
@@ -55,6 +59,7 @@ public class UserRepositoryIT {
                 .id(ADMIN_ID)
                 .userName(ADMIN_USER_NAME)
                 .password(ADMIN_PASSWORD)
+                .boards(new HashSet<>())
                 .build();
 
         // When

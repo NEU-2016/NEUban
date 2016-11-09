@@ -1,6 +1,7 @@
 package hu.unideb.inf.rft.neuban.persistence.entities;
 
 import java.util.Collection;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -45,10 +46,10 @@ public class BoardEntity extends SuperEntity<Long> {
 	@JoinColumn(name = "board_id")
 	@OrderBy("id")
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-	private Collection<ColumnEntity> columns;
+	private Set<ColumnEntity> columns;
 
 	@Builder
-	public BoardEntity(Long id, String title, Collection<ColumnEntity> columns) {
+	public BoardEntity(Long id, String title, Set<ColumnEntity> columns) {
 		super(id);
 		this.title = title;
 		this.columns = columns;

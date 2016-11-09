@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Collection;
 
 import org.junit.Rule;
@@ -98,7 +98,7 @@ public class BoardHandlerTest {
 		
 		final BoardDto expectedBoardDto = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null).build();
 		final UserDto expectedUserDtoWithoutExpectedBoard= UserDto.builder().id(USER_ID).userName(USER_NAME)
-				.password(USER_PASSWORD).boards(new ArrayList<>()).build();
+				.password(USER_PASSWORD).boards(new HashSet<>()).build();
 		
 		given(this.userService.getById(USER_ID)).willReturn(expectedUserDtoWithoutExpectedBoard);
 		given(this.boardService.getById(EXPECTED_BOARD_ID)).willReturn(expectedBoardDto);
@@ -122,7 +122,7 @@ public class BoardHandlerTest {
 		final BoardDto notExpectedBoardDto = BoardDto.builder().id(NOT_EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null).build();
 		final BoardDto expectedBoardDto = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null).build();
 		
-		Collection<BoardDto> boards = new ArrayList<>();
+		Collection<BoardDto> boards = new HashSet<>();
 		boards.add(expectedBoardDto);
 		final UserDto expectedUserDtoWithoutExpectedBoard = UserDto.builder().id(USER_ID).userName(USER_NAME)
 				.password(USER_PASSWORD).boards(boards).build();
@@ -146,7 +146,7 @@ public class BoardHandlerTest {
 		
 		// Given
 		final UserDto expectedUserDto= UserDto.builder().id(USER_ID).userName(USER_NAME)
-				.password(USER_PASSWORD).boards(new ArrayList<>()).build();
+				.password(USER_PASSWORD).boards(new HashSet<>()).build();
 		
 		given(this.userService.getById(USER_ID)).willReturn(expectedUserDto);
 		given(this.boardService.getById(NON_EXISTENT_BOARD_ID)).willReturn(null);
@@ -164,13 +164,13 @@ public class BoardHandlerTest {
 		
 		//Given
 		final BoardDto expectedUserBoard = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null).build();
-		Collection<BoardDto> boards = new ArrayList<>();
+		Collection<BoardDto> boards = new HashSet<>();
 		boards.add(expectedUserBoard);
 		final UserDto expectedUserDtoBeforeRemove = UserDto.builder().id(USER_ID).userName(USER_NAME)
 				.password(USER_PASSWORD).boards(boards).build();
 		
 		final UserDto expectedUserDtoAfterRemove = UserDto.builder().id(USER_ID).userName(USER_NAME)
-				.password(USER_PASSWORD).boards(new ArrayList<>()).build();
+				.password(USER_PASSWORD).boards(new HashSet<>()).build();
 		given(this.userService.getById(USER_ID)).willReturn(expectedUserDtoBeforeRemove,expectedUserDtoAfterRemove);
 		given(this.boardService.getById(EXPECTED_BOARD_ID)).willReturn(expectedUserBoard);
 		
@@ -218,7 +218,7 @@ public class BoardHandlerTest {
 		
 		// Given
 		final UserDto expectedUserDto= UserDto.builder().id(USER_ID).userName(USER_NAME)
-				.password(USER_PASSWORD).boards(new ArrayList<>()).build();
+				.password(USER_PASSWORD).boards(new HashSet<>()).build();
 		
 		given(this.userService.getById(USER_ID)).willReturn(expectedUserDto);
 		given(this.boardService.getById(NON_EXISTENT_BOARD_ID)).willReturn(null);
@@ -238,9 +238,9 @@ public class BoardHandlerTest {
 
 		final BoardDto expectedUserBoard = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null).build();
 		final UserDto expectedUserDtoBeforeAdd = UserDto.builder().id(USER_ID).userName(USER_NAME)
-				.password(USER_PASSWORD).boards(new ArrayList<>()).build();
+				.password(USER_PASSWORD).boards(new HashSet<>()).build();
 
-		Collection<BoardDto> boards = new ArrayList<>();
+		Collection<BoardDto> boards = new HashSet<>();
 		boards.add(expectedUserBoard);
 
 		final UserDto expectedUserDtoAfterAdd = UserDto.builder().id(USER_ID).userName(USER_NAME)
@@ -295,8 +295,8 @@ public class BoardHandlerTest {
 
 		final BoardDto expectedBoardDto = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null).build();
 		final UserDto expectedUserDtoForGetByIdBeforeSave = UserDto.builder().id(USER_ID).userName(USER_NAME)
-				.password(USER_PASSWORD).boards(new ArrayList<>()).build();
-		Collection<BoardDto> boards = new ArrayList<>();
+				.password(USER_PASSWORD).boards(new HashSet<>()).build();
+		Collection<BoardDto> boards = new HashSet<>();
 		boards.add(expectedBoardDto);
 		final UserDto expectedUserDtoForGetByIdAfterSave = UserDto.builder().id(USER_ID).userName(USER_NAME)
 				.password(USER_PASSWORD).boards(boards).build();
