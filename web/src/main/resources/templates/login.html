@@ -4,8 +4,8 @@
 </head>
 <body>
 <h1>Login page</h1>
-<p th:if="${param.error}">
-    Something is incorrect.
+<p th:if="${loginError}">
+    Error! Wrong username or password!
 </p>
 <form th:action="@{/appLogin}" method="POST">
     Username: <input type="text" name="username"/> <br/><br/>
