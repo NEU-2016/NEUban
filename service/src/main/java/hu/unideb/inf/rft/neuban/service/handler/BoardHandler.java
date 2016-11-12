@@ -12,7 +12,7 @@ import hu.unideb.inf.rft.neuban.service.UserService;
 import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 import hu.unideb.inf.rft.neuban.service.exceptions.BoardNotFoundException;
-import hu.unideb.inf.rft.neuban.service.exceptions.NoRelationFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.RelationNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.UserNotFoundException;
 
 @Service
@@ -21,11 +21,11 @@ public class BoardHandler {
 	@Autowired
 	private UserService userService;
 
-	@Autowired(required = true)
+	@Autowired
 	private BoardService boardService;
 
 	void removeUserFromBoardByUserIdAndByBoardId(Long userId, Long boardId)
-			throws UserNotFoundException, BoardNotFoundException, NoRelationFoundException {
+			throws UserNotFoundException, BoardNotFoundException, RelationNotFoundException {
 
 		Assert.notNull(userId);
 		Assert.notNull(boardId);
@@ -41,12 +41,9 @@ public class BoardHandler {
 		if (boardDto == null) {
 			throw new BoardNotFoundException();
 		}
-		if (userDto.getBoards() != null) {
-			if (!userDto.getBoards().removeIf(userBoards -> userBoards.getId().equals((boardDto.getId())))) {
-				throw new NoRelationFoundException();
-			}
-		} else {
-			throw new NoRelationFoundException();
+		if (userDto.getBoards() == null
+				|| !userDto.getBoards().removeIf(userBoards -> userBoards.getId().equals((boardDto.getId())))) {
+			throw new RelationNotFoundException();
 		}
 		userService.saveOrUpdate(userDto);
 	}

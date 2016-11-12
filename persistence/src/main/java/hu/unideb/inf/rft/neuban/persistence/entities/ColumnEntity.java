@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * Column entity with username and password.
+ * Column entity.
  * @author Erdei Krisztián
  *	
  */

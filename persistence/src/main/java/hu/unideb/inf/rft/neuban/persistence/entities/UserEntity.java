@@ -1,7 +1,6 @@
 package hu.unideb.inf.rft.neuban.persistence.entities;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -9,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -47,14 +46,14 @@ public class UserEntity extends SuperEntity<Long> {
 	@Size(min = 5, max = 20)
 	private String password;
 	
+	@OrderColumn
 	@JoinColumn(name = "user_id")
-	@OrderBy("id")
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-	private Set<BoardEntity> boards;
+	private List<BoardEntity> boards;
 
 
 	@Builder
-	public UserEntity(Long id, String userName, String password , Set<BoardEntity> boards) {
+	public UserEntity(Long id, String userName, String password , List<BoardEntity> boards) {
 		super(id);
 		this.userName = userName;
 		this.password = password;

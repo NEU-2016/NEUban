@@ -1,21 +1,20 @@
 package hu.unideb.inf.rft.neuban.persistence.repositories;
 
-import hu.unideb.inf.rft.neuban.persistence.annotations.JPARepositoryTest;
-import hu.unideb.inf.rft.neuban.persistence.entities.UserEntity;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+
+import java.util.ArrayList;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-
-import java.util.HashSet;
-
-import org.hibernate.collection.internal.PersistentSet;
+import hu.unideb.inf.rft.neuban.persistence.annotations.JPARepositoryTest;
+import hu.unideb.inf.rft.neuban.persistence.entities.UserEntity;
 
 @RunWith(SpringRunner.class)
 @JPARepositoryTest
@@ -59,7 +58,7 @@ public class UserRepositoryIT {
                 .id(ADMIN_ID)
                 .userName(ADMIN_USER_NAME)
                 .password(ADMIN_PASSWORD)
-                .boards(new HashSet<>())
+                .boards(new ArrayList<>())
                 .build();
 
         // When
