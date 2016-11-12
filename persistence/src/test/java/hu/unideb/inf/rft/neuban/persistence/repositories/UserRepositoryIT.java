@@ -7,11 +7,14 @@ import static org.hamcrest.Matchers.nullValue;
 
 import java.util.ArrayList;
 
+import hu.unideb.inf.rft.neuban.persistence.enums.Role;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Optional;
 
 import hu.unideb.inf.rft.neuban.persistence.annotations.JPARepositoryTest;
 import hu.unideb.inf.rft.neuban.persistence.entities.UserEntity;
@@ -21,51 +24,47 @@ import hu.unideb.inf.rft.neuban.persistence.entities.UserEntity;
 @Sql(scripts = "classpath:sql/data-insert-user.sql")
 public class UserRepositoryIT {
 
-    private static final long ADMIN_ID = 1L;
-    private static final String ADMIN_USER_NAME = "admin";
-    private static final String ADMIN_PASSWORD = "admin";
-    private static final String USER_NAME_NON_EXISTENT = "non-existent username";
+	private static final long ADMIN_ID = 1L;
+	private static final String ADMIN_USER_NAME = "admin";
+	private static final String ADMIN_PASSWORD = "admin";
+	private static final String USER_NAME_NON_EXISTENT = "non-existent username";
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-    @Test
-    public void findByUserNameShouldReturnNullWhenParamUserNameIsNull() {
-        // Given
+	@Test
+	public void findByUserNameShouldReturnNullWhenParamUserNameIsNull() {
+		// Given
 
-        // When
-        final UserEntity actualUserEntity = this.userRepository.findByUserName(null);
+		// When
+		final UserEntity actualUserEntity = this.userRepository.findByUserName(null).orElse(null);
 
-        // Then
-        assertThat(actualUserEntity, nullValue());
-    }
+		// Then
+		assertThat(actualUserEntity, nullValue());
+	}
 
-    @Test
-    public void findByUserNameShouldReturnNullWhenParamUserNameNotExists() {
-        // Given
+	@Test
+	public void findByUserNameShouldReturnNullWhenParamUserNameNotExists() {
+		// Given
 
-        // When
-        final UserEntity actualUserEntity = this.userRepository.findByUserName(USER_NAME_NON_EXISTENT);
+		// When
+		final UserEntity actualUserEntity = this.userRepository.findByUserName(USER_NAME_NON_EXISTENT).orElse(null);
 
-        // Then
-        assertThat(actualUserEntity, nullValue());
-    }
+		// Then
+		assertThat(actualUserEntity, nullValue());
+	}
 
-    @Test
-    public void findByUserNameShouldReturnAnExistingUserEntityWhenParamUserNameExists() {
-        // Given
-        final UserEntity expectedUserEntity = UserEntity.builder()
-                .id(ADMIN_ID)
-                .userName(ADMIN_USER_NAME)
-                .password(ADMIN_PASSWORD)
-                .boards(new ArrayList<>())
-                .build();
+	@Test
+	public void findByUserNameShouldReturnAnExistingUserEntityWhenParamUserNameExists() {
+		// Given
+		final UserEntity expectedUserEntity = UserEntity.builder().id(ADMIN_ID).userName(ADMIN_USER_NAME)
+				.password(ADMIN_PASSWORD).role(Role.ADMIN).boards(new ArrayList<>()).build();
 
-        // When
-        final UserEntity actualUserEntity = this.userRepository.findByUserName(ADMIN_USER_NAME);
+		// When
+		final UserEntity actualUserEntity = this.userRepository.findByUserName(ADMIN_USER_NAME).orElse(null);
 
-        // Then
-        assertThat(actualUserEntity, notNullValue());
-        assertThat(actualUserEntity, equalTo(expectedUserEntity));
-    }
+		// Then
+		assertThat(actualUserEntity, notNullValue());
+		assertThat(actualUserEntity, equalTo(expectedUserEntity));
+	}
 }

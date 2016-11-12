@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>NEUban - Log in</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" th:href="@{css/bootstrap.min.css}"/>
+</head>
+<body>
+<div th:class="container">
+    <h2>Login page</h2>
+    <form th:action="@{/appLogin}" method="POST">
+        <p th:class="bg-danger" th:if="${loginError}"><b>Error!</b> Wrong username or password!</p>
+        <label>Username</label>
+        <input type="text" th:class="form-control" th:placeholder="Username" name="username"/>
+        <label>Password</label>
+        <input type="password" th:class="form-control" th:placeholder="Password" name="password"/>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+</div>
+</body>
+</html>

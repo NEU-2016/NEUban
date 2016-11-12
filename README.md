@@ -6,6 +6,18 @@ NEUban is an open source Java EE project as an assignment for a course at the Un
 
 Our goal is to make a user-friendly tool to visualize works and workflows on a Kanban board environment.
 
+##You can login these username-password pairs.
+
+|               Default users               ||
+Username  | Password 
+------------ | :-----------
+boisterous  | password 
+traumatic  | password 
+chopchop  | password 
+krisztmas  | password 
+pivanyi  | password 
+falatka  | password 
+
 ## Build and run
 
 #### Configurations
@@ -58,6 +70,16 @@ Import as Existing Maven Project and run it as Spring Boot App.
 or
 
 `http://localhost:8080/neuban`
+
+#### Code coverage
+
+The project uses Cobertura for code coverage reporting:
+
+`$ mvn cobertura:cobertura`
+
+#### Style checking
+
+`$ mvn clean site`
 
 ### Lombok
 
