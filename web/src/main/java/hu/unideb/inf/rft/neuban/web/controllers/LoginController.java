@@ -1,9 +1,9 @@
 package hu.unideb.inf.rft.neuban.web.controllers;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class LoginController {
@@ -16,8 +16,9 @@ public class LoginController {
 	}
 
 	@RequestMapping(path = "/login-error")
-	public String loginError(Model model) {
-		model.addAttribute("loginError", true);
-		return LOGIN_VIEW;
+	public ModelAndView loginError() {
+		ModelAndView modelAndView = new ModelAndView(LOGIN_VIEW);
+		modelAndView.addObject("loginError", true);
+		return modelAndView;
 	}
 }

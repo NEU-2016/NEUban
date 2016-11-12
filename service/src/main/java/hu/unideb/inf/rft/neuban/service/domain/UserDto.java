@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@ToString(callSuper = true)
+@ToString(callSuper = true, exclude = {"password", "passwordConfirmation"})
 @EqualsAndHashCode(callSuper = true)
 public class UserDto extends BaseDto<Long> {
 

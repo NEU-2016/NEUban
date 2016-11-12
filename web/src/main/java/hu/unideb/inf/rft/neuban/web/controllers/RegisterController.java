@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping(path = "/register")
@@ -37,16 +38,21 @@ public class RegisterController {
 		ModelAndView modelAndView = new ModelAndView();
 		if (bindingResult.hasErrors()) {
 			modelAndView.setViewName(REGISTER_VIEW);
-			for (ObjectError error : bindingResult.getAllErrors()) {
-				if (error instanceof FieldError) {
-					FieldError fieldError = (FieldError) error;
-					modelAndView.addObject(fieldError.getField(), fieldError.getDefaultMessage());
-				}
-			}
+			addErrorsToModelAndView(modelAndView, bindingResult.getAllErrors());
 		} else {
 			modelAndView.setViewName(INDEX_VIEW);
 			userService.saveOrUpdate(userDto);
 		}
 		return modelAndView;
+	}
+
+	//TODO Pull out into some sort of common method collection class
+	private void addErrorsToModelAndView(ModelAndView modelAndView, List<ObjectError> errors) {
+		for (ObjectError error : errors) {
+			if (error instanceof FieldError) {
+				FieldError fieldError = (FieldError) error;
+				modelAndView.addObject(fieldError.getField(), fieldError.getDefaultMessage());
+			}
+		}
 	}
 }
