@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@ToString(callSuper = true, exclude = "password")
+@ToString(callSuper = true, exclude = {"password", "passwordConfirmation"})
 @EqualsAndHashCode(callSuper = true)
 public class UserDto extends BaseDto<Long> {
 
@@ -25,13 +25,18 @@ public class UserDto extends BaseDto<Long> {
     private String password;
 
     @NotNull
-    private Role role;
+    @Size(min = 5)
+    private String passwordConfirmation;
+
+    @NotNull
+    private Role role = Role.USER;
 
     @Builder
-    public UserDto(Long id, String userName, String password, Role role) {
+    public UserDto(Long id, String userName, String password, String passwordConfirmation, Role role) {
         super(id);
         this.userName = userName;
         this.password = password;
+        this.passwordConfirmation = passwordConfirmation;
         this.role = role;
     }
 

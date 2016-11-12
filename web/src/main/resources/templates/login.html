@@ -1,16 +1,21 @@
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title> Spring 4 Security + Thymeleaf Integration Example </title>
+    <title>NEUban - Log in</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" th:href="@{css/bootstrap.min.css}"/>
 </head>
 <body>
-<h1>Login page</h1>
-<p th:if="${param.error}">
-    Something is incorrect.
-</p>
-<form th:action="@{/appLogin}" method="POST">
-    Username: <input type="text" name="username"/> <br/><br/>
-    Password: <input type="password" name="password"/> <br/><br/>
-    <input type="submit" value="Login"/>
-</form>
+<div th:class="container">
+    <h2>Login page</h2>
+    <form th:action="@{/appLogin}" method="POST">
+        <p th:class="bg-danger" th:if="${loginError}"><b>Error!</b> Wrong username or password!</p>
+        <label>Username</label>
+        <input type="text" th:class="form-control" th:placeholder="Username" name="username"/>
+        <label>Password</label>
+        <input type="password" th:class="form-control" th:placeholder="Password" name="password"/>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+</div>
 </body>
 </html>
