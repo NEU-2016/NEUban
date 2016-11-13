@@ -1,10 +1,17 @@
 package hu.unideb.inf.rft.neuban.service.domain;
 
-import lombok.*;
-import hu.unideb.inf.rft.neuban.persistence.enums.Role;
-import java.util.Collection;
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import hu.unideb.inf.rft.neuban.persistence.enums.Role;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,7 +30,7 @@ public class UserDto extends BaseDto<Long> {
 	@Size(min = 5)
 	private String password;
 
-	private Collection<BoardDto> boards;
+	private List<BoardDto> boards;
 
 	@NotNull
 	@Size(min = 5)
@@ -34,7 +41,7 @@ public class UserDto extends BaseDto<Long> {
 
 	@Builder
 	public UserDto(Long id, String userName, String password, String passwordConfirmation, Role role,
-			Collection<BoardDto> boards) {
+			List<BoardDto> boards) {
 		super(id);
 		this.userName = userName;
 		this.password = password;

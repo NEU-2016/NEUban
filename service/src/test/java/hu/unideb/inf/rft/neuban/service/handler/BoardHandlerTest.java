@@ -7,8 +7,9 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
+import org.assertj.core.util.Lists;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -20,13 +21,13 @@ import org.modelmapper.ModelMapper;
 
 import hu.unideb.inf.rft.neuban.persistence.repositories.BoardRepository;
 import hu.unideb.inf.rft.neuban.persistence.repositories.UserRepository;
-import hu.unideb.inf.rft.neuban.service.BoardService;
-import hu.unideb.inf.rft.neuban.service.UserService;
 import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
-import hu.unideb.inf.rft.neuban.service.exceptions.BoardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.NonExistentBoardIdException;
+import hu.unideb.inf.rft.neuban.service.exceptions.NonExistentUserIdException;
 import hu.unideb.inf.rft.neuban.service.exceptions.RelationNotFoundException;
-import hu.unideb.inf.rft.neuban.service.exceptions.UserNotFoundException;
+import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
+import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BoardHandlerTest {
@@ -62,7 +63,7 @@ public class BoardHandlerTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowIllegalArgumentExceptionWhenUserIdIsNull()
-			throws UserNotFoundException, BoardNotFoundException, RelationNotFoundException {
+			throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException {
 
 		this.boardHandler.removeUserFromBoardByUserIdAndByBoardId(null, EXPECTED_BOARD_ID);
 
@@ -70,18 +71,18 @@ public class BoardHandlerTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowIllegalArgumentExceptionWhenBoardIdIsNull()
-			throws UserNotFoundException, BoardNotFoundException, RelationNotFoundException {
+			throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException {
 
 		this.boardHandler.removeUserFromBoardByUserIdAndByBoardId(USER_ID, null);
 
 	}
 
 	@Test
-	public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowUserNotFoundExceptionWhenUserNotExists()
-			throws UserNotFoundException, BoardNotFoundException, RelationNotFoundException {
+	public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowNonExistentUserIdExceptionWhenUserNotExists()
+			throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException {
 		// Given
 		given(this.userService.getById(USER_ID)).willReturn(null);
-		expectedException.expect(UserNotFoundException.class);
+		expectedException.expect(NonExistentUserIdException.class);
 
 		// When
 		this.boardHandler.removeUserFromBoardByUserIdAndByBoardId(NON_EXISTENT_USER_ID, EXPECTED_BOARD_ID);
@@ -92,7 +93,7 @@ public class BoardHandlerTest {
 
 	@Test
 	public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowNoRelationFoundExceptionWhenUserHasNoBoards()
-			throws UserNotFoundException, BoardNotFoundException, RelationNotFoundException {
+			throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException {
 
 		// Given
 
@@ -116,7 +117,7 @@ public class BoardHandlerTest {
 
 	@Test
 	public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowNoRelationFoundExceptionWhenUserDoNotHaveExpectedBoard()
-			throws UserNotFoundException, BoardNotFoundException, RelationNotFoundException {
+			throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException {
 
 		// Given
 
@@ -125,7 +126,7 @@ public class BoardHandlerTest {
 		final BoardDto expectedBoardDto = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null)
 				.build();
 
-		Collection<BoardDto> boards = new ArrayList<>();
+		List<BoardDto> boards = Lists.newArrayList();
 		boards.add(expectedBoardDto);
 		final UserDto expectedUserDtoWithoutExpectedBoard = UserDto.builder().id(USER_ID).userName(USER_NAME)
 				.password(USER_PASSWORD).boards(boards).build();
@@ -144,8 +145,8 @@ public class BoardHandlerTest {
 	}
 
 	@Test
-	public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowBoardNotFoundExceptionWhenBoardNotExists()
-			throws UserNotFoundException, BoardNotFoundException, RelationNotFoundException {
+	public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowNonExistentBoardIdExceptionWhenBoardNotExists()
+			throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException {
 
 		// Given
 		final UserDto expectedUserDto = UserDto.builder().id(USER_ID).userName(USER_NAME).password(USER_PASSWORD)
@@ -153,7 +154,7 @@ public class BoardHandlerTest {
 
 		given(this.userService.getById(USER_ID)).willReturn(expectedUserDto);
 		given(this.boardService.getById(NON_EXISTENT_BOARD_ID)).willReturn(null);
-		expectedException.expect(BoardNotFoundException.class);
+		expectedException.expect(NonExistentBoardIdException.class);
 
 		// When
 		this.boardHandler.removeUserFromBoardByUserIdAndByBoardId(USER_ID, NON_EXISTENT_BOARD_ID);
@@ -164,12 +165,12 @@ public class BoardHandlerTest {
 
 	@Test
 	public void removeUserFromBoardByUserIdAndByBoardIdTest()
-			throws UserNotFoundException, BoardNotFoundException, RelationNotFoundException {
+			throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException {
 
 		// Given
 		final BoardDto expectedUserBoard = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null)
 				.build();
-		Collection<BoardDto> boards = new ArrayList<>();
+		List<BoardDto> boards = Lists.newArrayList();
 		boards.add(expectedUserBoard);
 		final UserDto expectedUserDtoBeforeRemove = UserDto.builder().id(USER_ID).userName(USER_NAME)
 				.password(USER_PASSWORD).boards(boards).build();
@@ -189,7 +190,7 @@ public class BoardHandlerTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void addUserToBoardByUserIdAndByBoardIdShouldThrowIllegalArgumentExceptionWhenUserIdIsNull()
-			throws UserNotFoundException, BoardNotFoundException {
+			throws NonExistentUserIdException, NonExistentBoardIdException {
 
 		this.boardHandler.addUserToBoardByUserIdAndByBoardId(null, EXPECTED_BOARD_ID);
 
@@ -197,18 +198,18 @@ public class BoardHandlerTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void addUserToBoardByUserIdAndByBoardIdShouldThrowIllegalArgumentExceptionWhenBoardIdIsNull()
-			throws UserNotFoundException, BoardNotFoundException {
+			throws NonExistentUserIdException, NonExistentBoardIdException {
 
 		this.boardHandler.addUserToBoardByUserIdAndByBoardId(USER_ID, null);
 
 	}
 
 	@Test
-	public void addUserToBoardByUserIdAndByBoardIdShouldThrowUserNotFoundExceptionWhenUserNotExists()
-			throws UserNotFoundException, BoardNotFoundException {
+	public void addUserToBoardByUserIdAndByBoardIdShouldThrowNonExistentUserIdExceptionWhenUserNotExists()
+			throws NonExistentUserIdException, NonExistentBoardIdException {
 		// Given
 		given(this.userService.getById(USER_ID)).willReturn(null);
-		expectedException.expect(UserNotFoundException.class);
+		expectedException.expect(NonExistentUserIdException.class);
 
 		// When
 		this.boardHandler.addUserToBoardByUserIdAndByBoardId(NON_EXISTENT_USER_ID, EXPECTED_BOARD_ID);
@@ -218,8 +219,8 @@ public class BoardHandlerTest {
 	}
 
 	@Test
-	public void addUserToBoardByUserIdAndByBoardIdShouldThrowBoardNotFoundExceptionWhenBoardNotExists()
-			throws UserNotFoundException, BoardNotFoundException {
+	public void addUserToBoardByUserIdAndByBoardIdShouldThrowNonExistentBoardIdExceptionWhenBoardNotExists()
+			throws NonExistentUserIdException, NonExistentBoardIdException {
 
 		// Given
 		final UserDto expectedUserDto = UserDto.builder().id(USER_ID).userName(USER_NAME).password(USER_PASSWORD)
@@ -227,7 +228,7 @@ public class BoardHandlerTest {
 
 		given(this.userService.getById(USER_ID)).willReturn(expectedUserDto);
 		given(this.boardService.getById(NON_EXISTENT_BOARD_ID)).willReturn(null);
-		expectedException.expect(BoardNotFoundException.class);
+		expectedException.expect(NonExistentBoardIdException.class);
 
 		// When
 		this.boardHandler.addUserToBoardByUserIdAndByBoardId(USER_ID, NON_EXISTENT_BOARD_ID);
@@ -237,7 +238,7 @@ public class BoardHandlerTest {
 	}
 
 	@Test
-	public void addUserToBoardByUserIdAndByBoardIdTest() throws UserNotFoundException, BoardNotFoundException {
+	public void addUserToBoardByUserIdAndByBoardIdTest() throws NonExistentUserIdException, NonExistentBoardIdException {
 
 		// Given
 
@@ -246,7 +247,7 @@ public class BoardHandlerTest {
 		final UserDto expectedUserDtoBeforeAdd = UserDto.builder().id(USER_ID).userName(USER_NAME)
 				.password(USER_PASSWORD).boards(new ArrayList<>()).build();
 
-		Collection<BoardDto> boards = new ArrayList<>();
+		List<BoardDto> boards = Lists.newArrayList();
 		boards.add(expectedUserBoard);
 
 		final UserDto expectedUserDtoAfterAdd = UserDto.builder().id(USER_ID).userName(USER_NAME)
@@ -268,7 +269,7 @@ public class BoardHandlerTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void createBoardByDefaultUserIdAndByTitleShouldThrowIllegalArgumentExceptionWhenBoardTitleIsNull()
-			throws UserNotFoundException, BoardNotFoundException {
+			throws NonExistentUserIdException, NonExistentBoardIdException {
 
 		this.boardHandler.createBoardByDefaultUserIdAndByTitle(USER_ID, null);
 
@@ -276,18 +277,18 @@ public class BoardHandlerTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void createBoardByDefaultUserIdAndByTitleShouldThrowIllegalArgumentExceptionWhenUserIdIsNull()
-			throws UserNotFoundException, BoardNotFoundException {
+			throws NonExistentUserIdException, NonExistentBoardIdException {
 
 		this.boardHandler.createBoardByDefaultUserIdAndByTitle(null, BOARD_TITLE);
 
 	}
 
 	@Test
-	public void createBoardByDefaultUserIdAndByTitleShouldThrowUserNotFoundExceptionWhenUserNotExists()
-			throws UserNotFoundException {
+	public void createBoardByDefaultUserIdAndByTitleShouldThrowNonExistentUserIdExceptionWhenUserNotExists()
+			throws NonExistentUserIdException {
 		// Given
 		given(this.userService.getByUserName(NON_EXISTENT_USER_NAME)).willReturn(null);
-		expectedException.expect(UserNotFoundException.class);
+		expectedException.expect(NonExistentUserIdException.class);
 
 		// When
 		this.boardHandler.createBoardByDefaultUserIdAndByTitle(NON_EXISTENT_USER_ID, BOARD_TITLE);
@@ -297,13 +298,13 @@ public class BoardHandlerTest {
 	}
 
 	@Test
-	public void createBoardByDefaultUserIdAndByTitleTest() throws UserNotFoundException {
+	public void createBoardByDefaultUserIdAndByTitleTest() throws NonExistentUserIdException {
 
 		final BoardDto expectedBoardDto = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null)
 				.build();
 		final UserDto expectedUserDtoForGetByIdBeforeSave = UserDto.builder().id(USER_ID).userName(USER_NAME)
 				.password(USER_PASSWORD).boards(new ArrayList<>()).build();
-		Collection<BoardDto> boards = new ArrayList<>();
+		List<BoardDto> boards = Lists.newArrayList();
 		boards.add(expectedBoardDto);
 		final UserDto expectedUserDtoForGetByIdAfterSave = UserDto.builder().id(USER_ID).userName(USER_NAME)
 				.password(USER_PASSWORD).boards(boards).build();

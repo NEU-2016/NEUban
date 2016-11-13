@@ -1,6 +1,6 @@
 package hu.unideb.inf.rft.neuban.service.domain;
 
-import java.util.Collection;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -26,10 +26,10 @@ public class BoardDto extends BaseDto<Long> {
 	@Size(min = 2, max = 30)
 	private String title;
 
-	private Collection<ColumnEntity> columns;
+	private List<ColumnEntity> columns;
 
 	@Builder
-	public BoardDto(Long id, String title, Collection<ColumnEntity> columns) {
+	public BoardDto(Long id, String title, List<ColumnEntity> columns) {
 		super(id);
 		this.title = title;
 		this.columns = columns;

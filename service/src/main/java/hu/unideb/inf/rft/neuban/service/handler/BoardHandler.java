@@ -1,19 +1,19 @@
 package hu.unideb.inf.rft.neuban.service.handler;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
+import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import hu.unideb.inf.rft.neuban.service.BoardService;
-import hu.unideb.inf.rft.neuban.service.UserService;
 import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
-import hu.unideb.inf.rft.neuban.service.exceptions.BoardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.NonExistentBoardIdException;
+import hu.unideb.inf.rft.neuban.service.exceptions.NonExistentUserIdException;
 import hu.unideb.inf.rft.neuban.service.exceptions.RelationNotFoundException;
-import hu.unideb.inf.rft.neuban.service.exceptions.UserNotFoundException;
+import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
+import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 
 @Service
 public class BoardHandler {
@@ -25,7 +25,7 @@ public class BoardHandler {
 	private BoardService boardService;
 
 	void removeUserFromBoardByUserIdAndByBoardId(Long userId, Long boardId)
-			throws UserNotFoundException, BoardNotFoundException, RelationNotFoundException {
+			throws NonExistentBoardIdException, RelationNotFoundException {
 
 		Assert.notNull(userId);
 		Assert.notNull(boardId);
@@ -33,13 +33,13 @@ public class BoardHandler {
 		UserDto userDto = userService.getById(userId);
 
 		if (userDto == null) {
-			throw new UserNotFoundException();
+			throw new NonExistentUserIdException(userId);
 		}
 
 		BoardDto boardDto = boardService.getById(boardId);
 
 		if (boardDto == null) {
-			throw new BoardNotFoundException();
+			throw new NonExistentBoardIdException(boardId);
 		}
 		if (userDto.getBoards() == null
 				|| !userDto.getBoards().removeIf(userBoards -> userBoards.getId().equals((boardDto.getId())))) {
@@ -48,27 +48,26 @@ public class BoardHandler {
 		userService.saveOrUpdate(userDto);
 	}
 
-	void addUserToBoardByUserIdAndByBoardId(Long userId, Long boardId)
-			throws UserNotFoundException, BoardNotFoundException {
+	void addUserToBoardByUserIdAndByBoardId(Long userId, Long boardId) throws NonExistentBoardIdException {
 
 		Assert.notNull(userId);
 		Assert.notNull(boardId);
 		UserDto userDto = userService.getById(userId);
 
 		if (userDto == null) {
-			throw new UserNotFoundException();
+			throw new NonExistentUserIdException(userId);
 		}
 
 		BoardDto boardDto = boardService.getById(boardId);
 
 		if (boardDto == null) {
-			throw new BoardNotFoundException();
+			throw new NonExistentBoardIdException(boardId);
 		}
 
 		if (userDto.getBoards() != null) {
 			userDto.getBoards().add(boardDto);
 		} else {
-			Collection<BoardDto> boardCollection = new ArrayList<>();
+			List<BoardDto> boardCollection = Lists.newArrayList();
 			boardCollection.add(boardDto);
 			userDto.setBoards(boardCollection);
 		}
@@ -77,7 +76,7 @@ public class BoardHandler {
 
 	}
 
-	void createBoardByDefaultUserIdAndByTitle(Long userId, String title) throws UserNotFoundException {
+	void createBoardByDefaultUserIdAndByTitle(Long userId, String title) throws NonExistentUserIdException {
 
 		Assert.notNull(userId);
 		Assert.notNull(title);
@@ -85,7 +84,7 @@ public class BoardHandler {
 		UserDto userDto = userService.getById(userId);
 
 		if (userDto == null) {
-			throw new UserNotFoundException();
+			throw new NonExistentUserIdException(userId);
 		}
 
 		BoardDto boardDto = BoardDto.builder().title(title).build();
@@ -95,7 +94,7 @@ public class BoardHandler {
 		if (userDto.getBoards() != null) {
 			userDto.getBoards().add(boardDto);
 		} else {
-			Collection<BoardDto> boardCollection = new ArrayList<>();
+			List<BoardDto> boardCollection = Lists.newArrayList();
 			boardCollection.add(boardDto);
 			userDto.setBoards(boardCollection);
 		}

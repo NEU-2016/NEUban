@@ -6,13 +6,13 @@ import org.springframework.stereotype.Service;
 
 import hu.unideb.inf.rft.neuban.persistence.entities.BoardEntity;
 import hu.unideb.inf.rft.neuban.persistence.repositories.BoardRepository;
-import hu.unideb.inf.rft.neuban.service.BoardService;
 import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
+import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
 
 @Service
 public class BoardServiceImpl extends BaseServiceImpl<BoardEntity, BoardDto, Long> implements BoardService {
 
-	private BoardRepository boardRepository;
+	private final BoardRepository boardRepository;
 
 	@Autowired
 	public BoardServiceImpl(BoardRepository boardRepository, ModelMapper modelMapper) {

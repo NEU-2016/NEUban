@@ -1,9 +1,9 @@
 package hu.unideb.inf.rft.neuban.service.interfaces;
 
-import hu.unideb.inf.rft.neuban.persistence.entities.SuperEntity;
-
 import java.io.Serializable;
 import java.util.List;
+
+import hu.unideb.inf.rft.neuban.persistence.entities.SuperEntity;
 
 public interface BaseService<E extends SuperEntity<ID>, D, ID extends Serializable> {
 
