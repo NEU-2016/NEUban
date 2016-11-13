@@ -63,18 +63,7 @@ public abstract class BaseServiceImpl<E extends SuperEntity<ID>, D, ID extends S
 		}
 		return modelMapper.map(entity, this.dtoType);
 	}
-	
-//	@Override
-//	@Transactional(readOnly = true)
-//	public Optional<D> getById(ID id) {
-//		Assert.notNull(id);
-//		E entity = this.repository.findOne(id);
-//		if (entity != null) {
-//			return Optional.of(this.modelMapper.map(entity, this.dtoType));
-//
-//		}
-//		return Optional.empty();
-//	}
+
 
 	@Transactional
 	@Override
