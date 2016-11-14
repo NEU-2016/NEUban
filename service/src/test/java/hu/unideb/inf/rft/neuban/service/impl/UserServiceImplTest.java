@@ -4,12 +4,14 @@ import hu.unideb.inf.rft.neuban.persistence.entities.UserEntity;
 import hu.unideb.inf.rft.neuban.persistence.enums.Role;
 import hu.unideb.inf.rft.neuban.persistence.repositories.UserRepository;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
+import hu.unideb.inf.rft.neuban.service.exceptions.NullFieldValueException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
@@ -85,5 +87,26 @@ public class UserServiceImplTest {
 
         then(this.userRepository).should().findByUserName(ADMIN_USER_NAME);
         then(this.modelMapper).should().map(userEntity, UserDto.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void saveOrUpdateShouldThrowIllegalArgumentExceptionWhenParamUserDtoIsNull() {
+        // Given
+
+        // When
+        this.userService.saveOrUpdate(null);
+
+        // Then
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void saveOrUpdateShouldThrowIllegalStateExceptionWhenParamUserDtoPasswordFieldExistentWithNullValue() {
+        // Given
+        final UserDto userDto = UserDto.builder().password(null).build();
+
+        // When
+        this.userService.saveOrUpdate(userDto);
+
+        // Then
     }
 }
