@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
@@ -31,12 +32,14 @@ public class UserServiceImplTest {
     private UserRepository userRepository;
     @Mock
     private ModelMapper modelMapper;
+    @Mock
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private UserServiceImpl userService;
 
     @Before
     public void setUp() {
-        this.userService = new UserServiceImpl(this.userRepository, this.modelMapper);
+        this.userService = new UserServiceImpl(this.userRepository, this.modelMapper, this.bCryptPasswordEncoder);
     }
 
     @Test(expected = IllegalArgumentException.class)
