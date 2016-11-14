@@ -25,7 +25,7 @@ public class UniqueUsernameConstraintValidator implements ConstraintValidator<Un
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) {
+    public void setApplicationContext(final ApplicationContext applicationContext) {
         this.userService = applicationContext.getBean(UserService.class);
     }
 }
