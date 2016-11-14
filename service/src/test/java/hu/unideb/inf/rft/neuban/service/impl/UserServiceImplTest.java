@@ -11,8 +11,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
 
-import java.util.Optional;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.given;
@@ -52,7 +50,7 @@ public class UserServiceImplTest {
     @Test
     public void getByUserNameShouldReturnNullWhenUserWithTheParamUserNameDoesNotExist() {
         // Given
-        given(this.userRepository.findByUserName(USER_NAME_NON_EXISTENT)).willReturn(Optional.empty());
+        given(this.userRepository.findByUserName(USER_NAME_NON_EXISTENT)).willReturn(null);
 
         // When
         final UserDto actualUserDto = this.userService.getByUserName(USER_NAME_NON_EXISTENT).orElse(null);
@@ -70,7 +68,7 @@ public class UserServiceImplTest {
         final UserDto expectedUserDto = UserDto.builder().id(ADMIN_ID).userName(ADMIN_USER_NAME).password(ADMIN_PASSWORD).role(Role.ADMIN).build();
         final UserEntity userEntity = UserEntity.builder().id(ADMIN_ID).userName(ADMIN_USER_NAME).password(ADMIN_PASSWORD).role(Role.ADMIN).build();
 
-        given(this.userRepository.findByUserName(ADMIN_USER_NAME)).willReturn(Optional.of(userEntity));
+        given(this.userRepository.findByUserName(ADMIN_USER_NAME)).willReturn(userEntity);
         given(this.modelMapper.map(userEntity, UserDto.class)).willReturn(expectedUserDto);
 
         // When
