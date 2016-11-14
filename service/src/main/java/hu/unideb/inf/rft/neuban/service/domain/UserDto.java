@@ -1,6 +1,5 @@
 package hu.unideb.inf.rft.neuban.service.domain;
 
-
 import hu.unideb.inf.rft.neuban.persistence.enums.Role;
 import hu.unideb.inf.rft.neuban.service.annotations.FieldMatch;
 import hu.unideb.inf.rft.neuban.service.annotations.UniqueUsername;
@@ -8,6 +7,7 @@ import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,13 +35,17 @@ public class UserDto extends BaseDto<Long> {
     @NotNull
     private Role role = Role.USER;
 
+    private List<BoardDto> boards;
+
     @Builder
-    public UserDto(Long id, String userName, String password, String passwordConfirmation, Role role) {
+    public UserDto(Long id, String userName, String password, String passwordConfirmation, Role role,
+                   List<BoardDto> boards) {
         super(id);
         this.userName = userName;
         this.password = password;
         this.passwordConfirmation = passwordConfirmation;
         this.role = role;
+        this.boards = boards;
     }
 
 }

@@ -64,6 +64,7 @@ public abstract class BaseServiceImpl<E extends SuperEntity<ID>, D, ID extends S
 		return modelMapper.map(entity, this.dtoType);
 	}
 
+
 	@Transactional
 	@Override
 	public void removeById(ID id) {
