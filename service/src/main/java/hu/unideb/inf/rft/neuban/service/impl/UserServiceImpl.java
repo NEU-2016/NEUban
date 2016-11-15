@@ -30,13 +30,14 @@ public class UserServiceImpl extends BaseServiceImpl<UserEntity, UserDto, Long> 
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
+
     @Transactional(readOnly = true)
     @Override
     public Optional<UserDto> getByUserName(String userName) {
         Assert.notNull(userName);
-        UserEntity userEntity = this.userRepository.findByUserName(userName).orElse(null);
-        if (userEntity != null) {
-            return Optional.of(this.modelMapper.map(userEntity, UserDto.class));
+        Optional<UserEntity> userEntity = Optional.ofNullable(this.userRepository.findByUserName(userName));
+        if (userEntity.isPresent()) {
+            return Optional.of(this.modelMapper.map(userEntity.get(), UserDto.class));
         }
         return Optional.empty();
     }

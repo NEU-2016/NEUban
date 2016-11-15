@@ -13,16 +13,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.Optional;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
@@ -55,7 +51,6 @@ public class UserServiceImplTest {
             .role(Role.ADMIN)
             .build();
 
-
     @Before
     public void setUp() {
         this.userService = new UserServiceImpl(this.userRepository, this.modelMapper, this.bCryptPasswordEncoder);
@@ -74,7 +69,7 @@ public class UserServiceImplTest {
     @Test
     public void getByUserNameShouldReturnNullWhenUserWithTheParamUserNameDoesNotExist() {
         // Given
-        given(this.userRepository.findByUserName(USER_NAME_NON_EXISTENT)).willReturn(Optional.empty());
+        given(this.userRepository.findByUserName(USER_NAME_NON_EXISTENT)).willReturn(null);
 
         // When
         final UserDto actualUserDto = this.userService.getByUserName(USER_NAME_NON_EXISTENT).orElse(null);
@@ -89,8 +84,7 @@ public class UserServiceImplTest {
     @Test
     public void getByUserNameShouldReturnAnExistingUserDtoWhenParamUserNameExists() {
         // Given
-
-        given(this.userRepository.findByUserName(ADMIN_USER_NAME)).willReturn(Optional.of(userEntity));
+        given(this.userRepository.findByUserName(ADMIN_USER_NAME)).willReturn(userEntity);
         given(this.modelMapper.map(userEntity, UserDto.class)).willReturn(userDto);
 
         // When
