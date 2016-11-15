@@ -8,15 +8,15 @@ Our goal is to make a user-friendly tool to visualize works and workflows on a K
 
 ##You can login these username-password pairs.
 
-|               Default users               ||
-Username  | Password 
------------- | :-----------
-boisterous  | password 
+|   Default users  ||
+Username   | Password 
+---------- | :-------
+boisterous | password 
 traumatic  | password 
-chopchop  | password 
+chopchop   | password 
 krisztmas  | password 
-pivanyi  | password 
-falatka  | password 
+pivanyi    | password 
+falatka    | password 
 
 ## Build and run
 
