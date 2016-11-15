@@ -25,7 +25,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/secure/**").authenticated()
                 .and().formLogin().loginPage("/login").loginProcessingUrl("/appLogin")
                 .usernameParameter("username").passwordParameter("password")
-                .defaultSuccessUrl("/secure/welcome", true).failureUrl("/login-error")
+                .defaultSuccessUrl("/secure/welcome", true).failureUrl("/login/error")
                 .and().logout().logoutUrl("/appLogout").logoutSuccessUrl("/login").invalidateHttpSession(true);
     }
 
