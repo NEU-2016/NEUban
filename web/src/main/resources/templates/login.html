@@ -1,20 +1,20 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>NEUban - Log in</title>
+    <title th:text="#{login.title}"></title>
     <meta charset="utf-8"/>
     <link rel="stylesheet" type="text/css" th:href="@{css/bootstrap.min.css}"/>
 </head>
 <body>
 <div th:class="container">
-    <h2>Login page</h2>
+    <h2 th:text="#{login.header}"></h2>
     <form th:action="@{/appLogin}" method="POST">
-        <p th:class="bg-danger" th:if="${loginError}"><b>Error!</b> Wrong username or password!</p>
-        <label>Username</label>
-        <input type="text" th:class="form-control" th:placeholder="Username" name="username"/>
-        <label>Password</label>
-        <input type="password" th:class="form-control" th:placeholder="Password" name="password"/>
-        <button type="submit" class="btn btn-primary">Login</button>
+        <p th:class="bg-danger" th:if="${loginError}" th:text="#{login.error.wrong}"></p>
+        <label th:text="#{login.username}"></label>
+        <input type="text" th:class="form-control" th:placeholder="#{login.username}" name="username"/>
+        <label th:text="#{login.password}"></label>
+        <input type="password" th:class="form-control" th:placeholder="#{login.password}" name="password"/>
+        <button type="submit" class="btn btn-primary" th:text="#{login.button.login}"></button>
     </form>
 </div>
 </body>
