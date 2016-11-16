@@ -15,7 +15,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import java.util.Locale;
 
 @Configuration
-@ComponentScan(basePackages = "hu.unideb.inf.rft.neuban.web.controllers")
+@ComponentScan(basePackages = {"hu.unideb.inf.rft.neuban.web.controllers", "hu.unideb.inf.rft.neuban.web.validators"})
 @Import(ServiceConfiguration.class)
 public class WebConfiguration extends WebMvcConfigurerAdapter {
 

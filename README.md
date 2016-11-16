@@ -6,18 +6,6 @@ NEUban is an open source Java EE project as an assignment for a course at the Un
 
 Our goal is to make a user-friendly tool to visualize works and workflows on a Kanban board environment.
 
-##You can login these username-password pairs.
-
-|               Default users               ||
-Username  | Password 
------------- | :-----------
-boisterous  | password 
-traumatic  | password 
-chopchop  | password 
-krisztmas  | password 
-pivanyi  | password 
-falatka  | password 
-
 ## Build and run
 
 #### Configurations
@@ -91,7 +79,16 @@ The project uses Cobertura for code coverage reporting:
 
 1. installation details: https://github.com/mplushnikov/lombok-intellij-plugin
 
-
+### Default user credentials
+    
+| Username   | Password |
+| ---------- | -------- |
+| boisterous | password |
+| traumatic  | password |
+| chopchop   | password |
+| krisztmas  | password |
+| pivanyi    | password |
+| falatka    | password |
 
 ## Functionality
 
