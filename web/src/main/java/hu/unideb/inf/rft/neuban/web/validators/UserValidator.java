@@ -12,8 +12,8 @@ import org.springframework.validation.Validator;
 public class UserValidator implements Validator {
 
     public static final String FIELD_NAME_USERNAME = "userName";
-    public static final String USERNAME_ALREADY_EXISTS = "username.already.exists";
-    public static final String UNIQUE_USERNAME_CONSTRAINT = "Username should be unique.";
+    public static final String USERNAME_ALREADY_EXISTS_ERROR_MESSAGE_KEY = "username.already.exists";
+    public static final String UNIQUE_USERNAME_CONSTRAINT = "Username";
 
     @Autowired
     private UserService userService;
@@ -31,7 +31,7 @@ public class UserValidator implements Validator {
         final UserDto userDto = (UserDto) target;
 
         if (this.userService.getByUserName(userDto.getUserName()).isPresent()) {
-            errors.rejectValue(FIELD_NAME_USERNAME, UNIQUE_USERNAME_CONSTRAINT, USERNAME_ALREADY_EXISTS);
+            errors.rejectValue(FIELD_NAME_USERNAME, UNIQUE_USERNAME_CONSTRAINT, USERNAME_ALREADY_EXISTS_ERROR_MESSAGE_KEY);
         }
     }
 }
