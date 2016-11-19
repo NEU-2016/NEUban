@@ -1,31 +1,13 @@
 package hu.unideb.inf.rft.neuban.persistence.entities;
 
-import java.util.List;
+import lombok.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
-/**
- * Board entity , title and column list.
- * 
- * @author Erdei Krisztián
- * 
- */
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -35,23 +17,22 @@ import lombok.ToString;
 @Entity
 public class BoardEntity extends SuperEntity<Long> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "title")
-	@NotNull
-	@Size(min = 2, max = 30)
-	private String title;
-	
-	
-	@JoinColumn(name = "board_id")
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-	@OrderColumn
-	private List<ColumnEntity> columns;
+    @NotNull
+    @Size(min = 2, max = 30)
+    @Column(name = "title")
+    private String title;
 
-	@Builder
-	public BoardEntity(Long id, String title, List<ColumnEntity> columns) {
-		super(id);
-		this.title = title;
-		this.columns = columns;
-	}
+    @OrderColumn(name = "index")
+    @JoinColumn(name = "board_id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    private List<ColumnEntity> columns;
+
+    @Builder
+    public BoardEntity(Long id, String title, List<ColumnEntity> columns) {
+        super(id);
+        this.title = title;
+        this.columns = columns;
+    }
 }
