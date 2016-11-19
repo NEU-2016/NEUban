@@ -4,27 +4,21 @@ import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class BoardDto extends BaseDto<Long> {
-
-    private static final long serialVersionUID = 1L;
+public class ColumnDto extends BaseDto<Long> {
 
     @NotNull
-    @Size(min = 2, max = 30)
+    @Size(min = 2, max = 20)
     private String title;
 
-    private List<ColumnDto> columns;
-
     @Builder
-    public BoardDto(Long id, String title, List<ColumnDto> columns) {
+    public ColumnDto(Long id, String title) {
         super(id);
         this.title = title;
-        this.columns = columns;
     }
 }
