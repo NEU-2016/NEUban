@@ -1,8 +1,13 @@
 package hu.unideb.inf.rft.neuban.service.interfaces;
 
-import hu.unideb.inf.rft.neuban.persistence.entities.BoardEntity;
 import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
+import hu.unideb.inf.rft.neuban.service.exceptions.BoardNotFoundException;
 
-public interface BoardService extends BaseService<BoardEntity, BoardDto, Long> {
+import java.util.Optional;
 
+public interface BoardService {
+
+    Optional<BoardDto> get(Long boardId);
+
+    Long update(BoardDto boardDto) throws BoardNotFoundException;
 }

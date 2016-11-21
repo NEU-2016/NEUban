@@ -2,12 +2,14 @@ package hu.unideb.inf.rft.neuban.service.handler;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.assertj.core.util.Lists;
 import org.junit.Rule;
@@ -103,7 +105,7 @@ public class BoardHandlerTest {
 				.password(USER_PASSWORD).boards(new ArrayList<>()).build();
 
 		given(this.userService.getById(USER_ID)).willReturn(expectedUserDtoWithoutExpectedBoard);
-		given(this.boardService.getById(EXPECTED_BOARD_ID)).willReturn(expectedBoardDto);
+		given(this.boardService.get(EXPECTED_BOARD_ID)).willReturn(Optional.of(expectedBoardDto));
 
 		expectedException.expect(RelationNotFoundException.class);
 
@@ -112,7 +114,7 @@ public class BoardHandlerTest {
 
 		// Then
 		then(this.userService).should().getById(USER_ID);
-		then(this.boardService).should().getById(EXPECTED_BOARD_ID);
+		then(this.boardService).should().get(EXPECTED_BOARD_ID);
 	}
 
 	@Test
@@ -132,7 +134,7 @@ public class BoardHandlerTest {
 				.password(USER_PASSWORD).boards(boards).build();
 
 		given(this.userService.getById(USER_ID)).willReturn(expectedUserDtoWithoutExpectedBoard);
-		given(this.boardService.getById(NOT_EXPECTED_BOARD_ID)).willReturn(notExpectedBoardDto);
+		given(this.boardService.get(NOT_EXPECTED_BOARD_ID)).willReturn(Optional.of(notExpectedBoardDto));
 
 		expectedException.expect(RelationNotFoundException.class);
 
@@ -141,7 +143,7 @@ public class BoardHandlerTest {
 
 		// Then
 		then(this.userService).should().getById(USER_ID);
-		then(this.boardService).should().getById(NOT_EXPECTED_BOARD_ID);
+		then(this.boardService).should().get(NOT_EXPECTED_BOARD_ID);
 	}
 
 	@Test
@@ -153,14 +155,14 @@ public class BoardHandlerTest {
 				.boards(new ArrayList<>()).build();
 
 		given(this.userService.getById(USER_ID)).willReturn(expectedUserDto);
-		given(this.boardService.getById(NON_EXISTENT_BOARD_ID)).willReturn(null);
+		given(this.boardService.get(NON_EXISTENT_BOARD_ID)).willReturn(Optional.empty());
 		expectedException.expect(NonExistentBoardIdException.class);
 
 		// When
 		this.boardHandler.removeUserFromBoardByUserIdAndByBoardId(USER_ID, NON_EXISTENT_BOARD_ID);
 
 		// Then
-		then(this.boardService).should().getById(NON_EXISTENT_BOARD_ID);
+		then(this.boardService).should().get(NON_EXISTENT_BOARD_ID);
 	}
 
 	@Test
@@ -178,7 +180,7 @@ public class BoardHandlerTest {
 		final UserDto expectedUserDtoAfterRemove = UserDto.builder().id(USER_ID).userName(USER_NAME)
 				.password(USER_PASSWORD).boards(new ArrayList<>()).build();
 		given(this.userService.getById(USER_ID)).willReturn(expectedUserDtoBeforeRemove, expectedUserDtoAfterRemove);
-		given(this.boardService.getById(EXPECTED_BOARD_ID)).willReturn(expectedUserBoard);
+		given(this.boardService.get(EXPECTED_BOARD_ID)).willReturn(Optional.of(expectedUserBoard));
 
 		// When
 		this.boardHandler.removeUserFromBoardByUserIdAndByBoardId(USER_ID, EXPECTED_BOARD_ID);
@@ -227,14 +229,14 @@ public class BoardHandlerTest {
 				.boards(new ArrayList<>()).build();
 
 		given(this.userService.getById(USER_ID)).willReturn(expectedUserDto);
-		given(this.boardService.getById(NON_EXISTENT_BOARD_ID)).willReturn(null);
+		given(this.boardService.get(NON_EXISTENT_BOARD_ID)).willReturn(Optional.empty());
 		expectedException.expect(NonExistentBoardIdException.class);
 
 		// When
 		this.boardHandler.addUserToBoardByUserIdAndByBoardId(USER_ID, NON_EXISTENT_BOARD_ID);
 
 		// Then
-		then(this.boardService).should().getById(NON_EXISTENT_BOARD_ID);
+		then(this.boardService).should().get(NON_EXISTENT_BOARD_ID);
 	}
 
 	@Test
@@ -254,7 +256,7 @@ public class BoardHandlerTest {
 				.password(USER_PASSWORD).boards(boards).build();
 
 		given(this.userService.getById(USER_ID)).willReturn(expectedUserDtoBeforeAdd, expectedUserDtoAfterAdd);
-		given(this.boardService.getById(EXPECTED_BOARD_ID)).willReturn(expectedUserBoard);
+		given(this.boardService.get(EXPECTED_BOARD_ID)).willReturn(Optional.of(expectedUserBoard));
 
 		// When
 		this.boardHandler.addUserToBoardByUserIdAndByBoardId(USER_ID, EXPECTED_BOARD_ID);
@@ -311,17 +313,18 @@ public class BoardHandlerTest {
 
 		given(this.userService.getById(USER_ID)).willReturn(expectedUserDtoForGetByIdBeforeSave,
 				expectedUserDtoForGetByIdAfterSave);
-		given(this.boardService.getById(EXPECTED_BOARD_ID)).willReturn(expectedBoardDto);
+		given(this.boardService.get(EXPECTED_BOARD_ID)).willReturn(Optional.of(expectedBoardDto));
 
 		// When
 		this.boardHandler.createBoardByDefaultUserIdAndByTitle(USER_ID, BOARD_TITLE);
-		final BoardDto actualBoardDto = this.boardService.getById(EXPECTED_BOARD_ID);
+		final Optional<BoardDto> actualBoardDto = this.boardService.get(EXPECTED_BOARD_ID);
 		final UserDto actualUserDtoAfterSave = this.userService.getById(USER_ID);
 
 		// Then
 
 		assertThat(actualBoardDto, notNullValue());
-		assertThat(actualBoardDto, equalTo(expectedBoardDto));
+        assertThat(actualBoardDto.isPresent(), is(true));
+		assertThat(actualBoardDto.get(), equalTo(expectedBoardDto));
 
 		assertThat(actualUserDtoAfterSave, notNullValue());
 		assertThat(actualUserDtoAfterSave, equalTo(expectedUserDtoForGetByIdAfterSave));
