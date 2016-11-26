@@ -4,25 +4,26 @@ import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.List;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class ColumnDto extends BaseDto<Long> {
+@ToString(callSuper = true)
+public class CardDto extends BaseDto<Long> {
 
     @NotNull
-    @Size(min = 2, max = 20)
+    @Size(min = 2)
     private String title;
 
-    private List<CardDto> cards;
+    @NotNull
+    private String description;
 
     @Builder
-    public ColumnDto(Long id, String title, List<CardDto> cards) {
+    public CardDto(Long id, String title, String description) {
         super(id);
         this.title = title;
-        this.cards = cards;
+        this.description = description;
     }
 }
