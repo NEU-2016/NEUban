@@ -30,11 +30,9 @@ public class BoardHandler {
         Assert.notNull(userId);
         Assert.notNull(boardId);
 
-        UserDto userDto = Optional.ofNullable(this.userService.getById(userId))
-                .orElseThrow(() -> new NonExistentUserIdException(userId));
+        UserDto userDto = this.userService.get(userId).orElseThrow(() -> new NonExistentUserIdException(userId));
 
-        BoardDto boardDto = this.boardService.get(boardId)
-                .orElseThrow(() -> new NonExistentBoardIdException(boardId));
+        BoardDto boardDto = this.boardService.get(boardId).orElseThrow(() -> new NonExistentBoardIdException(boardId));
 
         if (userDto.getBoards() == null
                 || !userDto.getBoards().removeIf(userBoards -> userBoards.getId().equals((boardDto.getId())))) {
@@ -48,8 +46,7 @@ public class BoardHandler {
         Assert.notNull(userId);
         Assert.notNull(boardId);
 
-        UserDto userDto = Optional.ofNullable(this.userService.getById(userId))
-                .orElseThrow(() -> new NonExistentUserIdException(userId));
+        UserDto userDto = this.userService.get(userId).orElseThrow(() -> new NonExistentUserIdException(userId));
 
         BoardDto boardDto = this.boardService.get(boardId)
                 .orElseThrow(() -> new NonExistentBoardIdException(boardId));
@@ -71,8 +68,7 @@ public class BoardHandler {
         Assert.notNull(userId);
         Assert.notNull(title);
 
-        UserDto userDto = Optional.ofNullable(this.userService.getById(userId))
-                .orElseThrow(() -> new NonExistentUserIdException(userId));
+        UserDto userDto = this.userService.get(userId).orElseThrow(() -> new NonExistentUserIdException(userId));
 
         BoardDto boardDto = BoardDto.builder().title(title).build();
 
