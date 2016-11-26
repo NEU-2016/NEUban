@@ -24,7 +24,7 @@ public class BoardHandler {
     @Autowired
     private BoardService boardService;
 
-    void removeUserFromBoardByUserIdAndByBoardId(Long userId, Long boardId)
+    public void removeUserFromBoardByUserIdAndByBoardId(Long userId, Long boardId)
             throws NonExistentBoardIdException, RelationNotFoundException, NonExistentUserIdException {
 
         Assert.notNull(userId);
@@ -43,7 +43,7 @@ public class BoardHandler {
         userService.saveOrUpdate(userDto);
     }
 
-    void addUserToBoardByUserIdAndByBoardId(Long userId, Long boardId) throws NonExistentBoardIdException, NonExistentUserIdException {
+    public void addUserToBoardByUserIdAndByBoardId(Long userId, Long boardId) throws NonExistentBoardIdException, NonExistentUserIdException {
 
         Assert.notNull(userId);
         Assert.notNull(boardId);
@@ -66,7 +66,7 @@ public class BoardHandler {
 
     }
 
-    void createBoardByDefaultUserIdAndByTitle(Long userId, String title) throws NonExistentUserIdException {
+    public void createBoardByDefaultUserIdAndByTitle(Long userId, String title) throws NonExistentUserIdException {
 
         Assert.notNull(userId);
         Assert.notNull(title);
