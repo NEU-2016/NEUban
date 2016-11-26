@@ -24,7 +24,6 @@ public class BoardEntity extends SuperEntity<Long> {
     @Column(name = "title")
     private String title;
 
-    @OrderColumn(name = "index")
     @JoinColumn(name = "board_id")
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     private List<ColumnEntity> columns;

@@ -3,7 +3,6 @@ package hu.unideb.inf.rft.neuban.persistence.repositories;
 import hu.unideb.inf.rft.neuban.persistence.annotations.JPARepositoryTest;
 import hu.unideb.inf.rft.neuban.persistence.entities.UserEntity;
 import hu.unideb.inf.rft.neuban.persistence.enums.Role;
-import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
@@ -53,18 +53,26 @@ public class UserRepositoryIT {
     @Test
     public void findByUserNameShouldReturnAnExistingUserEntityWhenParamUserNameExists() {
         // Given
-        final UserEntity expectedUserEntity = UserEntity.builder()
-                .id(ADMIN_ID)
-                .userName(ADMIN_USER_NAME)
-                .password(ADMIN_PASSWORD)
-                .role(Role.ADMIN)
-                .boards(Lists.newArrayList()).build();
 
         // When
         final UserEntity actualUserEntity = this.userRepository.findByUserName(ADMIN_USER_NAME);
 
         // Then
         assertThat(actualUserEntity, notNullValue());
-        assertThat(actualUserEntity, equalTo(expectedUserEntity));
+
+        assertThat(actualUserEntity.getId(), notNullValue());
+        assertThat(actualUserEntity.getId(), equalTo(ADMIN_ID));
+
+        assertThat(actualUserEntity.getUserName(), notNullValue());
+        assertThat(actualUserEntity.getUserName(), equalTo(ADMIN_USER_NAME));
+
+        assertThat(actualUserEntity.getPassword(), notNullValue());
+        assertThat(actualUserEntity.getPassword(), equalTo(ADMIN_PASSWORD));
+
+        assertThat(actualUserEntity.getRole(), notNullValue());
+        assertThat(actualUserEntity.getRole(), equalTo(Role.ADMIN));
+
+        assertThat(actualUserEntity.getBoards(), notNullValue());
+        assertThat(actualUserEntity.getBoards().isEmpty(), is(true));
     }
 }
