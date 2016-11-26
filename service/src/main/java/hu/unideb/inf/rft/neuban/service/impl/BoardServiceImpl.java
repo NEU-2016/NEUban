@@ -32,7 +32,7 @@ public class BoardServiceImpl implements BoardService {
 	@Autowired
 	private ModelMapper modelMapper;
 
-	@Transactional
+	@Transactional(readOnly = true)
 	@Override
 	public Optional<BoardDto> get(final Long boardId) {
 		Assert.notNull(boardId);
@@ -67,6 +67,7 @@ public class BoardServiceImpl implements BoardService {
 		return this.boardRepository.saveAndFlush(boardEntity).getId();
 	}
 
+	@Override
 	public void removeUserFromBoardByUserIdAndByBoardId(Long userId, Long boardId)
 			throws NonExistentBoardIdException, RelationNotFoundException, NonExistentUserIdException {
 
@@ -84,6 +85,7 @@ public class BoardServiceImpl implements BoardService {
 		userService.saveOrUpdate(userDto);
 	}
 
+	@Override
 	public void addUserToBoardByUserIdAndByBoardId(Long userId, Long boardId)
 			throws NonExistentBoardIdException, NonExistentUserIdException {
 
@@ -106,6 +108,7 @@ public class BoardServiceImpl implements BoardService {
 
 	}
 
+	@Override
 	public void createBoardByDefaultUserIdAndByTitle(Long userId, String title) throws NonExistentUserIdException {
 
 		Assert.notNull(userId);
