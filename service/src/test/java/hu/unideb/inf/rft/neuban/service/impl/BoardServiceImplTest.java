@@ -1,9 +1,12 @@
 package hu.unideb.inf.rft.neuban.service.impl;
 
 import hu.unideb.inf.rft.neuban.persistence.entities.BoardEntity;
+import hu.unideb.inf.rft.neuban.persistence.enums.Role;
 import hu.unideb.inf.rft.neuban.persistence.repositories.BoardRepository;
 import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
+import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 import hu.unideb.inf.rft.neuban.service.exceptions.BoardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -12,6 +15,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,6 +31,10 @@ public class BoardServiceImplTest {
     private static final long BOARD_ID = 1L;
     private static final String BOARD_TITLE = "Title";
 
+    private static final long USER_ID = 1L;
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "passwordHash";
+
     private final BoardEntity boardEntity = BoardEntity.builder()
             .id(BOARD_ID)
             .title(BOARD_TITLE)
@@ -39,9 +47,19 @@ public class BoardServiceImplTest {
             .columns(Collections.emptyList())
             .build();
 
+    private final UserDto userDto = UserDto.builder()
+            .id(USER_ID)
+            .userName(USERNAME)
+            .password(PASSWORD)
+            .role(Role.USER)
+            .boards(Collections.nCopies(3, boardDto))
+            .build();
+
     @InjectMocks
     private BoardServiceImpl boardService;
 
+    @Mock
+    private UserService userService;
     @Mock
     private BoardRepository boardRepository;
     @Mock
@@ -92,6 +110,52 @@ public class BoardServiceImplTest {
         then(this.modelMapper).should().map(boardEntity, BoardDto.class);
         verifyNoMoreInteractions(this.boardRepository, this.modelMapper);
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getAllByUserIdShouldThrowIllegalArgumentExceptionWhenParamUserIdIsNull() {
+        // Given
+        given(this.userService.get(null)).willThrow(IllegalArgumentException.class);
+
+        // When
+        this.boardService.getAllByUserId(null);
+
+        // Then
+    }
+
+    @Test
+    public void getAllByUserIdShouldReturnEmptyListWhenUserDoesNotExist() {
+        // Given
+        given(this.userService.get(USER_ID)).willReturn(Optional.empty());
+
+        // When
+        final List<BoardDto> result = this.boardService.getAllByUserId(USER_ID);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.isEmpty(), is(true));
+
+        then(this.userService).should().get(USER_ID);
+        verifyNoMoreInteractions(this.userService);
+    }
+
+    @Test
+    public void getAllByUserIdShouldReturnListWithThreeElementsWhenUserDoesExist() {
+        // Given
+        given(this.userService.get(USER_ID)).willReturn(Optional.of(userDto));
+
+        // When
+        final List<BoardDto> result = this.boardService.getAllByUserId(USER_ID);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.isEmpty(), is(false));
+        assertThat(result.size(), equalTo(3));
+        assertThat(result, equalTo(Collections.nCopies(3, boardDto)));
+
+        then(this.userService).should().get(USER_ID);
+        verifyNoMoreInteractions(this.userService);
+    }
+
 
     @Test(expected = IllegalArgumentException.class)
     public void updateShouldThrowIllegalArgumentExceptionWhenParamBoardDtoDoesNotExist() throws BoardNotFoundException {
