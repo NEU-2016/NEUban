@@ -30,7 +30,6 @@ public class UserEntity extends SuperEntity<Long> {
     @Column(name = "password")
     private String password;
 
-    @OrderColumn(name = "index")
     @JoinColumn(name = "user_id")
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     private List<BoardEntity> boards;
