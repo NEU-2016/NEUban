@@ -208,7 +208,7 @@ public class ColumnServiceImplTest {
     }
 
     @Test
-    public void saveShouldBeSuccessFulSavingWhenColumnDtoIdIsNull() throws BoardNotFoundException, ColumnAlreadyExistsException {
+    public void saveShouldBeSuccessfulSavingWhenColumnDtoIdIsNull() throws BoardNotFoundException, ColumnAlreadyExistsException {
         // Given
         final ColumnDto columnDtoWithoutId = ColumnDto.builder()
                 .id(null)
@@ -236,7 +236,7 @@ public class ColumnServiceImplTest {
     }
 
     @Test
-    public void saveShouldBeSuccessFulSavingWhenColumnDtoDoesNotExistOnTheBoard() throws BoardNotFoundException, ColumnAlreadyExistsException {
+    public void saveShouldBeSuccessfulSavingWhenColumnDtoDoesNotExistOnTheBoard() throws BoardNotFoundException, ColumnAlreadyExistsException {
         // Given
         final ColumnDto newColumnDto = ColumnDto.builder()
                 .id(FOURTH_COLUMN_ID)
@@ -285,7 +285,7 @@ public class ColumnServiceImplTest {
     }
 
     @Test
-    public void updateShouldBeSuccessFulUpdatingWhenColumnExists() throws ColumnNotFoundException {
+    public void updateShouldBeSuccessfulUpdatingWhenColumnExists() throws ColumnNotFoundException {
         // Given
         given(this.modelMapper.map(firstColumnDto, ColumnEntity.class)).willReturn(firstColumnEntity);
 
@@ -320,7 +320,7 @@ public class ColumnServiceImplTest {
     }
 
     @Test
-    public void removeShouldBeSuccessFulDeletingWhenColumnExists() throws ColumnNotFoundException {
+    public void removeShouldBeSuccessfulDeletingWhenColumnExists() throws ColumnNotFoundException {
         // Given
         given(this.columnRepository.findOne(FIRST_COLUMN_ID)).willReturn(firstColumnEntity);
 

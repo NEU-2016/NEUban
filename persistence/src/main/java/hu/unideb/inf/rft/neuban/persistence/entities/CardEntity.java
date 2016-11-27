@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Table(name = "column_card")
+@Table(name = "card")
 @Entity
 public class CardEntity extends SuperEntity<Long> {
 
