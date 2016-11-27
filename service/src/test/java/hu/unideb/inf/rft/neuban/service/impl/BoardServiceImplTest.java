@@ -1,15 +1,18 @@
 package hu.unideb.inf.rft.neuban.service.impl;
 
-import hu.unideb.inf.rft.neuban.persistence.entities.BoardEntity;
-import hu.unideb.inf.rft.neuban.persistence.enums.Role;
-import hu.unideb.inf.rft.neuban.persistence.repositories.BoardRepository;
-import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
-import hu.unideb.inf.rft.neuban.service.domain.UserDto;
-import hu.unideb.inf.rft.neuban.service.exceptions.BoardNotFoundException;
-import hu.unideb.inf.rft.neuban.service.exceptions.NonExistentBoardIdException;
-import hu.unideb.inf.rft.neuban.service.exceptions.NonExistentUserIdException;
-import hu.unideb.inf.rft.neuban.service.exceptions.RelationNotFoundException;
-import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import org.assertj.core.util.Lists;
 import org.junit.Rule;
@@ -21,17 +24,16 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import hu.unideb.inf.rft.neuban.persistence.entities.BoardEntity;
+import hu.unideb.inf.rft.neuban.persistence.enums.Role;
+import hu.unideb.inf.rft.neuban.persistence.repositories.BoardRepository;
+import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
+import hu.unideb.inf.rft.neuban.service.domain.UserDto;
+import hu.unideb.inf.rft.neuban.service.exceptions.BoardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.NonExistentBoardIdException;
+import hu.unideb.inf.rft.neuban.service.exceptions.NonExistentUserIdException;
+import hu.unideb.inf.rft.neuban.service.exceptions.RelationNotFoundException;
+import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BoardServiceImplTest {
@@ -204,11 +206,8 @@ public class BoardServiceImplTest {
 		given(this.boardRepository.saveAndFlush(boardEntity)).willReturn(boardEntity);
 
 		// When
-		final Long result = this.boardService.update(boardDto);
-
+		this.boardService.update(boardDto);
 		// Then
-		assertThat(result, notNullValue());
-		assertThat(result, equalTo(1L));
 
 		then(this.boardRepository).should().findOne(BOARD_ID);
 		then(this.boardRepository).should().saveAndFlush(boardEntity);
@@ -416,7 +415,6 @@ public class BoardServiceImplTest {
 
 		given(this.userService.get(USER_ID)).willReturn(Optional.of(expectedUserDtoBeforeAdd),
 				Optional.of(expectedUserDtoAfterAdd));
-		// given(this.boardService.get(EXPECTED_BOARD_ID)).willReturn(Optional.of(expectedUserBoard));
 		given(this.boardRepository.findOne(EXPECTED_BOARD_ID)).willReturn(boardEntity);
 		given(this.modelMapper.map(boardEntity, BoardDto.class)).willReturn(expectedUserBoard);
 
@@ -433,42 +431,42 @@ public class BoardServiceImplTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void createBoardByDefaultUserIdAndByTitleShouldThrowIllegalArgumentExceptionWhenBoardTitleIsNull()
+	public void createBoardShouldThrowIllegalArgumentExceptionWhenBoardTitleIsNull()
 			throws NonExistentUserIdException, NonExistentBoardIdException {
 
-		this.boardService.createBoardByDefaultUserIdAndByTitle(USER_ID, null);
+		this.boardService.createBoard(USER_ID, null);
 
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void createBoardByDefaultUserIdAndByTitleShouldThrowIllegalArgumentExceptionWhenUserIdIsNull()
+	public void createBoardShouldThrowIllegalArgumentExceptionWhenUserIdIsNull()
 			throws NonExistentUserIdException, NonExistentBoardIdException {
 
-		this.boardService.createBoardByDefaultUserIdAndByTitle(null, BOARD_TITLE);
+		this.boardService.createBoard(null, BOARD_TITLE);
 
 	}
 
 	@Test
-	public void createBoardByDefaultUserIdAndByTitleShouldThrowNonExistentUserIdExceptionWhenUserNotExists()
+	public void createBoardShouldThrowNonExistentUserIdExceptionWhenUserNotExists()
 			throws NonExistentUserIdException {
 		// Given
 		given(this.userService.get(NON_EXISTENT_USER_ID)).willReturn(Optional.empty());
 		expectedException.expect(NonExistentUserIdException.class);
 
 		// When
-		this.boardService.createBoardByDefaultUserIdAndByTitle(NON_EXISTENT_USER_ID, BOARD_TITLE);
+		this.boardService.createBoard(NON_EXISTENT_USER_ID, BOARD_TITLE);
 		// Then
 
 		then(this.userService).should().get(NON_EXISTENT_USER_ID);
 	}
 
 	@Test
-	public void createBoardByDefaultUserIdAndByTitleTest() throws NonExistentUserIdException {
+	public void createBoardTest() throws NonExistentUserIdException {
 
 		final BoardDto expectedBoardDto = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null)
 				.build();
 		final UserDto expectedUserDtoForGetByIdBeforeSave = UserDto.builder().id(USER_ID).userName(USERNAME)
-				.password(PASSWORD).boards(new ArrayList<>()).build();
+				.password(PASSWORD).boards(Lists.newArrayList()).build();
 		List<BoardDto> boards = Lists.newArrayList();
 		boards.add(expectedBoardDto);
 		final UserDto expectedUserDtoForGetByIdAfterSave = UserDto.builder().id(USER_ID).userName(USERNAME)
@@ -480,7 +478,7 @@ public class BoardServiceImplTest {
 		given(this.boardRepository.findOne(EXPECTED_BOARD_ID)).willReturn(boardEntity);
 
 		// When
-		this.boardService.createBoardByDefaultUserIdAndByTitle(USER_ID, BOARD_TITLE);
+		this.boardService.createBoard(USER_ID, BOARD_TITLE);
 		final Optional<BoardDto> actualBoardDto = this.boardService.get(EXPECTED_BOARD_ID);
 		final Optional<UserDto> actualUserDtoAfterSave = this.userService.get(USER_ID);
 

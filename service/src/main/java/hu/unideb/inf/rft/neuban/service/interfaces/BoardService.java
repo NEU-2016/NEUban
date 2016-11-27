@@ -15,12 +15,12 @@ public interface BoardService {
 
 	List<BoardDto> getAllByUserId(Long userId);
 
-	Long update(BoardDto boardDto) throws BoardNotFoundException;
+	void update(BoardDto boardDto) throws BoardNotFoundException;
 
 	void removeUserFromBoardByUserIdAndByBoardId(Long userId, Long boardId)
 			throws NonExistentBoardIdException, RelationNotFoundException, NonExistentUserIdException;
 
-	void createBoardByDefaultUserIdAndByTitle(Long userId, String title) throws NonExistentUserIdException;
+	void createBoard(Long userId, String title) throws NonExistentUserIdException;
 
 	void addUserToBoardByUserIdAndByBoardId(Long userId, Long boardId)
 			throws NonExistentBoardIdException, NonExistentUserIdException;
