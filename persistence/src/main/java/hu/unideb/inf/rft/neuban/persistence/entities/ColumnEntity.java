@@ -2,11 +2,10 @@ package hu.unideb.inf.rft.neuban.persistence.entities;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 
 @NoArgsConstructor
@@ -25,9 +24,14 @@ public class ColumnEntity extends SuperEntity<Long> {
     @Column(name = "title")
     private String title;
 
+    @JoinColumn(name = "column_id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    private List<CardEntity> cards;
+
     @Builder
-    public ColumnEntity(Long id, String title) {
+    public ColumnEntity(Long id, String title, List<CardEntity> cards) {
         super(id);
         this.title = title;
+        this.cards = cards;
     }
 }
