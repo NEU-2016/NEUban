@@ -5,11 +5,11 @@ import hu.unideb.inf.rft.neuban.persistence.entities.CardEntity;
 import hu.unideb.inf.rft.neuban.persistence.repositories.CardRepository;
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
-import hu.unideb.inf.rft.neuban.service.exceptions.CardAlreadyExistsException;
-import hu.unideb.inf.rft.neuban.service.exceptions.CardNotFoundException;
-import hu.unideb.inf.rft.neuban.service.exceptions.ColumnNotFoundException;
+import hu.unideb.inf.rft.neuban.service.domain.UserDto;
+import hu.unideb.inf.rft.neuban.service.exceptions.*;
 import hu.unideb.inf.rft.neuban.service.interfaces.CardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
+import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,11 +23,26 @@ import java.util.Optional;
 public class CardServiceImpl implements CardService {
 
     @Autowired
+    private UserService userService;
+    @Autowired
     private ColumnService columnService;
     @Autowired
     private CardRepository cardRepository;
     @Autowired
     private ModelMapper modelMapper;
+
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<CardDto> get(final Long cardId) {
+        Assert.notNull(cardId);
+
+        final Optional<CardEntity> cardEntityOptional = Optional.ofNullable(this.cardRepository.findOne(cardId));
+
+        if (cardEntityOptional.isPresent()) {
+            return Optional.of(modelMapper.map(cardEntityOptional.get(), CardDto.class));
+        }
+        return Optional.empty();
+    }
 
     @Transactional(readOnly = true)
     @Override
@@ -74,5 +89,31 @@ public class CardServiceImpl implements CardService {
                 .orElseThrow(() -> new CardNotFoundException(String.valueOf(cardId)));
 
         this.cardRepository.delete(cardId);
+    }
+
+    @Transactional
+    @Override
+    public void addUserToCard(final Long userId, final Long cardId) throws UserNotFoundException, CardNotFoundException, UserAlreadyExistsOnCardException {
+        final UserDto userDto = this.userService.get(userId).orElseThrow(() -> new UserNotFoundException(String.valueOf(userId)));
+        final CardDto cardDto = this.get(cardId).orElseThrow(() -> new CardNotFoundException(String.valueOf(cardId)));
+
+        if (cardDto.getUsers().stream().anyMatch(actualUser -> actualUser.getId().equals(userDto.getId()))) {
+            throw new UserAlreadyExistsOnCardException(String.valueOf(userId), String.valueOf(cardId));
+        }
+        cardDto.getUsers().add(userDto);
+        this.update(cardDto);
+    }
+
+    @Transactional
+    @Override
+    public void removeUserFromCard(final Long userId, final Long cardId) throws UserNotFoundException, CardNotFoundException, UserNotFoundOnCardException {
+        final UserDto userDto = this.userService.get(userId).orElseThrow(() -> new UserNotFoundException(String.valueOf(userId)));
+        final CardDto cardDto = this.get(cardId).orElseThrow(() -> new CardNotFoundException(String.valueOf(cardId)));
+
+        if (cardDto.getUsers().stream().noneMatch(actualUser -> actualUser.getId().equals(userDto.getId()))) {
+            throw new UserNotFoundOnCardException(String.valueOf(userId), String.valueOf(cardId));
+        }
+        cardDto.getUsers().removeIf(actualUser -> actualUser.getId().equals(userDto.getId()));
+        this.update(cardDto);
     }
 }
