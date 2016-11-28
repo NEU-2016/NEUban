@@ -3,9 +3,7 @@ package hu.unideb.inf.rft.neuban.web.controllers;
 import org.junit.Before;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 public abstract class AbstractControllerTest {

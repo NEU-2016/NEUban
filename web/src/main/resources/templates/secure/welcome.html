@@ -16,6 +16,12 @@
             <label th:text="${board.title}"></label>
             <button type="submit" class="btn btn-primary" th:text="#{welcome.button.boarddetails}"></button>
         </form>
+        <!--
+        TODO implement when BoardService has actual method for removal
+        <form th:action="@{/secure/welcome/remove/__${board.id}__}" method="GET">
+            <button type="submit" class="btn btn-primary" th:text="#{welcome.button.boardremove}"></button>
+        </form>
+        -->
     </div>
     <form th:action="@{/secure/welcome/create}" method="POST">
         <label th:text="#{welcome.boardtitle}"></label>
