@@ -30,8 +30,10 @@ public class UserEntity extends SuperEntity<Long> {
     @Column(name = "password")
     private String password;
 
-    @JoinColumn(name = "user_id")
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(name = "user_board_relation_table",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "board_id", referencedColumnName = "id"))
     private List<BoardEntity> boards;
 
     @NotNull
