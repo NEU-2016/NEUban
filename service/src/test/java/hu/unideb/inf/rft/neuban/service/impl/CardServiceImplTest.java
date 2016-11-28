@@ -247,7 +247,7 @@ public class CardServiceImplTest {
     }
 
     @Test
-    public void saveShouldBeSuccessFulSavingWhenCardDtoIdIsNull() throws CardAlreadyExistsException, ColumnNotFoundException {
+    public void saveShouldBeSuccessfulSavingWhenCardDtoIdIsNull() throws CardAlreadyExistsException, ColumnNotFoundException {
         // Given
         final CardDto cardDtoWithoutId = CardDto.builder()
                 .id(null)
@@ -275,7 +275,7 @@ public class CardServiceImplTest {
     }
 
     @Test
-    public void saveShouldBeSuccessFulSavingWhenCardDtoDoesNotExistOnTheColumn() throws CardAlreadyExistsException, ColumnNotFoundException {
+    public void saveShouldBeSuccessfulSavingWhenCardDtoDoesNotExistOnTheColumn() throws CardAlreadyExistsException, ColumnNotFoundException {
         // Given
         final CardDto newCardDto = CardDto.builder()
                 .id(FOURTH_CARD_ID)
@@ -324,7 +324,7 @@ public class CardServiceImplTest {
     }
 
     @Test
-    public void updateShouldBeSuccessFulUpdatingWhenCardExists() throws CardNotFoundException {
+    public void updateShouldBeSuccessfulUpdatingWhenCardExists() throws CardNotFoundException {
         // Given
         given(this.modelMapper.map(firstCardDto, CardEntity.class)).willReturn(firstCardEntity);
 
@@ -359,7 +359,7 @@ public class CardServiceImplTest {
     }
 
     @Test
-    public void removeShouldBeSuccessFulDeletingWhenCardExists() throws CardNotFoundException {
+    public void removeShouldBeSuccessfulDeletingWhenCardExists() throws CardNotFoundException {
         // Given
         given(this.cardRepository.findOne(FIRST_CARD_ID)).willReturn(firstCardEntity);
 
