@@ -76,7 +76,7 @@ public class CardServiceImplTest {
             .cards(cardDtoList)
             .build();
 
-    private final UserDto firstUserDo = UserDto.builder()
+    private final UserDto firstUserDto = UserDto.builder()
             .id(FIRST_USER_ID)
             .userName(USERNAME)
             .password(PASSWORD_HASH)
@@ -397,7 +397,7 @@ public class CardServiceImplTest {
     @Test(expected = IllegalArgumentException.class)
     public void addUserToCardShouldThrowIllegalArgumentExceptionWhenParamCardIdIsNull() throws UserNotFoundException, UserAlreadyExistsOnCardException, CardNotFoundException {
         // Given
-        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDo));
+        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDto));
         doThrow(IllegalArgumentException.class).when(this.cardService).get(null);
 
         // When
@@ -409,7 +409,7 @@ public class CardServiceImplTest {
     @Test(expected = CardNotFoundException.class)
     public void addUserToCardShouldThrowCardNotFoundExceptionWhenCardDoesNotExist() throws UserNotFoundException, UserAlreadyExistsOnCardException, CardNotFoundException {
         // Given
-        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDo));
+        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDto));
         doReturn(Optional.empty()).when(this.cardService).get(FIRST_CARD_ID);
 
         // When
@@ -419,11 +419,11 @@ public class CardServiceImplTest {
     }
 
     @Test(expected = UserAlreadyExistsOnCardException.class)
-    public void addUserToCardShouldBeNotSuccessFulAddingWhenUserAlreadyExistsOnCard() throws UserNotFoundException, UserAlreadyExistsOnCardException, CardNotFoundException {
+    public void addUserToCardShouldBeNotSuccessfulAddingWhenUserAlreadyExistsOnCard() throws UserNotFoundException, UserAlreadyExistsOnCardException, CardNotFoundException {
         // Given
-        firstCardDto.setUsers(Collections.singletonList(firstUserDo));
+        firstCardDto.setUsers(Collections.singletonList(firstUserDto));
 
-        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDo));
+        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDto));
         doReturn(Optional.of(firstCardDto)).when(this.cardService).get(FIRST_CARD_ID);
 
         // When
@@ -433,9 +433,9 @@ public class CardServiceImplTest {
     }
 
     @Test
-    public void addUserToCardShouldBeSuccessFulAddingWhenUserDoesNotExistOnCard() throws UserNotFoundException, UserAlreadyExistsOnCardException, CardNotFoundException {
+    public void addUserToCardShouldBeSuccessfulAddingWhenUserDoesNotExistOnCard() throws UserNotFoundException, UserAlreadyExistsOnCardException, CardNotFoundException {
         // Given
-        firstCardDto.setUsers(Lists.newArrayList(firstUserDo, secondUserDto, thirdUserDto));
+        firstCardDto.setUsers(Lists.newArrayList(firstUserDto, secondUserDto, thirdUserDto));
 
         given(this.userService.get(FOURTH_USER_ID)).willReturn(Optional.of(fourthUserDto));
         doReturn(Optional.of(firstCardDto)).when(this.cardService).get(FIRST_CARD_ID);
@@ -485,7 +485,7 @@ public class CardServiceImplTest {
     @Test(expected = IllegalArgumentException.class)
     public void removeUserFromCardShouldThrowIllegalArgumentExceptionWhenParamCardIdIsNull() throws UserNotFoundException, UserNotFoundOnCardException, CardNotFoundException {
         // Given
-        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDo));
+        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDto));
         doThrow(IllegalArgumentException.class).when(this.cardService).get(null);
 
         // When
@@ -497,7 +497,7 @@ public class CardServiceImplTest {
     @Test(expected = CardNotFoundException.class)
     public void removeUserFromCardShouldThrowCardNotFoundExceptionWhenCardDoesNotExist() throws UserNotFoundException, UserNotFoundOnCardException, CardNotFoundException {
         // Given
-        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDo));
+        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDto));
         doReturn(Optional.empty()).when(this.cardService).get(FIRST_CARD_ID);
 
         // When
@@ -507,11 +507,11 @@ public class CardServiceImplTest {
     }
 
     @Test(expected = UserNotFoundOnCardException.class)
-    public void removeUserFromCardShouldBeNotSuccessFulRemovingWhenUserDoesNotExistsOnCard() throws UserNotFoundException, UserNotFoundOnCardException, CardNotFoundException {
+    public void removeUserFromCardShouldBeNotSuccessfulRemovingWhenUserDoesNotExistsOnCard() throws UserNotFoundException, UserNotFoundOnCardException, CardNotFoundException {
         // Given
         firstCardDto.setUsers(Collections.emptyList());
 
-        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDo));
+        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDto));
         doReturn(Optional.of(firstCardDto)).when(this.cardService).get(FIRST_CARD_ID);
 
         // When
@@ -521,9 +521,9 @@ public class CardServiceImplTest {
     }
 
     @Test
-    public void removeUserFromCardShouldBeSuccessFulRemovingWhenUserDoesExistOnCard() throws UserNotFoundException, UserNotFoundOnCardException, CardNotFoundException {
+    public void removeUserFromCardShouldBeSuccessfulRemovingWhenUserDoesExistOnCard() throws UserNotFoundException, UserNotFoundOnCardException, CardNotFoundException {
         // Given
-        firstCardDto.setUsers(Lists.newArrayList(firstUserDo, secondUserDto, thirdUserDto, fourthUserDto));
+        firstCardDto.setUsers(Lists.newArrayList(firstUserDto, secondUserDto, thirdUserDto, fourthUserDto));
 
         given(this.userService.get(FOURTH_USER_ID)).willReturn(Optional.of(fourthUserDto));
         doReturn(Optional.of(firstCardDto)).when(this.cardService).get(FIRST_CARD_ID);
