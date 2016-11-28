@@ -7,9 +7,26 @@
 </head>
 <body>
 <div th:class="container">
-    <h2 th:text="#{welcome.header}"></h2>
+    <h2 th:text="|#{welcome.header}, ${#httpServletRequest.remoteUser}!|"></h2>
     <form th:action="@{/appLogout}" method="POST">
         <button type="submit" class="btn btn-default" th:text="#{welcome.button.logout}"></button>
+    </form>
+    <div th:each="board : ${boardList}">
+        <form th:action="@{/secure/board/__${board.id}__}" method="GET">
+            <label th:text="${board.title}"></label>
+            <button type="submit" class="btn btn-primary" th:text="#{welcome.button.boarddetails}"></button>
+        </form>
+        <!--
+        TODO implement when BoardService has actual method for removal
+        <form th:action="@{/secure/welcome/remove/__${board.id}__}" method="GET">
+            <button type="submit" class="btn btn-primary" th:text="#{welcome.button.boardremove}"></button>
+        </form>
+        -->
+    </div>
+    <form th:action="@{/secure/welcome/create}" method="POST">
+        <label th:text="#{welcome.boardtitle}"></label>
+        <input type="text" th:class="form-control" th:placeholder="#{welcome.boardtitle}" th:name="boardTitle"/>
+        <button type="submit" class="btn btn-primary" th:text="#{welcome.button.boardcreate}"></button>
     </form>
 </div>
 </body>

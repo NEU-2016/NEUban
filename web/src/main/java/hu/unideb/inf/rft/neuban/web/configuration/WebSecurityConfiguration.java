@@ -26,7 +26,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and().formLogin().loginPage("/login").loginProcessingUrl("/appLogin")
                 .usernameParameter("username").passwordParameter("password")
                 .defaultSuccessUrl("/secure/welcome", true).failureUrl("/login/error")
-                .and().logout().logoutUrl("/appLogout").logoutSuccessUrl("/login").invalidateHttpSession(true);
+                .and().logout().logoutUrl("/appLogout").logoutSuccessUrl("/index").invalidateHttpSession(true);
     }
 
     @Autowired
