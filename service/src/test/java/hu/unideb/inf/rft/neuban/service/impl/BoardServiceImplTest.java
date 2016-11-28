@@ -509,7 +509,7 @@ public class BoardServiceImplTest {
 	}
 
 	@Test
-	public void removeTest() throws BoardNotFoundException {
+	public void removeShouldRemoveBoardWithGivenIdIfBoardExists() throws BoardNotFoundException {
 		// Given
 
 		given(this.boardRepository.findOne(BOARD_ID)).willReturn(boardEntity);

@@ -70,7 +70,7 @@ public class BoardServiceImpl implements BoardService {
 
 	@Transactional
 	@Override
-	public void remove(Long boardId) throws BoardNotFoundException {
+	public void remove(final Long boardId) throws BoardNotFoundException {
 		Assert.notNull(boardId);
 
 		Optional.ofNullable(this.boardRepository.findOne(boardId))
