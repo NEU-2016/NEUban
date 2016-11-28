@@ -14,14 +14,16 @@ public class BoardController {
 
 	private static final String BOARD_VIEW = "secure/board";
 
+	private static final String BOARD_MODEL_OBJECT_NAME = "board";
+
 	@Autowired
 	private BoardService boardService;
 
 	@GetMapping(path = "/{boardId}")
-	public ModelAndView loadBoardView(@PathVariable Long boardId) {
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName(BOARD_VIEW);
-		modelAndView.addObject("board", boardService.get(boardId).orElse(null));
+	public ModelAndView loadBoardView(@PathVariable final Long boardId) {
+		final ModelAndView modelAndView = new ModelAndView(BOARD_VIEW);
+		//TODO error page if boardId doesn't exist
+		modelAndView.addObject(BOARD_MODEL_OBJECT_NAME, boardService.get(boardId).orElse(null));
 		return modelAndView;
 	}
 }
