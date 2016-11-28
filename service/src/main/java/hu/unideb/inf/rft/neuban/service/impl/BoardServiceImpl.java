@@ -70,6 +70,17 @@ public class BoardServiceImpl implements BoardService {
 
 	@Transactional
 	@Override
+	public void remove(Long boardId) throws BoardNotFoundException {
+		Assert.notNull(boardId);
+
+		Optional.ofNullable(this.boardRepository.findOne(boardId))
+				.orElseThrow(() -> new BoardNotFoundException(String.valueOf(boardId)));
+
+		this.boardRepository.delete(boardId);
+	}
+
+	@Transactional
+	@Override
 	public void removeUserFromBoardByUserIdAndByBoardId(final Long userId, final Long boardId)
 			throws NonExistentBoardIdException, RelationNotFoundException, NonExistentUserIdException {
 
@@ -111,8 +122,7 @@ public class BoardServiceImpl implements BoardService {
 
 	@Transactional
 	@Override
-	public void createBoard(final Long userId, final String title)
-			throws NonExistentUserIdException {
+	public void createBoard(final Long userId, final String title) throws NonExistentUserIdException {
 
 		Assert.notNull(userId);
 		Assert.notNull(title);
@@ -128,4 +138,5 @@ public class BoardServiceImpl implements BoardService {
 		}
 		userService.saveOrUpdate(userDto);
 	}
+
 }

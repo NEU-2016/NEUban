@@ -70,10 +70,9 @@ public class BoardServiceImplTest {
 	private BoardRepository boardRepository;
 	@Mock
 	private ModelMapper modelMapper;
-	
+
 	@Rule
 	public final ExpectedException expectedException = ExpectedException.none();
-
 
 	@Test(expected = IllegalArgumentException.class)
 	public void getShouldThrowIllegalArgumentExceptionWhenParamBoardIdIsNull() {
@@ -327,11 +326,11 @@ public class BoardServiceImplTest {
 				.build();
 		List<BoardDto> boards = Lists.newArrayList();
 		boards.add(expectedUserBoard);
-		final UserDto expectedUserDtoBeforeRemove = UserDto.builder().id(USER_ID).userName(USERNAME)
-				.password(PASSWORD).boards(boards).build();
+		final UserDto expectedUserDtoBeforeRemove = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
+				.boards(boards).build();
 
-		final UserDto expectedUserDtoAfterRemove = UserDto.builder().id(USER_ID).userName(USERNAME)
-				.password(PASSWORD).boards(new ArrayList<>()).build();
+		final UserDto expectedUserDtoAfterRemove = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
+				.boards(new ArrayList<>()).build();
 		given(this.userService.get(USER_ID)).willReturn(Optional.of(expectedUserDtoBeforeRemove),
 				Optional.of(expectedUserDtoAfterRemove));
 
@@ -404,14 +403,14 @@ public class BoardServiceImplTest {
 
 		final BoardDto expectedUserBoard = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null)
 				.build();
-		final UserDto expectedUserDtoBeforeAdd = UserDto.builder().id(USER_ID).userName(USERNAME)
-				.password(PASSWORD).boards(new ArrayList<>()).build();
+		final UserDto expectedUserDtoBeforeAdd = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
+				.boards(new ArrayList<>()).build();
 
 		List<BoardDto> boards = Lists.newArrayList();
 		boards.add(expectedUserBoard);
 
-		final UserDto expectedUserDtoAfterAdd = UserDto.builder().id(USER_ID).userName(USERNAME)
-				.password(PASSWORD).boards(boards).build();
+		final UserDto expectedUserDtoAfterAdd = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
+				.boards(boards).build();
 
 		given(this.userService.get(USER_ID)).willReturn(Optional.of(expectedUserDtoBeforeAdd),
 				Optional.of(expectedUserDtoAfterAdd));
@@ -447,8 +446,7 @@ public class BoardServiceImplTest {
 	}
 
 	@Test
-	public void createBoardShouldThrowNonExistentUserIdExceptionWhenUserNotExists()
-			throws NonExistentUserIdException {
+	public void createBoardShouldThrowNonExistentUserIdExceptionWhenUserNotExists() throws NonExistentUserIdException {
 		// Given
 		given(this.userService.get(NON_EXISTENT_USER_ID)).willReturn(Optional.empty());
 		expectedException.expect(NonExistentUserIdException.class);
@@ -462,7 +460,7 @@ public class BoardServiceImplTest {
 
 	@Test
 	public void createBoardTest() throws NonExistentUserIdException {
-
+		// Given
 		final BoardDto expectedBoardDto = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null)
 				.build();
 		final UserDto expectedUserDtoForGetByIdBeforeSave = UserDto.builder().id(USER_ID).userName(USERNAME)
@@ -492,4 +490,38 @@ public class BoardServiceImplTest {
 		assertThat(actualUserDtoAfterSave.isPresent(), is(true));
 		assertThat(actualUserDtoAfterSave.get(), equalTo(expectedUserDtoForGetByIdAfterSave));
 	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void removeShouldThrowIllegalArgumentExceptionWhenBoardIdIsNull() throws BoardNotFoundException {
+		this.boardService.remove(null);
+	}
+
+	@Test
+	public void removeShouldThrowBoardNotFoundExceptionWhenBoardDoesNotExist() throws BoardNotFoundException {
+		// Given
+
+		given(this.boardRepository.findOne(BOARD_ID)).willReturn(null);
+
+		// When
+
+		expectedException.expect(BoardNotFoundException.class);
+		this.boardService.remove(BOARD_ID);
+	}
+
+	@Test
+	public void removeTest() throws BoardNotFoundException {
+		// Given
+
+		given(this.boardRepository.findOne(BOARD_ID)).willReturn(boardEntity);
+
+		// When
+
+		this.boardService.remove(BOARD_ID);
+
+		// then
+
+		then(this.boardRepository).should().findOne(BOARD_ID);
+		then(this.boardRepository).should().delete(BOARD_ID);
+	}
+
 }

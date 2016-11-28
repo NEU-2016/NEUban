@@ -14,6 +14,8 @@ public interface BoardService {
 	Optional<BoardDto> get(Long boardId);
 
 	List<BoardDto> getAllByUserId(Long userId);
+	
+	void remove(final Long boardId) throws BoardNotFoundException;
 
 	void update(BoardDto boardDto) throws BoardNotFoundException;
 
@@ -24,5 +26,7 @@ public interface BoardService {
 
 	void addUserToBoardByUserIdAndByBoardId(Long userId, Long boardId)
 			throws NonExistentBoardIdException, NonExistentUserIdException;
+	
+	
 
 }
