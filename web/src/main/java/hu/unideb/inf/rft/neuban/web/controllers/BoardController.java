@@ -1,11 +1,13 @@
 package hu.unideb.inf.rft.neuban.web.controllers;
 
+import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
+import hu.unideb.inf.rft.neuban.service.exceptions.BoardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.ColumnAlreadyExistsException;
 import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
+import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -13,17 +15,35 @@ import org.springframework.web.servlet.ModelAndView;
 public class BoardController {
 
 	private static final String BOARD_VIEW = "secure/board";
+	private static final String REDIRECT_URL_TO_BOARD_VIEW = "redirect:/" + BOARD_VIEW;
 
 	private static final String BOARD_MODEL_OBJECT_NAME = "board";
 
 	@Autowired
 	private BoardService boardService;
 
+	@Autowired
+	private ColumnService columnService;
+
 	@GetMapping(path = "/{boardId}")
 	public ModelAndView loadBoardView(@PathVariable final Long boardId) {
 		final ModelAndView modelAndView = new ModelAndView(BOARD_VIEW);
 		//TODO error page if boardId doesn't exist
 		modelAndView.addObject(BOARD_MODEL_OBJECT_NAME, boardService.get(boardId).orElse(null));
+		return modelAndView;
+	}
+
+	@PostMapping(path = "/{boardId}/addcolumn")
+	public ModelAndView createBoard(@PathVariable final Long boardId, @RequestParam final String columnTitle) {
+		final ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_BOARD_VIEW + "/" + boardId);
+		//TODO error page if user doesn't exist
+		try {
+			columnService.save(boardId, ColumnDto.builder().title(columnTitle).build());
+		} catch (BoardNotFoundException e) {
+			modelAndView.addObject("boardNotFoundError", true);
+		} catch (ColumnAlreadyExistsException e) {
+			modelAndView.addObject("columnAlreadyExistsError", true);
+		}
 		return modelAndView;
 	}
 }
