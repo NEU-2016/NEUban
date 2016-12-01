@@ -46,8 +46,11 @@ public class BoardServiceImplTest {
 	private static final String BOARD_TITLE = "Title";
 
 	private static final long USER_ID = 1L;
+	private static final long USER2_ID = 2L;
 	private static final String USERNAME = "username";
 	private static final String PASSWORD = "passwordHash";
+	private static final String USERNAME2 = "username2";
+	private static final String PASSWORD2 = "passwordHash2";
 
 	private final BoardEntity boardEntity = BoardEntity.builder().id(BOARD_ID).title(BOARD_TITLE)
 			.columns(Collections.emptyList()).build();
@@ -60,6 +63,9 @@ public class BoardServiceImplTest {
 
 	private final UserDto userDto = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD).role(Role.USER)
 			.boards(Collections.nCopies(3, boardDto)).build();
+
+	private final UserDto userDto2 = UserDto.builder().id(USER2_ID).userName(USERNAME2).password(PASSWORD2)
+			.role(Role.USER).boards(Collections.nCopies(3, boardDto)).build();
 
 	@InjectMocks
 	private BoardServiceImpl boardService;
@@ -509,19 +515,43 @@ public class BoardServiceImplTest {
 	}
 
 	@Test
-	public void removeShouldRemoveBoardWithGivenIdIfBoardExists() throws BoardNotFoundException {
+	public void removeShouldDeleteRelationThenDeleteBoard() throws BoardNotFoundException {
 		// Given
 
+		final UserDto userDtoBeforeDelete = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
+				.role(Role.USER).boards(Lists.newArrayList(boardDto)).build();
+
+		final UserDto userDto2BeforeDelete = UserDto.builder().id(USER2_ID).userName(USERNAME2).password(PASSWORD2)
+				.role(Role.USER).boards(Lists.newArrayList(boardDto)).build();
+
+		final UserDto userDtoAfterDelete = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
+				.role(Role.USER).boards(Lists.newArrayList()).build();
+
+		final UserDto userDto2AfterDelete = UserDto.builder().id(USER2_ID).userName(USERNAME2).password(PASSWORD2)
+				.role(Role.USER).boards(Lists.newArrayList()).build();
+
+		final List<UserDto> expectedUserDtosBeforeSave = Lists.newArrayList(userDtoBeforeDelete, userDto2BeforeDelete);
+		final List<UserDto> expectedUserDtosAfterSave = Lists.newArrayList(userDtoAfterDelete, userDto2AfterDelete);
+
+		given(this.userService.getAll()).willReturn(expectedUserDtosBeforeSave, expectedUserDtosAfterSave);
 		given(this.boardRepository.findOne(BOARD_ID)).willReturn(boardEntity);
+
+		given(this.modelMapper.map(boardEntity, BoardDto.class)).willReturn(boardDto);
 
 		// When
 
+		List<UserDto> actualUserDtosBeforeSave = this.userService.getAll();
 		this.boardService.remove(BOARD_ID);
+		List<UserDto> actualUserDtosAfterSave = this.userService.getAll();
 
-		// then
+		// Then
+
+		assertThat(actualUserDtosBeforeSave, equalTo(expectedUserDtosBeforeSave));
+		assertThat(actualUserDtosAfterSave, equalTo(expectedUserDtosAfterSave));
 
 		then(this.boardRepository).should().findOne(BOARD_ID);
 		then(this.boardRepository).should().delete(BOARD_ID);
+
 	}
 
 }
