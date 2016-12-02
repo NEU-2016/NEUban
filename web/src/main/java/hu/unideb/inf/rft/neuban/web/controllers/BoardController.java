@@ -48,7 +48,7 @@ public class BoardController {
 		return modelAndView;
 	}
 
-	@PostMapping(path = "/removecolumn/{columnId}")
+	@DeleteMapping(path = "/removecolumn/{columnId}")
 	public ModelAndView deleteColumn(@PathVariable final Long boardId, @PathVariable final Long columnId) {
 		final ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_BOARD_VIEW + "/" + boardId);
 		//TODO error page
