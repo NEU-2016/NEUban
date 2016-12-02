@@ -187,7 +187,7 @@ public class BoardServiceImplTest {
 		// Then
 	}
 
-	@Test(expected = BoardNotFoundException.class)
+	/*@Test(expected = BoardNotFoundException.class)
 	public void updateShouldThrowBoardNotFoundExceptionWhenParamBoardDtoIdIsInvalid() throws BoardNotFoundException {
 		// Given
 		given(this.boardRepository.findOne(BOARD_ID)).willReturn(null);
@@ -211,7 +211,7 @@ public class BoardServiceImplTest {
 		then(this.boardRepository).should().findOne(BOARD_ID);
 		then(this.boardRepository).should().saveAndFlush(boardEntity);
 		verifyNoMoreInteractions(this.boardRepository);
-	}
+	}*/
 
 	@Test(expected = IllegalArgumentException.class)
 	public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowIllegalArgumentExceptionWhenUserIdIsNull()
