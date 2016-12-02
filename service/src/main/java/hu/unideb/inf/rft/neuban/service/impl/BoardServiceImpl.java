@@ -2,6 +2,7 @@ package hu.unideb.inf.rft.neuban.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,10 +73,20 @@ public class BoardServiceImpl implements BoardService {
 	public void remove(final Long boardId) throws BoardNotFoundException {
 		Assert.notNull(boardId);
 
-		Optional.ofNullable(this.boardRepository.findOne(boardId))
-				.orElseThrow(() -> new BoardNotFoundException(String.valueOf(boardId)));
+		List<UserDto> userDtos = userService.getAll();
 
+		final BoardEntity boardEntity = Optional.ofNullable(this.boardRepository.findOne(boardId))
+				.orElseThrow(() -> new BoardNotFoundException(boardId.toString()));
+
+		final BoardDto boardDto = modelMapper.map(boardEntity, BoardDto.class);
+		userDtos = userDtos.stream().filter(userDto -> userDto.getBoards().contains(boardDto))
+				.collect(Collectors.toList());
+		for (UserDto userDtoIter : userDtos) {
+			userDtoIter.getBoards().remove(boardDto);
+			userService.saveOrUpdate(userDtoIter);
+		}
 		this.boardRepository.delete(boardId);
+
 	}
 
 	@Transactional
