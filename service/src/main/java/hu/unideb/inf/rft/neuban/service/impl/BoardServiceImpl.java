@@ -79,18 +79,14 @@ public class BoardServiceImpl implements BoardService {
 		final Optional<BoardEntity> boardEntityOptional = Optional.ofNullable(this.boardRepository.findOne(boardId));
 
 		if (boardEntityOptional.isPresent()) {
-			BoardDto boardDto = modelMapper.map(boardEntityOptional.get(), BoardDto.class);
+			final BoardDto boardDto = modelMapper.map(boardEntityOptional.get(), BoardDto.class);
 			userDtos = userDtos.stream().filter(userDto -> userDto.getBoards().contains(boardDto))
 					.collect(Collectors.toList());
-			if (userDtos == null) {
-				this.boardRepository.delete(boardId);
-			} else {
-				for (UserDto userDtoIter : userDtos) {
-					userDtoIter.getBoards().remove(boardDto);
-					userService.saveOrUpdate(userDtoIter);
-				}
-				this.boardRepository.delete(boardId);
+			for (UserDto userDtoIter : userDtos) {
+				userDtoIter.getBoards().remove(boardDto);
+				userService.saveOrUpdate(userDtoIter);
 			}
+			this.boardRepository.delete(boardId);
 		} else {
 			throw new BoardNotFoundException(boardId.toString());
 		}

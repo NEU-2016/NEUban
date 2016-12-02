@@ -1,12 +1,14 @@
 package hu.unideb.inf.rft.neuban.web.controllers;
 
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
+import hu.unideb.inf.rft.neuban.service.exceptions.BoardNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.NonExistentUserIdException;
 import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,15 +54,12 @@ public class WelcomeController {
 		return modelAndView;
 	}
 
-
-	//TODO implement when BoardService has actual method for removal
-	/*
 	@GetMapping(path = "/remove/{boardId}")
-	public ModelAndView removeBoard(@PathVariable Long boardId) {
+	public ModelAndView removeBoard(@PathVariable Long boardId) throws BoardNotFoundException {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName(REDIRECT_URL_TO_WELCOME_VIEW);
-		boardService.
+		boardService.remove(boardId);
 		return modelAndView;
 	}
-	*/
+
 }
