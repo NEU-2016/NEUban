@@ -19,6 +19,10 @@ public class BoardController {
 	private static final String REDIRECT_URL_TO_BOARD_VIEW = "redirect:/" + BOARD_VIEW;
 
 	private static final String BOARD_MODEL_OBJECT_NAME = "board";
+	private static final String BOARD_NOT_FOUND_ERROR_MODEL_OBJECT_NAME = "boardNotFoundError";
+	private static final String COLUMN_ALREADY_EXISTS_ERROR_MODEL_OBJECT_NAME = "columnAlreadyExistsError";
+	private static final String COLUMN_NOT_FOUND_ERROR_MODEL_OBJECT_NAME = "columnNotFoundError";
+
 
 	@Autowired
 	private BoardService boardService;
@@ -41,9 +45,9 @@ public class BoardController {
 		try {
 			columnService.save(boardId, ColumnDto.builder().title(columnTitle).build());
 		} catch (BoardNotFoundException e) {
-			modelAndView.addObject("boardNotFoundError", true);
+			modelAndView.addObject(BOARD_NOT_FOUND_ERROR_MODEL_OBJECT_NAME, true);
 		} catch (ColumnAlreadyExistsException e) {
-			modelAndView.addObject("columnAlreadyExistsError", true);
+			modelAndView.addObject(COLUMN_ALREADY_EXISTS_ERROR_MODEL_OBJECT_NAME, true);
 		}
 		return modelAndView;
 	}
@@ -55,7 +59,7 @@ public class BoardController {
 		try {
 			columnService.remove(columnId);
 		} catch (ColumnNotFoundException e) {
-			modelAndView.addObject("columnNotFoundError", true);
+			modelAndView.addObject(COLUMN_NOT_FOUND_ERROR_MODEL_OBJECT_NAME, true);
 		}
 		return modelAndView;
 	}
