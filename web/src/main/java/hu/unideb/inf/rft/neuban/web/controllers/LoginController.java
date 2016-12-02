@@ -10,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class LoginController {
 
 	private static final String LOGIN_VIEW = "login";
+	private static final String LOGIN_ERROR_MODEL_OBJECT_NAME = "loginError";
 
 	@GetMapping
 	public String loadLoginView() {
@@ -19,7 +20,7 @@ public class LoginController {
 	@GetMapping(path = "/error")
 	public ModelAndView loginError() {
 		ModelAndView modelAndView = new ModelAndView(LOGIN_VIEW);
-		modelAndView.addObject("loginError", true);
+		modelAndView.addObject(LOGIN_ERROR_MODEL_OBJECT_NAME, true);
 		return modelAndView;
 	}
 }

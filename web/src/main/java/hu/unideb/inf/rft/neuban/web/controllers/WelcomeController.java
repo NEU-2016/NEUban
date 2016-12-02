@@ -24,6 +24,7 @@ public class WelcomeController {
 	private static final String REDIRECT_URL_TO_WELCOME_VIEW = "redirect:/" + WELCOME_VIEW;
 
 	private static final String BOARD_LIST_MODEL_OBJECT_NAME = "boardList";
+	private static final String NON_EXISTENT_USER_ID_ERROR_MODEL_OBJECT_NAME = "nonExistentUserIdError";
 
 	@Autowired
 	private UserService userService;
@@ -49,7 +50,7 @@ public class WelcomeController {
 			boardService.createBoard(currentUser.getId(), boardTitle);
 		} catch (NonExistentUserIdException e) {
 			//TODO currentUsers' existence is already proven, if the application gets here, the problem is in the code
-			modelAndView.addObject("nonExistentUserIdError", true);
+			modelAndView.addObject(NON_EXISTENT_USER_ID_ERROR_MODEL_OBJECT_NAME, true);
 		}
 		return modelAndView;
 	}
