@@ -62,8 +62,7 @@ public class BoardServiceImpl implements BoardService {
 		Assert.notNull(boardDto);
 		Assert.notNull(boardDto.getId());
 
-		final BoardEntity boardEntity = Optional.ofNullable(this.boardRepository.findOne(boardDto.getId()))
-				.orElseThrow(() -> new BoardNotFoundException(String.valueOf(boardDto.getId())));
+		final BoardEntity boardEntity = this.modelMapper.map(boardDto, BoardEntity.class);
 
 		this.boardRepository.saveAndFlush(boardEntity);
 	}

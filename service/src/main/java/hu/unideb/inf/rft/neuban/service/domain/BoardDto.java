@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor
@@ -19,7 +20,7 @@ public class BoardDto extends BaseDto<Long> {
     @Size(min = 2, max = 30)
     private String title;
 
-    private List<ColumnDto> columns;
+    private List<ColumnDto> columns = Collections.emptyList();
 
     @Builder
     public BoardDto(Long id, String title, List<ColumnDto> columns) {
