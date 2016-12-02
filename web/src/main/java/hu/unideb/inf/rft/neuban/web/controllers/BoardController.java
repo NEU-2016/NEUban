@@ -35,7 +35,7 @@ public class BoardController {
 	}
 
 	@PostMapping(path = "/addcolumn")
-	public ModelAndView createBoard(@PathVariable final Long boardId, @RequestParam final String columnTitle) {
+	public ModelAndView addColumn(@PathVariable final Long boardId, @RequestParam final String columnTitle) {
 		final ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_BOARD_VIEW + "/" + boardId);
 		//TODO error page
 		try {
@@ -49,7 +49,7 @@ public class BoardController {
 	}
 
 	@PostMapping(path = "/removecolumn/{columnId}")
-	public ModelAndView createBoard(@PathVariable final Long boardId, @PathVariable final Long columnId) {
+	public ModelAndView deleteColumn(@PathVariable final Long boardId, @PathVariable final Long columnId) {
 		final ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_BOARD_VIEW + "/" + boardId);
 		//TODO error page
 		try {
