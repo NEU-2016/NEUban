@@ -33,13 +33,13 @@ public class BoardController {
 	@GetMapping
 	public ModelAndView loadBoardView(@PathVariable final Long boardId) {
 		final ModelAndView modelAndView = new ModelAndView(BOARD_VIEW);
-		//TODO error page if boardId doesn't exist
+		//TODO error page
 		modelAndView.addObject(BOARD_MODEL_OBJECT_NAME, boardService.get(boardId).orElse(null));
 		return modelAndView;
 	}
 
-	@PostMapping(path = "/addcolumn")
-	public ModelAndView addColumn(@PathVariable final Long boardId, @RequestParam final String columnTitle) {
+	@PostMapping(path = "/createcolumn")
+	public ModelAndView createColumn(@PathVariable final Long boardId, @RequestParam final String columnTitle) {
 		final ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_BOARD_VIEW + "/" + boardId);
 		//TODO error page
 		try {
@@ -53,7 +53,7 @@ public class BoardController {
 	}
 
 	@DeleteMapping(path = "/removecolumn/{columnId}")
-	public ModelAndView deleteColumn(@PathVariable final Long boardId, @PathVariable final Long columnId) {
+	public ModelAndView removeColumn(@PathVariable final Long boardId, @PathVariable final Long columnId) {
 		final ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_BOARD_VIEW + "/" + boardId);
 		//TODO error page
 		try {
