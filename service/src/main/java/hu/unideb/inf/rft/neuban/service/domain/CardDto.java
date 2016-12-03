@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.List;
 
 
 @NoArgsConstructor
@@ -21,13 +20,10 @@ public class CardDto extends BaseDto<Long> {
     @NotNull
     private String description;
 
-    private List<UserDto> users;
-
     @Builder
-    public CardDto(Long id, String title, String description, List<UserDto> users) {
+    public CardDto(Long id, String title, String description) {
         super(id);
         this.title = title;
         this.description = description;
-        this.users = users;
     }
 }
