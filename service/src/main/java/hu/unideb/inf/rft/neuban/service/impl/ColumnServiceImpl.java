@@ -3,6 +3,7 @@ package hu.unideb.inf.rft.neuban.service.impl;
 import com.google.common.collect.Lists;
 import hu.unideb.inf.rft.neuban.persistence.entities.ColumnEntity;
 import hu.unideb.inf.rft.neuban.persistence.repositories.ColumnRepository;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
 import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
 import hu.unideb.inf.rft.neuban.service.exceptions.BoardNotFoundException;
@@ -12,12 +13,15 @@ import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Optional;
+
+import static hu.unideb.inf.rft.neuban.service.configuration.CrudServiceBeanNameProvider.SINGLE_COLUMN_DATA_GET_SERVICE;
 
 @Service
 public class ColumnServiceImpl implements ColumnService {
@@ -29,17 +33,14 @@ public class ColumnServiceImpl implements ColumnService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    @Qualifier(SINGLE_COLUMN_DATA_GET_SERVICE)
+    private SingleDataGetService<ColumnDto, Long> singleColumnDataGetService;
+
     @Transactional(readOnly = true)
     @Override
     public Optional<ColumnDto> get(final Long columnId) {
-        Assert.notNull(columnId);
-
-        final Optional<ColumnEntity> columnEntityOptional = Optional.ofNullable(this.columnRepository.findOne(columnId));
-
-        if (columnEntityOptional.isPresent()) {
-            return Optional.of(this.modelMapper.map(columnEntityOptional.get(), ColumnDto.class));
-        }
-        return Optional.empty();
+        return this.singleColumnDataGetService.get(columnId);
     }
 
     @Transactional(readOnly = true)

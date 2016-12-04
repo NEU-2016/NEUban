@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -23,6 +25,8 @@ import hu.unideb.inf.rft.neuban.service.exceptions.RelationNotFoundException;
 import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 
+import static hu.unideb.inf.rft.neuban.service.configuration.CrudServiceBeanNameProvider.SINGLE_BOARD_DATA_GET_SERVICE;
+
 @Service
 public class BoardServiceImpl implements BoardService {
 
@@ -33,17 +37,14 @@ public class BoardServiceImpl implements BoardService {
 	@Autowired
 	private ModelMapper modelMapper;
 
+	@Autowired
+	@Qualifier(SINGLE_BOARD_DATA_GET_SERVICE)
+	private SingleDataGetService<BoardDto, Long> singleBoardDataGetService;
+
 	@Transactional(readOnly = true)
 	@Override
 	public Optional<BoardDto> get(final Long boardId) {
-		Assert.notNull(boardId);
-
-		final Optional<BoardEntity> boardEntityOptional = Optional.ofNullable(this.boardRepository.findOne(boardId));
-
-		if (boardEntityOptional.isPresent()) {
-			return Optional.of(modelMapper.map(boardEntityOptional.get(), BoardDto.class));
-		}
-		return Optional.empty();
+		return this.singleBoardDataGetService.get(boardId);
 	}
 
 	@Transactional(readOnly = true)

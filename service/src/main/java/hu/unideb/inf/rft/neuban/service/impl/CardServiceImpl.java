@@ -3,6 +3,7 @@ package hu.unideb.inf.rft.neuban.service.impl;
 import com.google.common.collect.Lists;
 import hu.unideb.inf.rft.neuban.persistence.entities.CardEntity;
 import hu.unideb.inf.rft.neuban.persistence.repositories.CardRepository;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
 import hu.unideb.inf.rft.neuban.service.exceptions.*;
@@ -11,12 +12,15 @@ import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Optional;
+
+import static hu.unideb.inf.rft.neuban.service.configuration.CrudServiceBeanNameProvider.SINGLE_CARD_DATA_GET_SERVICE;
 
 @Service
 public class CardServiceImpl implements CardService {
@@ -30,17 +34,14 @@ public class CardServiceImpl implements CardService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    @Qualifier(SINGLE_CARD_DATA_GET_SERVICE)
+    private SingleDataGetService<CardDto, Long> singleCardDataGetService;
+
     @Transactional(readOnly = true)
     @Override
     public Optional<CardDto> get(final Long cardId) {
-        Assert.notNull(cardId);
-
-        final Optional<CardEntity> cardEntityOptional = Optional.ofNullable(this.cardRepository.findOne(cardId));
-
-        if (cardEntityOptional.isPresent()) {
-            return Optional.of(modelMapper.map(cardEntityOptional.get(), CardDto.class));
-        }
-        return Optional.empty();
+        return this.singleCardDataGetService.get(cardId);
     }
 
     @Transactional(readOnly = true)
