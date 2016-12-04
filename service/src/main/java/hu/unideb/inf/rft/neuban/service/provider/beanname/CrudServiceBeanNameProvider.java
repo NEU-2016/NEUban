@@ -1,4 +1,4 @@
-package hu.unideb.inf.rft.neuban.service.configuration;
+package hu.unideb.inf.rft.neuban.service.provider.beanname;
 
 
 public class CrudServiceBeanNameProvider {
