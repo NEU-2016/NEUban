@@ -52,8 +52,8 @@ public class WelcomeController {
 	}
 
 	@DeleteMapping(path = "/removeboard/{boardId}")
-	public ModelAndView removeBoard(@PathVariable Long boardId) {
-		ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_WELCOME_VIEW);
+	public ModelAndView removeBoard(@PathVariable final Long boardId) {
+		final ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_WELCOME_VIEW);
 		//TODO error page
 		try {
 			boardService.remove(boardId);
