@@ -86,13 +86,13 @@ values (8,'Sample description for task 8','Task 8',4);
 
 -- User-Card
 
-delete from user_card_relation_table where user_id = 1;
+-- delete from user_card_relation_table where user_id = 1;
 
-insert into user_card_relation_table (card_id,user_id)
-values (3,1);
+-- insert into user_card_relation_table (card_id,user_id)
+-- values (3,1);
 
-insert into user_card_relation_table (card_id,user_id)
-values (4,1);
+-- insert into user_card_relation_table (card_id,user_id)
+-- values (4,1);
 
-insert into user_card_relation_table (card_id,user_id)
-values (7,1);
+-- insert into user_card_relation_table (card_id,user_id)
+-- values (7,1);

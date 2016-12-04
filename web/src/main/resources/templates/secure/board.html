@@ -17,17 +17,17 @@
 TODO use a style that is horizontally scrollable with non-fixed sized columns
  -->
 <div class="container-fluid">
-    <form th:action="@{/secure/board/__${board.id}__/addcolumn}" method="POST">
-        <label th:text="#{board.addcolumn}"></label>
+    <form th:action="@{/secure/board/__${board.id}__/createcolumn}" method="POST">
+        <label th:text="#{board.createcolumn}"></label>
         <input type="text" th:class="form-control" th:placeholder="#{board.columntitle}" th:name="columnTitle"/>
-        <button type="submit" class="btn btn-primary" th:text="#{board.button.addcolumn}"></button>
+        <button type="submit" class="btn btn-primary" th:text="#{board.button.createcolumn}"></button>
     </form>
     <div class="row">
         <div th:each="column : ${board.columns}" class="col-xs-3 well">
             <h3 th:text="${column.title}"></h3>
             <form th:action="@{/secure/board/__${board.id}__/removecolumn/__${column.id}__}" th:method="DELETE">
                 <input type="hidden" name="_method" value="delete"/>
-                <button type="submit" class="btn btn-primary" th:text="#{board.button.removecolumn}"></button>
+                <button type="submit" class="btn btn-danger" th:text="#{board.button.removecolumn}"></button>
             </form>
         </div>
     </div>
