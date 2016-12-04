@@ -6,10 +6,10 @@ import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 @ToString(callSuper = true, exclude = {"password", "passwordConfirmation"})
 @EqualsAndHashCode(callSuper = true)
@@ -30,16 +30,15 @@ public class UserDto extends BaseDto<Long> {
     @Size(min = 5)
     private String passwordConfirmation;
 
-    @NotNull
-    private Role role = Role.USER;
+    private Role role;
 
     private List<BoardDto> boards;
 
     private List<CardDto> cards;
 
     @Builder
-    public UserDto(Long id, String userName, String password, String passwordConfirmation, Role role,
-                   List<BoardDto> boards, List<CardDto> cards) {
+    public UserDto(final Long id, final String userName, final String password, final String passwordConfirmation,
+                   final Role role, final List<BoardDto> boards, final List<CardDto> cards) {
         super(id);
         this.userName = userName;
         this.password = password;
@@ -49,4 +48,31 @@ public class UserDto extends BaseDto<Long> {
         this.cards = cards;
     }
 
+    public static class UserDtoBuilder {
+
+        private Role role = Role.USER;
+        private List<BoardDto> boards = Collections.emptyList();
+        private List<CardDto> cards = Collections.emptyList();
+
+        public UserDtoBuilder role(final Role role) {
+            if (role != null) {
+                this.role = role;
+            }
+            return this;
+        }
+
+        public UserDtoBuilder boards(final List<BoardDto> boards) {
+            if (boards != null) {
+                this.boards = boards;
+            }
+            return this;
+        }
+
+        public UserDtoBuilder cards(final List<CardDto> cards) {
+            if (cards != null) {
+                this.cards = cards;
+            }
+            return this;
+        }
+    }
 }

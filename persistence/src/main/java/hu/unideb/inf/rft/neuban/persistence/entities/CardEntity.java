@@ -10,13 +10,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Table(name = "card")
 @Entity
 public class CardEntity extends SuperEntity<Long> {
+
+    private static final long serialVersionUID = 1L;
 
     @NotNull
     @Size(min = 2)
@@ -29,9 +30,12 @@ public class CardEntity extends SuperEntity<Long> {
     private String description;
 
     @Builder
-    public CardEntity(Long id, String title, String description) {
+    public CardEntity(final Long id, final String title, final String description) {
         super(id);
         this.title = title;
         this.description = description;
+    }
+
+    public static class CardEntityBuilder {
     }
 }

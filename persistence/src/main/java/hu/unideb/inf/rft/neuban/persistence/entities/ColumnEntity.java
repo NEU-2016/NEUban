@@ -5,11 +5,11 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Collections;
 import java.util.List;
 
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -29,9 +29,21 @@ public class ColumnEntity extends SuperEntity<Long> {
     private List<CardEntity> cards;
 
     @Builder
-    public ColumnEntity(Long id, String title, List<CardEntity> cards) {
+    public ColumnEntity(final Long id, final String title, final List<CardEntity> cards) {
         super(id);
         this.title = title;
         this.cards = cards;
+    }
+
+    public static class ColumnEntityBuilder {
+
+        private List<CardEntity> cards = Collections.emptyList();
+
+        public ColumnEntityBuilder cards(final List<CardEntity> cards) {
+            if (cards != null) {
+                this.cards = cards;
+            }
+            return this;
+        }
     }
 }

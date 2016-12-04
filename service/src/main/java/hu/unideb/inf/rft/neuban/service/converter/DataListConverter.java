@@ -3,7 +3,7 @@ package hu.unideb.inf.rft.neuban.service.converter;
 
 import java.util.List;
 
-public interface ListDataConverterService<SOURCE, TARGET> {
+public interface DataListConverter<SOURCE, TARGET> {
 
     List<SOURCE> convertToSources(List<TARGET> targets);
 
