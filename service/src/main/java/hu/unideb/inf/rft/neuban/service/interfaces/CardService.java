@@ -2,13 +2,11 @@ package hu.unideb.inf.rft.neuban.service.interfaces;
 
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.exceptions.*;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface CardService {
-
-    Optional<CardDto> get(Long cardId);
+public interface CardService extends SingleDataGetService<CardDto, Long> {
 
     List<CardDto> getAllByColumnId(Long columnId);
 

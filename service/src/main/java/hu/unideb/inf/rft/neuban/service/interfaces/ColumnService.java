@@ -4,13 +4,11 @@ import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
 import hu.unideb.inf.rft.neuban.service.exceptions.BoardNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.ColumnAlreadyExistsException;
 import hu.unideb.inf.rft.neuban.service.exceptions.ColumnNotFoundException;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface ColumnService {
-
-    Optional<ColumnDto> get(Long columnId);
+public interface ColumnService extends SingleDataGetService<ColumnDto, Long> {
 
     List<ColumnDto> getAllByBoardId(Long boardId);
 
