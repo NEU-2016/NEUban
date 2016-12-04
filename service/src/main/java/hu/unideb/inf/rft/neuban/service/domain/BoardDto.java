@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
@@ -20,12 +19,24 @@ public class BoardDto extends BaseDto<Long> {
     @Size(min = 2, max = 30)
     private String title;
 
-    private List<ColumnDto> columns = Collections.emptyList();
+    private List<ColumnDto> columns;
 
     @Builder
-    public BoardDto(Long id, String title, List<ColumnDto> columns) {
+    public BoardDto(final Long id, final String title, final List<ColumnDto> columns) {
         super(id);
         this.title = title;
         this.columns = columns;
+    }
+
+    public static class BoardDtoBuilder {
+
+        private List<ColumnDto> columns = Collections.emptyList();
+
+        public BoardDtoBuilder columns(final List<ColumnDto> columns) {
+            if (columns != null) {
+                this.columns = columns;
+            }
+            return this;
+        }
     }
 }
