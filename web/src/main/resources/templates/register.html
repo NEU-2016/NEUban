@@ -6,20 +6,20 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
 </head>
 <body>
-<div th:class="container">
+<div class="container">
     <h2 th:text="#{register.header}"></h2>
     <form action="#" th:action="@{/register}" th:object="${userDto}" method="POST">
-        <p th:class="bg-danger" th:if="${userName}" th:text="#{register.error.username}"></p>
+        <p class="bg-danger" th:if="${userName}" th:text="#{register.error.username}"></p>
         <label th:text="#{register.username}"></label>
-        <input type="text" th:class="form-control" th:field="*{userName}"
+        <input type="text" class="form-control" th:field="*{userName}"
                th:placeholder="#{register.username}"/>
-        <p th:class="bg-danger" th:if="${password}"  th:text="#{register.error.password}"></p>
+        <p class="bg-danger" th:if="${password}"  th:text="#{register.error.password}"></p>
         <label th:text="#{register.password}"></label>
-        <input type="password" th:class="form-control" th:field="*{password}"
+        <input type="password" class="form-control" th:field="*{password}"
                th:placeholder="#{register.password}"/>
-        <p th:class="bg-danger" th:if="${passwordConfirmation}" th:text="#{register.error.passwordconfirmation}"></p>
+        <p class="bg-danger" th:if="${passwordConfirmation}" th:text="#{register.error.passwordconfirmation}"></p>
         <label th:text="#{register.passwordconfirmation}"></label>
-        <input type="password" th:class="form-control" th:field="*{passwordConfirmation}"
+        <input type="password" class="form-control" th:field="*{passwordConfirmation}"
                th:placeholder="#{register.password}"/>
         <button type="submit" class="btn btn-primary" th:text="#{register.button.register}"></button>
     </form>

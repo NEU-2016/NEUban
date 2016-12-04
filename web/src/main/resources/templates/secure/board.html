@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="#{board.title}"></title>
+    <title text="#{board.title}"></title>
     <meta charset="utf-8"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
 </head>
 <body>
-<div th:class="container">
+<div class="container">
     <h2 th:text="#{board.header}"></h2>
     <h3 th:text="${board.title}"></h3>
     <form th:action="@{/secure/welcome}" method="GET">
@@ -19,7 +19,7 @@ TODO use a style that is horizontally scrollable with non-fixed sized columns
 <div class="container-fluid">
     <form th:action="@{/secure/board/__${board.id}__/createcolumn}" method="POST">
         <label th:text="#{board.createcolumn}"></label>
-        <input type="text" th:class="form-control" th:placeholder="#{board.columntitle}" th:name="columnTitle"/>
+        <input type="text" class="form-control" th:placeholder="#{board.columntitle}" name="columnTitle"/>
         <button type="submit" class="btn btn-primary" th:text="#{board.button.createcolumn}"></button>
     </form>
     <div class="row">
