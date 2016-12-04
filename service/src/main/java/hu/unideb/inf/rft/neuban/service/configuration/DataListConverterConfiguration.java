@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.WebApplicationContext;
 
-import static hu.unideb.inf.rft.neuban.service.provider.beanname.ConverterBeanNameProvider.*;
+import static hu.unideb.inf.rft.neuban.service.provider.beanname.SingleDataConverterBeanNameProvider.*;
 
 @Configuration
 public class DataListConverterConfiguration {
