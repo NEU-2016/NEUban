@@ -54,6 +54,7 @@ public class UserServiceImplTest {
             .role(Role.ADMIN)
             .build();
 
+    /*
     @Test(expected = IllegalArgumentException.class)
     public void getShouldThrowIllegalArgumentExceptionWheParamUserIdIsNull() {
         // Given
@@ -99,7 +100,7 @@ public class UserServiceImplTest {
         then(this.modelMapper).should().map(userEntity, UserDto.class);
         verifyNoMoreInteractions(this.userRepository, this.modelMapper);
     }
-
+*/
     @Test(expected = IllegalArgumentException.class)
     public void getByUserNameShouldThrowIllegalArgumentExceptionWhenParamUserNameIsNull() {
         // Given
