@@ -3,7 +3,7 @@ package hu.unideb.inf.rft.neuban.service.converter;
 
 import java.util.Optional;
 
-public interface SingleDataConverterService<SOURCE, TARGET> {
+public interface SingleDataConverter<SOURCE, TARGET> {
 
     Optional<SOURCE> convertToSource(TARGET target);
 
