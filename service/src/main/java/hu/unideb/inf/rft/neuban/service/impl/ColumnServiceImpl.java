@@ -1,16 +1,17 @@
 package hu.unideb.inf.rft.neuban.service.impl;
 
 import com.google.common.collect.Lists;
-import hu.unideb.inf.rft.neuban.persistence.entities.ColumnEntity;
 import hu.unideb.inf.rft.neuban.persistence.repositories.ColumnRepository;
-import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
 import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
-import hu.unideb.inf.rft.neuban.service.exceptions.BoardNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.ColumnAlreadyExistsException;
-import hu.unideb.inf.rft.neuban.service.exceptions.ColumnNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.BoardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.ColumnNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.DataNotFoundException;
 import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataUpdateService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,7 +22,8 @@ import org.springframework.util.Assert;
 import java.util.List;
 import java.util.Optional;
 
-import static hu.unideb.inf.rft.neuban.service.provider.beanname.CrudServiceBeanNameProvider.SINGLE_COLUMN_DATA_GET_SERVICE;
+import static hu.unideb.inf.rft.neuban.service.provider.beanname.SingleDataGetServiceBeanNameProvider.SINGLE_COLUMN_DATA_GET_SERVICE;
+import static hu.unideb.inf.rft.neuban.service.provider.beanname.SingleDataUpdateServiceBeanNameProvider.SINGLE_COLUMN_DATA_UPDATE_SERVICE;
 
 @Service
 public class ColumnServiceImpl implements ColumnService {
@@ -36,6 +38,10 @@ public class ColumnServiceImpl implements ColumnService {
     @Autowired
     @Qualifier(SINGLE_COLUMN_DATA_GET_SERVICE)
     private SingleDataGetService<ColumnDto, Long> singleColumnDataGetService;
+
+    @Autowired
+    @Qualifier(SINGLE_COLUMN_DATA_UPDATE_SERVICE)
+    private SingleDataUpdateService<ColumnDto> singleColumnDataUpdateService;
 
     @Transactional(readOnly = true)
     @Override
@@ -56,7 +62,7 @@ public class ColumnServiceImpl implements ColumnService {
 
     @Transactional
     @Override
-    public void save(final Long boardId, final ColumnDto columnDto) throws BoardNotFoundException, ColumnAlreadyExistsException {
+    public void save(final Long boardId, final ColumnDto columnDto) throws DataNotFoundException, ColumnAlreadyExistsException {
         Assert.notNull(columnDto);
         final BoardDto boardDto = this.boardService.get(boardId).orElseThrow(() -> new BoardNotFoundException(String.valueOf(boardId)));
 
@@ -70,14 +76,8 @@ public class ColumnServiceImpl implements ColumnService {
 
     @Transactional
     @Override
-    public void update(final ColumnDto columnDto) throws ColumnNotFoundException {
-        Assert.notNull(columnDto);
-
-        if (columnDto.getId() == null) {
-            throw new ColumnNotFoundException(String.valueOf(columnDto.getId()));
-        }
-
-        this.columnRepository.saveAndFlush(this.modelMapper.map(columnDto, ColumnEntity.class));
+    public void update(final ColumnDto columnDto) throws DataNotFoundException {
+        this.singleColumnDataUpdateService.update(columnDto);
     }
 
     @Transactional

@@ -2,10 +2,10 @@ package hu.unideb.inf.rft.neuban.service.impl;
 
 import hu.unideb.inf.rft.neuban.persistence.entities.UserEntity;
 import hu.unideb.inf.rft.neuban.persistence.repositories.UserRepository;
-import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 import hu.unideb.inf.rft.neuban.service.exceptions.NullFieldValueException;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Optional;
 
-import static hu.unideb.inf.rft.neuban.service.provider.beanname.CrudServiceBeanNameProvider.SINGLE_USER_DATA_GET_SERVICE;
+import static hu.unideb.inf.rft.neuban.service.provider.beanname.SingleDataGetServiceBeanNameProvider.SINGLE_USER_DATA_GET_SERVICE;
 
 @Service
 public class UserServiceImpl implements UserService {
