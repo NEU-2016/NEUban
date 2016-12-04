@@ -5,7 +5,6 @@ import hu.unideb.inf.rft.neuban.persistence.entities.CardEntity;
 import hu.unideb.inf.rft.neuban.persistence.repositories.CardRepository;
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
-import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 import hu.unideb.inf.rft.neuban.service.exceptions.*;
 import hu.unideb.inf.rft.neuban.service.interfaces.CardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
@@ -91,7 +90,17 @@ public class CardServiceImpl implements CardService {
         this.cardRepository.delete(cardId);
     }
 
-    @Transactional
+    @Override
+    public void addUserToCard(Long userId, Long cardId) throws UserNotFoundException, CardNotFoundException, UserAlreadyExistsOnCardException {
+
+    }
+
+    @Override
+    public void removeUserFromCard(Long userId, Long cardId) throws UserNotFoundException, CardNotFoundException, UserNotFoundOnCardException {
+
+    }
+
+    /*@Transactional
     @Override
     public void addUserToCard(final Long userId, final Long cardId) throws UserNotFoundException, CardNotFoundException, UserAlreadyExistsOnCardException {
         final UserDto userDto = this.userService.get(userId).orElseThrow(() -> new UserNotFoundException(String.valueOf(userId)));
@@ -115,5 +124,5 @@ public class CardServiceImpl implements CardService {
         }
         cardDto.getUsers().removeIf(actualUser -> actualUser.getId().equals(userDto.getId()));
         this.update(cardDto);
-    }
+    }*/
 }

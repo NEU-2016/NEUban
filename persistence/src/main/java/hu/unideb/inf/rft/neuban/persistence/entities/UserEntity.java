@@ -36,17 +36,24 @@ public class UserEntity extends SuperEntity<Long> {
             inverseJoinColumns = @JoinColumn(name = "board_id", referencedColumnName = "id"))
     private List<BoardEntity> boards;
 
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(name = "user_card_relation_table",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "card_id", referencedColumnName = "id"))
+    private List<CardEntity> cards;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
 
     @Builder
-    public UserEntity(Long id, String userName, String password, Role role, List<BoardEntity> boards) {
+    public UserEntity(Long id, String userName, String password, Role role, List<BoardEntity> boards, List<CardEntity> cards) {
         super(id);
         this.userName = userName;
         this.password = password;
         this.role = role;
         this.boards = boards;
+        this.cards = cards;
     }
 }

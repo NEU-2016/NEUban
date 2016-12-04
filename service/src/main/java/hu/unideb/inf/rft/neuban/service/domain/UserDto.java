@@ -35,15 +35,18 @@ public class UserDto extends BaseDto<Long> {
 
     private List<BoardDto> boards;
 
+    private List<CardDto> cards;
+
     @Builder
     public UserDto(Long id, String userName, String password, String passwordConfirmation, Role role,
-                   List<BoardDto> boards) {
+                   List<BoardDto> boards, List<CardDto> cards) {
         super(id);
         this.userName = userName;
         this.password = password;
         this.passwordConfirmation = passwordConfirmation;
         this.role = role;
         this.boards = boards;
+        this.cards = cards;
     }
 
 }

@@ -372,6 +372,7 @@ public class CardServiceImplTest {
         verifyNoMoreInteractions(this.cardRepository);
     }
 
+    /*
     @Test(expected = IllegalArgumentException.class)
     public void addUserToCardShouldThrowIllegalArgumentExceptionWhenParamUserIdIsNull() throws UserNotFoundException, UserAlreadyExistsOnCardException, CardNotFoundException {
         // Given
@@ -546,5 +547,5 @@ public class CardServiceImplTest {
         then(this.cardService).should().update(cardDtoArgumentCaptor.getValue());
 
         verifyNoMoreInteractions(this.userService);
-    }
+    }*/
 }
