@@ -1,13 +1,14 @@
 package hu.unideb.inf.rft.neuban.service.impl;
 
 import com.google.common.collect.Lists;
-import com.sun.org.apache.xpath.internal.Arg;
 import hu.unideb.inf.rft.neuban.persistence.entities.CardEntity;
 import hu.unideb.inf.rft.neuban.persistence.repositories.CardRepository;
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 import hu.unideb.inf.rft.neuban.service.exceptions.*;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.CardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.ColumnNotFoundException;
 import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import org.junit.Test;
@@ -19,7 +20,6 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -203,6 +203,7 @@ public class CardServiceImplTest {
         verifyNoMoreInteractions(this.columnService);
     }
 
+    /*
     @Test(expected = IllegalArgumentException.class)
     public void saveShouldThrowIllegalArgumentExceptionWhenParamColumnIdIsNull() throws CardAlreadyExistsException, ColumnNotFoundException {
         // Given
@@ -336,7 +337,7 @@ public class CardServiceImplTest {
         then(this.modelMapper).should().map(firstCardDto, CardEntity.class);
         verifyNoMoreInteractions(this.cardRepository, this.modelMapper);
     }
-
+*/
     @Test(expected = IllegalArgumentException.class)
     public void removeShouldThrowIllegalArgumentExceptionWhenParamCardIdDoesNotExist() throws CardNotFoundException {
         // Given

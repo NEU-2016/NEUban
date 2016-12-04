@@ -5,9 +5,9 @@ import hu.unideb.inf.rft.neuban.persistence.entities.ColumnEntity;
 import hu.unideb.inf.rft.neuban.persistence.repositories.ColumnRepository;
 import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
 import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
-import hu.unideb.inf.rft.neuban.service.exceptions.BoardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.BoardNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.ColumnAlreadyExistsException;
-import hu.unideb.inf.rft.neuban.service.exceptions.ColumnNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.ColumnNotFoundException;
 import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -163,7 +163,7 @@ public class ColumnServiceImplTest {
         then(this.boardService).should().get(BOARD_ID);
         verifyNoMoreInteractions(this.boardService);
     }
-
+/*
     @Test(expected = IllegalArgumentException.class)
     public void saveShouldThrowIllegalArgumentExceptionWhenParamBoardIdIsNull() throws ColumnAlreadyExistsException, BoardNotFoundException {
         // Given
@@ -297,7 +297,7 @@ public class ColumnServiceImplTest {
         then(this.modelMapper).should().map(firstColumnDto, ColumnEntity.class);
         verifyNoMoreInteractions(this.columnRepository, this.modelMapper);
     }
-
+*/
     @Test(expected = IllegalArgumentException.class)
     public void removeShouldThrowIllegalArgumentExceptionWhenParamColumnIdDoesNotExist() throws ColumnNotFoundException {
         // Given
