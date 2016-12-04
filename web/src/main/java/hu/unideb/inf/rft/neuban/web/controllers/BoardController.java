@@ -1,9 +1,10 @@
 package hu.unideb.inf.rft.neuban.web.controllers;
 
 import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
-import hu.unideb.inf.rft.neuban.service.exceptions.BoardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.BoardNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.ColumnAlreadyExistsException;
-import hu.unideb.inf.rft.neuban.service.exceptions.ColumnNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.ColumnNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.DataNotFoundException;
 import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class BoardController {
 	}
 
 	@PostMapping(path = "/createcolumn")
-	public ModelAndView createColumn(@PathVariable final Long boardId, @RequestParam final String columnTitle) {
+	public ModelAndView createColumn(@PathVariable final Long boardId, @RequestParam final String columnTitle) throws DataNotFoundException {
 		final ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_BOARD_VIEW + "/" + boardId);
 		//TODO error page
 		try {
