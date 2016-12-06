@@ -29,11 +29,15 @@ public class CardEntity extends SuperEntity<Long> {
     @Column(name = "description")
     private String description;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.REMOVE })
+    private List<CommentEntity> comments;
+
     @Builder
-    public CardEntity(final Long id, final String title, final String description) {
+    public CardEntity(final Long id, final String title, final String description, final comments) {
         super(id);
         this.title = title;
         this.description = description;
+	this.comments=comments;
     }
 
     public static class CardEntityBuilder {
