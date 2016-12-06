@@ -1,13 +1,12 @@
 package hu.unideb.inf.rft.neuban.service.interfaces;
 
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserService {
-
-	Optional<UserDto> get(Long userId);
+public interface UserService extends SingleDataGetService<UserDto, Long> {
 
 	List<UserDto> getAll();
 

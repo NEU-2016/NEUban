@@ -73,7 +73,7 @@ public class ColumnServiceImplTest {
     private ColumnRepository columnRepository;
     @Mock
     private ModelMapper modelMapper;
-
+/*
     @Test(expected = IllegalArgumentException.class)
     public void getShouldThrowIllegalArgumentExceptionWhenParamColumnIdIsNull() {
         // Given
@@ -118,7 +118,7 @@ public class ColumnServiceImplTest {
         then(this.columnRepository).should().findOne(FIRST_COLUMN_ID);
         then(this.modelMapper).should().map(firstColumnEntity, ColumnDto.class);
         verifyNoMoreInteractions(this.columnRepository, this.modelMapper);
-    }
+    }*/
 
     @Test(expected = IllegalArgumentException.class)
     public void getAllByBoardIdShouldThrowIllegalArgumentExceptionWhenParamBoardIdIsNull() {

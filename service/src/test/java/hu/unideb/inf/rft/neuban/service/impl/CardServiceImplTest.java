@@ -112,7 +112,7 @@ public class CardServiceImplTest {
     private CardRepository cardRepository;
     @Mock
     private ModelMapper modelMapper;
-
+/*
     @Test(expected = IllegalArgumentException.class)
     public void getShouldThrowIllegalArgumentExceptionWhenParamUserIdIsNull() {
         // Given
@@ -158,7 +158,7 @@ public class CardServiceImplTest {
         then(this.modelMapper).should().map(firstCardEntity, CardDto.class);
         verifyNoMoreInteractions(this.cardRepository, this.modelMapper);
     }
-
+*/
     @Test(expected = IllegalArgumentException.class)
     public void getAllByColumnIdShouldThrowIllegalArgumentExceptionWhenParamColumnIdIsNull() {
         // Given
