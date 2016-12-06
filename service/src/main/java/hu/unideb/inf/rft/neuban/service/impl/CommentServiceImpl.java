@@ -1,28 +1,34 @@
 package hu.unideb.inf.rft.neuban.service.impl;
 
+import static hu.unideb.inf.rft.neuban.service.provider.beanname.SingleDataGetServiceBeanNameProvider.SINGLE_BOARD_DATA_GET_SERVICE;
+import static hu.unideb.inf.rft.neuban.service.provider.beanname.SingleDataUpdateServiceBeanNameProvider.SINGLE_BOARD_DATA_UPDATE_SERVICE;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import com.google.common.collect.Lists;
 
-import hu.unideb.inf.rft.neuban.persistence.entities.CommentEntity;
 import hu.unideb.inf.rft.neuban.persistence.repositories.CommentRepository;
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.domain.CommentDto;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
-import hu.unideb.inf.rft.neuban.service.exceptions.CardNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.CommentNotFoundException;
-import hu.unideb.inf.rft.neuban.service.exceptions.UserNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.CardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.DataNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.UserNotFoundException;
 import hu.unideb.inf.rft.neuban.service.interfaces.CardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.CommentService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataUpdateService;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -39,18 +45,17 @@ public class CommentServiceImpl implements CommentService {
 	@Autowired
 	private ModelMapper modelMapper;
 
-	@Transactional(readOnly = true)
+	@Autowired
+	@Qualifier(SINGLE_BOARD_DATA_GET_SERVICE)
+	private SingleDataGetService<CommentDto, Long> singleCommentDataGetService;
+
+	@Autowired
+	@Qualifier(SINGLE_BOARD_DATA_UPDATE_SERVICE)
+	private SingleDataUpdateService<CommentDto> singleCommentDataUpdateService;
+
 	@Override
-	public Optional<CommentDto> get(final Long commentId) {
-		Assert.notNull(commentId);
-
-		final Optional<CommentEntity> commentEntityOptional = Optional
-				.ofNullable(this.commentRepository.findOne(commentId));
-
-		if (commentEntityOptional.isPresent()) {
-			return Optional.of(modelMapper.map(commentEntityOptional.get(), CommentDto.class));
-		}
-		return Optional.empty();
+	public Optional<CommentDto> get(Long commentId) {
+		return this.singleCommentDataGetService.get(commentId);
 	}
 
 	@Transactional(readOnly = true)
@@ -67,21 +72,11 @@ public class CommentServiceImpl implements CommentService {
 		return Lists.newArrayList();
 	}
 
-	// @Transactional
-	// @Override
-	// public void update(final CommentDto commentDto) throws
-	// CommentNotFoundException {
-	// Assert.notNull(commentDto);
-	// Assert.notNull(commentDto.getId());
-	//
-	// final CommentEntity commentEntity =
-	// Optional.ofNullable(this.commentRepository.findOne(commentDto.getId()))
-	// .orElseThrow(() -> new
-	// CommentNotFoundException(String.valueOf(commentDto.getId())));
-	//
-	// this.commentRepository.saveAndFlush(commentEntity);
-	//
-	// }
+	@Override
+	public void update(CommentDto commentDto) throws DataNotFoundException {
+		singleCommentDataUpdateService.update(commentDto);
+
+	}
 
 	@Transactional
 	@Override
@@ -98,8 +93,7 @@ public class CommentServiceImpl implements CommentService {
 
 	@Transactional
 	@Override
-	public void addComment(final Long userId, final Long cardId, final String content)
-			throws UserNotFoundException, CardNotFoundException {
+	public void addComment(final Long userId, final Long cardId, final String content) throws DataNotFoundException {
 
 		Assert.notNull(userId);
 		Assert.notNull(cardId);

@@ -29,9 +29,10 @@ import hu.unideb.inf.rft.neuban.persistence.repositories.CommentRepository;
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.domain.CommentDto;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
-import hu.unideb.inf.rft.neuban.service.exceptions.CardNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.CommentNotFoundException;
-import hu.unideb.inf.rft.neuban.service.exceptions.UserNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.CardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.DataNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.UserNotFoundException;
 import hu.unideb.inf.rft.neuban.service.interfaces.CardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 
@@ -194,28 +195,28 @@ public class CommentServiceImplTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void addCommentShouldThrowIllegalArgumentExceptionWhenParamUserIdIsNull()
-			throws UserNotFoundException, CardNotFoundException {
+			throws DataNotFoundException {
 		// When
 		commentService.addComment(null, CARD_ID, COMMENT_CONTENT);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void addCommentShouldThrowIllegalArgumentExceptionWhenParamCardIdIsNull()
-			throws UserNotFoundException, CardNotFoundException {
+			throws DataNotFoundException {
 		// When
 		commentService.addComment(USER_ID, null, COMMENT_CONTENT);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void addCommentShouldThrowIllegalArgumentExceptionWhenParamContentIsNull()
-			throws UserNotFoundException, CardNotFoundException {
+			throws DataNotFoundException {
 		// When
 		commentService.addComment(USER_ID, CARD_ID, null);
 	}
 
 	@Test
 	public void addCommentShouldThrowCommentNotFoundExceptionWhenParamCommentDoesNotExists()
-			throws CardNotFoundException, UserNotFoundException {
+			throws DataNotFoundException {
 
 		// Given
 		given(this.cardService.get(CARD_ID)).willReturn(Optional.empty());
@@ -227,7 +228,7 @@ public class CommentServiceImplTest {
 
 	@Test
 	public void addCommentShouldThrowUserNotFoundExceptionWhenParamCommentDoesNotExists()
-			throws CardNotFoundException, UserNotFoundException {
+			throws DataNotFoundException {
 
 		// Given
 		given(this.cardService.get(CARD_ID)).willReturn(Optional.of(cardDto));
@@ -239,7 +240,7 @@ public class CommentServiceImplTest {
 	}
 
 	@Test
-	public void addCommentTest() throws UserNotFoundException, CardNotFoundException {
+	public void addCommentTest() throws DataNotFoundException {
 		UserDto userDto = UserDto.builder().id(USER_ID).userName("USERNAME").password("PASSWORD")
 				.boards(com.google.common.collect.Lists.newArrayList()).build();
 		CardDto CardDtoBeforeSave = CardDto.builder().id(CARD_ID).comments(Lists.newArrayList())
