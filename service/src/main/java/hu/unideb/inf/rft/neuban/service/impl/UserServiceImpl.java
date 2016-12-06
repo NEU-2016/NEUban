@@ -19,7 +19,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Optional;
 
-import static hu.unideb.inf.rft.neuban.service.configuration.CrudServiceBeanNameProvider.SINGLE_USER_DATA_GET_SERVICE;
+import static hu.unideb.inf.rft.neuban.service.provider.beanname.CrudServiceBeanNameProvider.SINGLE_USER_DATA_GET_SERVICE;
 
 @Service
 public class UserServiceImpl implements UserService {

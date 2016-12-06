@@ -21,7 +21,7 @@ import org.springframework.util.Assert;
 import java.util.List;
 import java.util.Optional;
 
-import static hu.unideb.inf.rft.neuban.service.configuration.CrudServiceBeanNameProvider.SINGLE_COLUMN_DATA_GET_SERVICE;
+import static hu.unideb.inf.rft.neuban.service.provider.beanname.CrudServiceBeanNameProvider.SINGLE_COLUMN_DATA_GET_SERVICE;
 
 @Service
 public class ColumnServiceImpl implements ColumnService {

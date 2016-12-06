@@ -20,7 +20,7 @@ import org.springframework.util.Assert;
 import java.util.List;
 import java.util.Optional;
 
-import static hu.unideb.inf.rft.neuban.service.configuration.CrudServiceBeanNameProvider.SINGLE_CARD_DATA_GET_SERVICE;
+import static hu.unideb.inf.rft.neuban.service.provider.beanname.CrudServiceBeanNameProvider.SINGLE_CARD_DATA_GET_SERVICE;
 
 @Service
 public class CardServiceImpl implements CardService {

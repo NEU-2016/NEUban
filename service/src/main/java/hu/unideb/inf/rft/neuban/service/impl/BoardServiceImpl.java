@@ -25,7 +25,7 @@ import hu.unideb.inf.rft.neuban.service.exceptions.RelationNotFoundException;
 import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 
-import static hu.unideb.inf.rft.neuban.service.configuration.CrudServiceBeanNameProvider.SINGLE_BOARD_DATA_GET_SERVICE;
+import static hu.unideb.inf.rft.neuban.service.provider.beanname.CrudServiceBeanNameProvider.SINGLE_BOARD_DATA_GET_SERVICE;
 
 @Service
 public class BoardServiceImpl implements BoardService {
