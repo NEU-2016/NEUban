@@ -1,15 +1,21 @@
 package hu.unideb.inf.rft.neuban.service.impl;
 
 import com.google.common.collect.Lists;
-import hu.unideb.inf.rft.neuban.persistence.entities.CardEntity;
 import hu.unideb.inf.rft.neuban.persistence.repositories.CardRepository;
-import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
-import hu.unideb.inf.rft.neuban.service.exceptions.*;
+import hu.unideb.inf.rft.neuban.service.exceptions.CardAlreadyExistsException;
+import hu.unideb.inf.rft.neuban.service.exceptions.UserAlreadyExistsOnCardException;
+import hu.unideb.inf.rft.neuban.service.exceptions.UserNotFoundOnCardException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.CardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.ColumnNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.DataNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.UserNotFoundException;
 import hu.unideb.inf.rft.neuban.service.interfaces.CardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataUpdateService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,7 +26,8 @@ import org.springframework.util.Assert;
 import java.util.List;
 import java.util.Optional;
 
-import static hu.unideb.inf.rft.neuban.service.provider.beanname.CrudServiceBeanNameProvider.SINGLE_CARD_DATA_GET_SERVICE;
+import static hu.unideb.inf.rft.neuban.service.provider.beanname.SingleDataGetServiceBeanNameProvider.SINGLE_CARD_DATA_GET_SERVICE;
+import static hu.unideb.inf.rft.neuban.service.provider.beanname.SingleDataUpdateServiceBeanNameProvider.SINGLE_CARD_DATA_UPDATE_SERVICE;
 
 @Service
 public class CardServiceImpl implements CardService {
@@ -37,6 +44,10 @@ public class CardServiceImpl implements CardService {
     @Autowired
     @Qualifier(SINGLE_CARD_DATA_GET_SERVICE)
     private SingleDataGetService<CardDto, Long> singleCardDataGetService;
+
+    @Autowired
+    @Qualifier(SINGLE_CARD_DATA_UPDATE_SERVICE)
+    private SingleDataUpdateService<CardDto> singleCardDataUpdateService;
 
     @Transactional(readOnly = true)
     @Override
@@ -57,7 +68,7 @@ public class CardServiceImpl implements CardService {
 
     @Transactional
     @Override
-    public void save(final Long columnId, final CardDto cardDto) throws ColumnNotFoundException, CardAlreadyExistsException {
+    public void save(final Long columnId, final CardDto cardDto) throws DataNotFoundException, CardAlreadyExistsException {
         Assert.notNull(cardDto);
         final ColumnDto columnDto = this.columnService.get(columnId).orElseThrow(() -> new ColumnNotFoundException(String.valueOf(columnId)));
 
@@ -71,13 +82,8 @@ public class CardServiceImpl implements CardService {
 
     @Transactional
     @Override
-    public void update(final CardDto cardDto) throws CardNotFoundException {
-        Assert.notNull(cardDto);
-
-        if (cardDto.getId() == null) {
-            throw new CardNotFoundException(String.valueOf(cardDto.getId()));
-        }
-        this.cardRepository.saveAndFlush(this.modelMapper.map(cardDto, CardEntity.class));
+    public void update(final CardDto cardDto) throws DataNotFoundException {
+        this.singleCardDataUpdateService.update(cardDto);
     }
 
     @Transactional

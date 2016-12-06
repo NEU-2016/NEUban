@@ -1,8 +1,8 @@
 package hu.unideb.inf.rft.neuban.service.provider.beanname;
 
 
-public class ConverterBeanNameProvider {
-    private ConverterBeanNameProvider() {}
+public class SingleDataConverterBeanNameProvider {
+    private SingleDataConverterBeanNameProvider() {}
 
     public static final String SINGLE_USER_DATA_CONVERTER = "singleUserDataConverter";
     public static final String SINGLE_BOARD_DATA_CONVERTER = "singleBoardDataConverter";

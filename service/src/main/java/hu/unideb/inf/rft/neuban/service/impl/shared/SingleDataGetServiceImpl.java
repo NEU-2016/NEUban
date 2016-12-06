@@ -3,8 +3,8 @@ package hu.unideb.inf.rft.neuban.service.impl.shared;
 
 import hu.unideb.inf.rft.neuban.persistence.entities.SuperEntity;
 import hu.unideb.inf.rft.neuban.service.converter.SingleDataConverter;
-import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 import hu.unideb.inf.rft.neuban.service.domain.BaseDto;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.util.Assert;
 
@@ -13,15 +13,10 @@ import java.util.Optional;
 
 public class SingleDataGetServiceImpl<ENTITY extends SuperEntity<ID>, DTO extends BaseDto<ID>, ID extends Serializable> implements SingleDataGetService<DTO, ID> {
 
-    private final Class<ENTITY> entityType;
-    private final Class<DTO> dtoType;
     private final JpaRepository<ENTITY, ID> repository;
     private final SingleDataConverter<ENTITY, DTO> singleDataConverter;
 
-    public SingleDataGetServiceImpl(final Class<ENTITY> entityType, final Class<DTO> dtoType,
-                                    final JpaRepository repository, final SingleDataConverter singleDataConverter) {
-        this.entityType = entityType;
-        this.dtoType = dtoType;
+    public SingleDataGetServiceImpl(final JpaRepository repository, final SingleDataConverter singleDataConverter) {
         this.repository = repository;
         this.singleDataConverter = singleDataConverter;
     }

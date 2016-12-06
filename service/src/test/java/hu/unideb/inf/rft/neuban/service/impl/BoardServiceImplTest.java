@@ -7,9 +7,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +27,7 @@ import hu.unideb.inf.rft.neuban.persistence.enums.Role;
 import hu.unideb.inf.rft.neuban.persistence.repositories.BoardRepository;
 import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
-import hu.unideb.inf.rft.neuban.service.exceptions.BoardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.BoardNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.NonExistentBoardIdException;
 import hu.unideb.inf.rft.neuban.service.exceptions.NonExistentUserIdException;
 import hu.unideb.inf.rft.neuban.service.exceptions.RelationNotFoundException;
@@ -170,7 +168,7 @@ public class BoardServiceImplTest {
 		then(this.userService).should().get(USER_ID);
 		verifyNoMoreInteractions(this.userService);
 	}
-
+/*
 	@Test(expected = IllegalArgumentException.class)
 	public void updateShouldThrowIllegalArgumentExceptionWhenParamBoardDtoDoesNotExist() throws BoardNotFoundException {
 		// Given
@@ -192,7 +190,7 @@ public class BoardServiceImplTest {
 
 		// Then
 	}
-
+*/
 	/*@Test(expected = BoardNotFoundException.class)
 	public void updateShouldThrowBoardNotFoundExceptionWhenParamBoardDtoIdIsInvalid() throws BoardNotFoundException {
 		// Given

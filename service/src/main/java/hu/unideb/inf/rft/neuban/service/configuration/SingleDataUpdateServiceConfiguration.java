@@ -9,7 +9,12 @@ import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.BoardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.CardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.ColumnNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.UserNotFoundException;
 import hu.unideb.inf.rft.neuban.service.impl.shared.SingleDataGetServiceImpl;
+import hu.unideb.inf.rft.neuban.service.impl.shared.SingleDataUpdateServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,32 +25,36 @@ import static hu.unideb.inf.rft.neuban.service.provider.beanname.SingleDataConve
 import static hu.unideb.inf.rft.neuban.service.provider.beanname.JPARepositoryBeanNameProvider.*;
 
 @Configuration
-public class SingleDataGetServiceConfiguration {
+public class SingleDataUpdateServiceConfiguration {
 
     @Autowired
     private WebApplicationContext context;
 
     @Bean
-    public SingleDataGetServiceImpl<UserEntity, UserDto, Long> singleUserDataGetService() {
-        return new SingleDataGetServiceImpl<>(this.context.getBean(USER_REPOSITORY, JpaRepository.class),
+    public SingleDataUpdateServiceImpl<UserEntity, UserDto, Long, UserNotFoundException> singleUserDataUpdateService() {
+        return new SingleDataUpdateServiceImpl<>(UserNotFoundException.class,
+                this.context.getBean(USER_REPOSITORY, JpaRepository.class),
                 this.context.getBean(SINGLE_USER_DATA_CONVERTER, SingleDataConverter.class));
     }
 
     @Bean
-    public SingleDataGetServiceImpl<BoardEntity, BoardDto, Long> singleBoardDataGetService() {
-        return new SingleDataGetServiceImpl<>(this.context.getBean(BOARD_REPOSITORY, JpaRepository.class),
+    public SingleDataUpdateServiceImpl<BoardEntity, BoardDto, Long, BoardNotFoundException> singleBoardDataUpdateService() {
+        return new SingleDataUpdateServiceImpl<>(BoardNotFoundException.class,
+                this.context.getBean(BOARD_REPOSITORY, JpaRepository.class),
                 this.context.getBean(SINGLE_BOARD_DATA_CONVERTER, SingleDataConverter.class));
     }
 
     @Bean
-    public SingleDataGetServiceImpl<ColumnEntity, ColumnDto, Long> singleColumnDataGetService() {
-        return new SingleDataGetServiceImpl<>(this.context.getBean(COLUMN_REPOSITORY, JpaRepository.class),
+    public SingleDataUpdateServiceImpl<ColumnEntity, ColumnDto, Long, ColumnNotFoundException> singleColumnDataUpdateService() {
+        return new SingleDataUpdateServiceImpl<>(ColumnNotFoundException.class,
+                this.context.getBean(COLUMN_REPOSITORY, JpaRepository.class),
                 this.context.getBean(SINGLE_COLUMN_DATA_CONVERTER, SingleDataConverter.class));
     }
 
     @Bean
-    public SingleDataGetServiceImpl<CardEntity, CardDto, Long> singleCardDataGetService() {
-        return new SingleDataGetServiceImpl<>(this.context.getBean(CARD_REPOSITORY, JpaRepository.class),
+    public SingleDataUpdateServiceImpl<CardEntity, CardDto, Long, CardNotFoundException> singleCardDataUpdateService() {
+        return new SingleDataUpdateServiceImpl<>(CardNotFoundException.class,
+                this.context.getBean(CARD_REPOSITORY, JpaRepository.class),
                 this.context.getBean(SINGLE_CARD_DATA_CONVERTER, SingleDataConverter.class));
     }
 }

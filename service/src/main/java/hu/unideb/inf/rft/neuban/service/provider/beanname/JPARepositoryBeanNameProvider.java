@@ -1,8 +1,8 @@
 package hu.unideb.inf.rft.neuban.service.provider.beanname;
 
 
-public class RepositoryBeanNameProvider {
-    private RepositoryBeanNameProvider() {
+public class JPARepositoryBeanNameProvider {
+    private JPARepositoryBeanNameProvider() {
     }
 
     public static final String USER_REPOSITORY = "userRepository";

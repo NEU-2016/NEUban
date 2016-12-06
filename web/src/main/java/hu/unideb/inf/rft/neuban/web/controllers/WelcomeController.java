@@ -1,7 +1,7 @@
 package hu.unideb.inf.rft.neuban.web.controllers;
 
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
-import hu.unideb.inf.rft.neuban.service.exceptions.BoardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.BoardNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.NonExistentUserIdException;
 import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
