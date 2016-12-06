@@ -7,7 +7,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,7 +50,7 @@ public class CommentServiceImplTest {
 	private CardService cardService;
 	@Mock
 	private CommentRepository commentRepository;
-	
+
 	@Mock
 	private CardRepository cardrepository;
 
@@ -85,46 +84,6 @@ public class CommentServiceImplTest {
 
 	private final Optional<CardDto> cardDtoWithTwoComments = Optional.of(CardDto.builder().id(CARD_ID_WITH_TWO_COMMENTS)
 			.title(CARD_TITLE).comments(Lists.newArrayList(commentDto, newerCommentDto)).build());
-
-	@Test(expected = IllegalArgumentException.class)
-	public void getShouldThrowIllegalArgumentExceptionWhenParamColumnIdIsNull() {
-		// When
-		commentService.get(null);
-	}
-
-	@Test
-	public void getShouldReturnWithEmptyOptionalWhenCommentDoesNotExist() {
-		// Given
-		given(this.commentRepository.findOne(COMMENT_ID)).willReturn(null);
-
-		// When
-		final Optional<CommentDto> result = this.commentService.get(COMMENT_ID);
-
-		// Then
-		assertThat(result, notNullValue());
-		assertThat(result.isPresent(), is(false));
-
-		then(this.commentRepository).should().findOne(COMMENT_ID);
-		verifyNoMoreInteractions(this.commentRepository);
-		verifyZeroInteractions(this.modelMapper);
-	}
-
-	@Test
-	public void getShouldReturnWithNotEmptyOptionalWhenCommentDoesExist() {
-		// Given
-
-		given(this.commentRepository.findOne(COMMENT_ID)).willReturn(commentEntity);
-		given(this.modelMapper.map(commentEntity, CommentDto.class)).willReturn(commentDto);
-
-		// When
-
-		final Optional<CommentDto> actualCommentDto = commentService.get(COMMENT_ID);
-
-		// Then
-		assertThat(actualCommentDto, notNullValue());
-		assertThat(actualCommentDto.isPresent(), is(true));
-		assertThat(actualCommentDto.get(), equalTo(commentDto));
-	}
 
 	@Test
 	public void getAllShouldReturnEmptyListWhenCardDoesNotExist() throws CardNotFoundException {
@@ -194,22 +153,19 @@ public class CommentServiceImplTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void addCommentShouldThrowIllegalArgumentExceptionWhenParamUserIdIsNull()
-			throws DataNotFoundException {
+	public void addCommentShouldThrowIllegalArgumentExceptionWhenParamUserIdIsNull() throws DataNotFoundException {
 		// When
 		commentService.addComment(null, CARD_ID, COMMENT_CONTENT);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void addCommentShouldThrowIllegalArgumentExceptionWhenParamCardIdIsNull()
-			throws DataNotFoundException {
+	public void addCommentShouldThrowIllegalArgumentExceptionWhenParamCardIdIsNull() throws DataNotFoundException {
 		// When
 		commentService.addComment(USER_ID, null, COMMENT_CONTENT);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void addCommentShouldThrowIllegalArgumentExceptionWhenParamContentIsNull()
-			throws DataNotFoundException {
+	public void addCommentShouldThrowIllegalArgumentExceptionWhenParamContentIsNull() throws DataNotFoundException {
 		// When
 		commentService.addComment(USER_ID, CARD_ID, null);
 	}
@@ -227,8 +183,7 @@ public class CommentServiceImplTest {
 	}
 
 	@Test
-	public void addCommentShouldThrowUserNotFoundExceptionWhenParamCommentDoesNotExists()
-			throws DataNotFoundException {
+	public void addCommentShouldThrowUserNotFoundExceptionWhenParamCommentDoesNotExists() throws DataNotFoundException {
 
 		// Given
 		given(this.cardService.get(CARD_ID)).willReturn(Optional.of(cardDto));
