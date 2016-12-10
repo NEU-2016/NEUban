@@ -7,11 +7,14 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataUpdateService;
 import org.assertj.core.util.Lists;
 import org.junit.Rule;
 import org.junit.Test;
@@ -74,13 +77,16 @@ public class BoardServiceImplTest {
 	private BoardRepository boardRepository;
 	@Mock
 	private ModelMapper modelMapper;
+	@Mock
+	private SingleDataGetService<BoardDto, Long> singleBoardDataGetService;
 
 	@Rule
 	public final ExpectedException expectedException = ExpectedException.none();
-/*
+
 	@Test(expected = IllegalArgumentException.class)
 	public void getShouldThrowIllegalArgumentExceptionWhenParamBoardIdIsNull() {
 		// Given
+		given(this.singleBoardDataGetService.get(null)).willThrow(IllegalArgumentException.class);
 
 		// When
 		this.boardService.get(null);
@@ -91,7 +97,7 @@ public class BoardServiceImplTest {
 	@Test
 	public void getShouldReturnEmptyOptionalWhenBoardDoesNotExist() {
 		// Given
-		given(this.boardRepository.findOne(BOARD_ID)).willReturn(null);
+		given(this.singleBoardDataGetService.get(BOARD_ID)).willReturn(Optional.empty());
 
 		// When
 		Optional<BoardDto> result = this.boardService.get(BOARD_ID);
@@ -100,16 +106,14 @@ public class BoardServiceImplTest {
 		assertThat(result, notNullValue());
 		assertThat(result.isPresent(), is(false));
 
-		then(this.boardRepository).should().findOne(BOARD_ID);
-		verifyZeroInteractions(this.modelMapper);
-		verifyNoMoreInteractions(this.boardRepository);
+		then(this.singleBoardDataGetService).should().get(BOARD_ID);
+		verifyNoMoreInteractions(this.singleBoardDataGetService);
 	}
 
 	@Test
-	public void getShouldReturnExistingBoardWithOptionalWhenBoardExists() {
+	public void getShouldReturnWithNonEmptyOptionalWhenBoardDoesExist() {
 		// Given
-		given(this.boardRepository.findOne(BOARD_ID)).willReturn(boardEntity);
-		given(this.modelMapper.map(boardEntity, BoardDto.class)).willReturn(boardDto);
+		given(this.singleBoardDataGetService.get(BOARD_ID)).willReturn(Optional.of(boardDto));
 
 		// When
 		Optional<BoardDto> result = this.boardService.get(BOARD_ID);
@@ -119,11 +123,10 @@ public class BoardServiceImplTest {
 		assertThat(result.isPresent(), is(true));
 		assertThat(result.get(), equalTo(boardDto));
 
-		then(this.boardRepository).should().findOne(BOARD_ID);
-		then(this.modelMapper).should().map(boardEntity, BoardDto.class);
-		verifyNoMoreInteractions(this.boardRepository, this.modelMapper);
+		then(this.singleBoardDataGetService).should().get(BOARD_ID);
+		verifyNoMoreInteractions(this.singleBoardDataGetService);
 	}
-*/
+
 	@Test(expected = IllegalArgumentException.class)
 	public void getAllByUserIdShouldThrowIllegalArgumentExceptionWhenParamUserIdIsNull() {
 		// Given
