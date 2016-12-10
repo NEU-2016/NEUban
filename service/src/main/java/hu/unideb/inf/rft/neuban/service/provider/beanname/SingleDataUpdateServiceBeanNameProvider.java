@@ -8,4 +8,5 @@ public class SingleDataUpdateServiceBeanNameProvider {
     public static final String SINGLE_BOARD_DATA_UPDATE_SERVICE = "singleBoardDataUpdateService";
     public static final String SINGLE_COLUMN_DATA_UPDATE_SERVICE = "singleColumnDataUpdateService";
     public static final String SINGLE_CARD_DATA_UPDATE_SERVICE = "singleCardDataUpdateService";
+	public static final String SINGLE_COMMENT_DATA_UPDATE_SERVICE = "singleCommentDataUpdateService";
 }

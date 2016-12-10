@@ -33,5 +33,13 @@ public class CardDto extends BaseDto<Long> {
 	}
 
 	public static class CardDtoBuilder {
+
+		public CardDtoBuilder comments(final List<CommentDto> comments) {
+			if (comments != null) {
+				this.comments = comments;
+			}
+			return this;
+		}
+
 	}
 }

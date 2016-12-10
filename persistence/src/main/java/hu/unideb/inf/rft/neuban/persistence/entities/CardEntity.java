@@ -1,11 +1,13 @@
 package hu.unideb.inf.rft.neuban.persistence.entities;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -38,6 +40,7 @@ public class CardEntity extends SuperEntity<Long> {
 	@Column(name = "description")
 	private String description;
 
+	@JoinColumn(name = "card_id")
 	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.REMOVE })
 	private List<CommentEntity> comments;
 
@@ -50,5 +53,14 @@ public class CardEntity extends SuperEntity<Long> {
 	}
 
 	public static class CardEntityBuilder {
+
+		private List<CommentEntity> comments = Collections.emptyList();
+
+		public CardEntityBuilder comments(final List<CommentEntity> comments) {
+			if (comments != null) {
+				this.comments = comments;
+			}
+			return this;
+		}
 	}
 }

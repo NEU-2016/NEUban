@@ -8,7 +8,6 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,7 +15,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -32,17 +30,19 @@ public class CommentEntity extends SuperEntity<Long> {
 	private String content;
 
 	@NotNull
-	@Column(name = "createdDateTime")
-	private LocalDateTime createdDateTime;
+	@Column(name = "created_time")
+	private LocalDateTime created_time;
 
-	@Column(name = "userId")
+	@NotNull
+	@Column(name = "user_id")
 	private UserEntity user;
 
 	@Builder
-	public CommentEntity(Long id, String content, LocalDateTime createdDateTime, UserEntity user) {
+	public CommentEntity(final Long id, final String content, final LocalDateTime createdDateTime,
+			final UserEntity user) {
 		super(id);
 		this.content = content;
-		this.createdDateTime = createdDateTime;
+		this.created_time = createdDateTime;
 		this.user = user;
 	}
 

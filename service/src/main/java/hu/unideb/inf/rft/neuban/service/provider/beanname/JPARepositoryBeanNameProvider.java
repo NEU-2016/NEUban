@@ -9,5 +9,6 @@ public class JPARepositoryBeanNameProvider {
     public static final String BOARD_REPOSITORY = "boardRepository";
     public static final String COLUMN_REPOSITORY = "columnRepository";
     public static final String CARD_REPOSITORY = "cardRepository";
+    public static final String COMMENT_REPOSITORY = "commentRepository";
 
 }

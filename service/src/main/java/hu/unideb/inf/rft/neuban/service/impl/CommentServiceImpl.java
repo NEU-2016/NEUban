@@ -1,13 +1,9 @@
 package hu.unideb.inf.rft.neuban.service.impl;
 
-import static hu.unideb.inf.rft.neuban.service.provider.beanname.SingleDataGetServiceBeanNameProvider.SINGLE_BOARD_DATA_GET_SERVICE;
-import static hu.unideb.inf.rft.neuban.service.provider.beanname.SingleDataUpdateServiceBeanNameProvider.SINGLE_BOARD_DATA_UPDATE_SERVICE;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -30,6 +26,10 @@ import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataUpdateService;
 
+import static hu.unideb.inf.rft.neuban.service.provider.beanname.SingleDataGetServiceBeanNameProvider.SINGLE_COMMENT_DATA_GET_SERVICE;
+import static hu.unideb.inf.rft.neuban.service.provider.beanname.SingleDataUpdateServiceBeanNameProvider.SINGLE_COMMENT_DATA_UPDATE_SERVICE;
+
+
 @Service
 public class CommentServiceImpl implements CommentService {
 
@@ -42,19 +42,16 @@ public class CommentServiceImpl implements CommentService {
 	@Autowired
 	private CardService cardService;
 
-	@Autowired
-	private ModelMapper modelMapper;
-
-	@Autowired
-	@Qualifier(SINGLE_BOARD_DATA_GET_SERVICE)
+	@Qualifier(SINGLE_COMMENT_DATA_GET_SERVICE)
 	private SingleDataGetService<CommentDto, Long> singleCommentDataGetService;
 
 	@Autowired
-	@Qualifier(SINGLE_BOARD_DATA_UPDATE_SERVICE)
+	@Qualifier(SINGLE_COMMENT_DATA_UPDATE_SERVICE)
 	private SingleDataUpdateService<CommentDto> singleCommentDataUpdateService;
 
+	@Transactional
 	@Override
-	public Optional<CommentDto> get(Long commentId) {
+	public Optional<CommentDto> get(final Long commentId) {
 		return this.singleCommentDataGetService.get(commentId);
 	}
 
@@ -72,8 +69,9 @@ public class CommentServiceImpl implements CommentService {
 		return Lists.newArrayList();
 	}
 
+	@Transactional
 	@Override
-	public void update(CommentDto commentDto) throws DataNotFoundException {
+	public void update(final CommentDto commentDto) throws DataNotFoundException {
 		singleCommentDataUpdateService.update(commentDto);
 
 	}
@@ -99,16 +97,17 @@ public class CommentServiceImpl implements CommentService {
 		Assert.notNull(cardId);
 		Assert.notNull(content);
 
-		final Optional<CardDto> cardDto = Optional
-				.of(cardService.get(cardId).orElseThrow(() -> new CardNotFoundException(String.valueOf(cardId))));
-		final Optional<UserDto> userDto = Optional
-				.of(userService.get(userId).orElseThrow(() -> new UserNotFoundException(String.valueOf(userId))));
-		final CommentDto commentDto = CommentDto.builder().content(content).userDto(userDto.get())
+		final CardDto cardDto = cardService.get(cardId)
+				.orElseThrow(() -> new CardNotFoundException(String.valueOf(cardId)));
+		final UserDto user = userService.get(userId)
+				.orElseThrow(() -> new UserNotFoundException(String.valueOf(userId)));
+
+		final CommentDto commentDto = CommentDto.builder().content(content).user(user)
 				.createdDateTime(LocalDateTime.now()).build();
 
-		cardDto.get().getComments().add(commentDto);
+		cardDto.getComments().add(commentDto);
 
-		this.cardService.update(cardDto.get());
+		this.cardService.update(cardDto);
 	}
 
 }
