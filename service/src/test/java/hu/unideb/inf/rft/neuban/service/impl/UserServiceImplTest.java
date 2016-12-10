@@ -4,6 +4,7 @@ import hu.unideb.inf.rft.neuban.persistence.entities.UserEntity;
 import hu.unideb.inf.rft.neuban.persistence.enums.Role;
 import hu.unideb.inf.rft.neuban.persistence.repositories.UserRepository;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -37,6 +38,8 @@ public class UserServiceImplTest {
     private ModelMapper modelMapper;
     @Mock
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Mock
+    private SingleDataGetService<UserDto, Long> singleUserDataGetService;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -54,10 +57,10 @@ public class UserServiceImplTest {
             .role(Role.ADMIN)
             .build();
 
-    /*
     @Test(expected = IllegalArgumentException.class)
     public void getShouldThrowIllegalArgumentExceptionWheParamUserIdIsNull() {
         // Given
+        given(this.singleUserDataGetService.get(null)).willThrow(IllegalArgumentException.class);
 
         // When
         this.userService.get(null);
@@ -68,7 +71,7 @@ public class UserServiceImplTest {
     @Test
     public void getShouldReturnWithEmptyOptionalWhenUserDoesNotExist() {
         // Given
-        given(this.userRepository.findOne(ADMIN_ID)).willReturn(null);
+        given(this.singleUserDataGetService.get(ADMIN_ID)).willReturn(Optional.empty());
 
         // When
         final Optional<UserDto> result = this.userService.get(ADMIN_ID);
@@ -77,16 +80,14 @@ public class UserServiceImplTest {
         assertThat(result, notNullValue());
         assertThat(result.isPresent(), is(false));
 
-        then(this.userRepository).should().findOne(ADMIN_ID);
-        verifyZeroInteractions(this.modelMapper);
-        verifyNoMoreInteractions(this.userRepository);
+        then(this.singleUserDataGetService).should().get(ADMIN_ID);
+        verifyNoMoreInteractions(this.singleUserDataGetService);
     }
 
     @Test
-    public void getShouldReturnWithNotEmptyOptionalWhenUserDoesExist() {
+    public void getShouldReturnWithNonEmptyOptionalWhenUserDoesExist() {
         // Given
-        given(this.userRepository.findOne(ADMIN_ID)).willReturn(userEntity);
-        given(this.modelMapper.map(userEntity, UserDto.class)).willReturn(userDto);
+        given(this.singleUserDataGetService.get(ADMIN_ID)).willReturn(Optional.of(userDto));
 
         // When
         final Optional<UserDto> result = this.userService.get(ADMIN_ID);
@@ -96,11 +97,10 @@ public class UserServiceImplTest {
         assertThat(result.isPresent(), is(true));
         assertThat(result.get(), equalTo(userDto));
 
-        then(this.userRepository).should().findOne(ADMIN_ID);
-        then(this.modelMapper).should().map(userEntity, UserDto.class);
-        verifyNoMoreInteractions(this.userRepository, this.modelMapper);
+        then(this.singleUserDataGetService).should().get(ADMIN_ID);
+        verifyNoMoreInteractions(this.singleUserDataGetService);
     }
-*/
+
     @Test(expected = IllegalArgumentException.class)
     public void getByUserNameShouldThrowIllegalArgumentExceptionWhenParamUserNameIsNull() {
         // Given

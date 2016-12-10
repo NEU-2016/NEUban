@@ -6,14 +6,12 @@ import hu.unideb.inf.rft.neuban.persistence.repositories.CardRepository;
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
-import hu.unideb.inf.rft.neuban.service.exceptions.*;
 import hu.unideb.inf.rft.neuban.service.exceptions.data.CardNotFoundException;
-import hu.unideb.inf.rft.neuban.service.exceptions.data.ColumnNotFoundException;
 import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -25,10 +23,9 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CardServiceImplTest {
@@ -112,10 +109,13 @@ public class CardServiceImplTest {
     private CardRepository cardRepository;
     @Mock
     private ModelMapper modelMapper;
-/*
+    @Mock
+    private SingleDataGetService<CardDto, Long> singleCardDataGetService;
+
     @Test(expected = IllegalArgumentException.class)
     public void getShouldThrowIllegalArgumentExceptionWhenParamUserIdIsNull() {
         // Given
+        given(this.singleCardDataGetService.get(null)).willThrow(IllegalArgumentException.class);
 
         // When
         this.cardService.get(null);
@@ -126,7 +126,7 @@ public class CardServiceImplTest {
     @Test
     public void getShouldReturnWithEmptyOptionalWhenCardDoesNotExist() {
         // Given
-        given(this.cardRepository.findOne(FIRST_CARD_ID)).willReturn(null);
+        given(this.singleCardDataGetService.get(FIRST_CARD_ID)).willReturn(Optional.empty());
 
         // When
         final Optional<CardDto> result = this.cardService.get(FIRST_CARD_ID);
@@ -135,16 +135,14 @@ public class CardServiceImplTest {
         assertThat(result, notNullValue());
         assertThat(result.isPresent(), is(false));
 
-        then(this.cardRepository).should().findOne(FIRST_CARD_ID);
-        verifyNoMoreInteractions(this.cardRepository);
-        verifyZeroInteractions(this.modelMapper);
+        then(this.singleCardDataGetService).should().get(FIRST_CARD_ID);
+        verifyNoMoreInteractions(this.singleCardDataGetService);
     }
 
     @Test
-    public void getShouldReturnWithNotEmptyOptionalWhenCardDoesExist() {
+    public void getShouldReturnWithNonEmptyOptionalWhenCardDoesExist() {
         // Given
-        given(this.cardRepository.findOne(FIRST_CARD_ID)).willReturn(firstCardEntity);
-        given(this.modelMapper.map(firstCardEntity, CardDto.class)).willReturn(firstCardDto);
+        given(this.singleCardDataGetService.get(FIRST_CARD_ID)).willReturn(Optional.of(firstCardDto));
 
         // When
         final Optional<CardDto> result = this.cardService.get(FIRST_CARD_ID);
@@ -154,11 +152,10 @@ public class CardServiceImplTest {
         assertThat(result.isPresent(), is(true));
         assertThat(result.get(), equalTo(firstCardDto));
 
-        then(this.cardRepository).should().findOne(FIRST_CARD_ID);
-        then(this.modelMapper).should().map(firstCardEntity, CardDto.class);
-        verifyNoMoreInteractions(this.cardRepository, this.modelMapper);
+        then(this.singleCardDataGetService).should().get(FIRST_CARD_ID);
+        verifyNoMoreInteractions(this.singleCardDataGetService);
     }
-*/
+
     @Test(expected = IllegalArgumentException.class)
     public void getAllByColumnIdShouldThrowIllegalArgumentExceptionWhenParamColumnIdIsNull() {
         // Given
