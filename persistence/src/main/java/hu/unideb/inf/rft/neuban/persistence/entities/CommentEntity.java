@@ -31,18 +31,17 @@ public class CommentEntity extends SuperEntity<Long> {
 
 	@NotNull
 	@Column(name = "created_time")
-	private LocalDateTime created_time;
+	private LocalDateTime createdTime;
 
 	@NotNull
 	@Column(name = "user_id")
 	private UserEntity user;
 
 	@Builder
-	public CommentEntity(final Long id, final String content, final LocalDateTime createdDateTime,
-			final UserEntity user) {
+	public CommentEntity(final Long id,final String content,final LocalDateTime createdDateTime,final UserEntity user) {
 		super(id);
 		this.content = content;
-		this.created_time = createdDateTime;
+		this.createdTime = createdDateTime;
 		this.user = user;
 	}
 

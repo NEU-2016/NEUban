@@ -18,7 +18,7 @@ public class SingleCommentDataConverter implements SingleDataConverter<CommentEn
 	private SingleUserDataConverter singleUserDataConverter;
 
 	@Override
-	public Optional<CommentEntity> convertToSource(CommentDto commentDto) {
+	public Optional<CommentEntity> convertToSource(final CommentDto commentDto) {
 		if (commentDto == null) {
 			return Optional.empty();
 		}
@@ -33,7 +33,7 @@ public class SingleCommentDataConverter implements SingleDataConverter<CommentEn
 			return Optional.empty();
 		}
 		return Optional.of(CommentDto.builder().id(commentEntity.getId()).content(commentEntity.getContent())
-				.createdDateTime(commentEntity.getCreated_time())
+				.createdDateTime(commentEntity.getCreatedTime())
 				.user(this.singleUserDataConverter.convertToTarget(commentEntity.getUser()).get()).build());
 	}
 }

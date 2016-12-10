@@ -29,7 +29,6 @@ import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataUpdateServic
 import static hu.unideb.inf.rft.neuban.service.provider.beanname.SingleDataGetServiceBeanNameProvider.SINGLE_COMMENT_DATA_GET_SERVICE;
 import static hu.unideb.inf.rft.neuban.service.provider.beanname.SingleDataUpdateServiceBeanNameProvider.SINGLE_COMMENT_DATA_UPDATE_SERVICE;
 
-
 @Service
 public class CommentServiceImpl implements CommentService {
 
@@ -49,7 +48,7 @@ public class CommentServiceImpl implements CommentService {
 	@Qualifier(SINGLE_COMMENT_DATA_UPDATE_SERVICE)
 	private SingleDataUpdateService<CommentDto> singleCommentDataUpdateService;
 
-	@Transactional
+	@Transactional(readOnly = true)
 	@Override
 	public Optional<CommentDto> get(final Long commentId) {
 		return this.singleCommentDataGetService.get(commentId);
