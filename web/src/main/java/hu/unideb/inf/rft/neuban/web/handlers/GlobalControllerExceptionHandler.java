@@ -1,7 +1,9 @@
 package hu.unideb.inf.rft.neuban.web.handlers;
 
+import hu.unideb.inf.rft.neuban.service.exceptions.CardAlreadyExistsException;
 import hu.unideb.inf.rft.neuban.service.exceptions.ColumnAlreadyExistsException;
 import hu.unideb.inf.rft.neuban.service.exceptions.NonExistentUserIdException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.CardNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.data.DataNotFoundException;
 import hu.unideb.inf.rft.neuban.web.exceptions.InvalidRegistrationException;
 import hu.unideb.inf.rft.neuban.web.exceptions.LoginFailureException;
@@ -27,6 +29,8 @@ public class GlobalControllerExceptionHandler {
 			ConstraintViolationException.class,
 			DataNotFoundException.class,
 			ColumnAlreadyExistsException.class,
+			CardAlreadyExistsException.class,
+			CardNotFoundException.class
 	})
 	public ModelAndView defaultErrorHandler(final Exception e) {
 		final ModelAndView modelAndView = new ModelAndView(ERROR_VIEW);
