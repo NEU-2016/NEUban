@@ -5,9 +5,11 @@ import hu.unideb.inf.rft.neuban.persistence.entities.ColumnEntity;
 import hu.unideb.inf.rft.neuban.persistence.repositories.ColumnRepository;
 import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
 import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
-import hu.unideb.inf.rft.neuban.service.exceptions.data.BoardNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.ColumnAlreadyExistsException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.BoardNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.data.ColumnNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.DataNotFoundException;
+import hu.unideb.inf.rft.neuban.service.impl.shared.SingleDataUpdateServiceImpl;
 import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 import org.junit.Test;
@@ -76,6 +78,8 @@ public class ColumnServiceImplTest {
     private ModelMapper modelMapper;
     @Mock
     private SingleDataGetService<ColumnDto, Long> singleColumnDataGetService;
+    @Mock
+    private SingleDataUpdateServiceImpl<ColumnEntity, ColumnDto, Long, ColumnNotFoundException> singleColumnDataUpdateService;
 
     @Test(expected = IllegalArgumentException.class)
     public void getShouldThrowIllegalArgumentExceptionWhenParamColumnIdIsNull() {
@@ -164,9 +168,9 @@ public class ColumnServiceImplTest {
         then(this.boardService).should().get(BOARD_ID);
         verifyNoMoreInteractions(this.boardService);
     }
-/*
+
     @Test(expected = IllegalArgumentException.class)
-    public void saveShouldThrowIllegalArgumentExceptionWhenParamBoardIdIsNull() throws ColumnAlreadyExistsException, BoardNotFoundException {
+    public void saveShouldThrowIllegalArgumentExceptionWhenParamBoardIdIsNull() throws ColumnAlreadyExistsException, DataNotFoundException {
         // Given
         given(this.boardService.get(null)).willThrow(IllegalArgumentException.class);
 
@@ -177,7 +181,7 @@ public class ColumnServiceImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void saveShouldThrowIllegalArgumentExceptionWhenParamColumnDtoIsNull() throws ColumnAlreadyExistsException, BoardNotFoundException {
+    public void saveShouldThrowIllegalArgumentExceptionWhenParamColumnDtoIsNull() throws ColumnAlreadyExistsException, DataNotFoundException {
         // Given
 
         // When
@@ -187,7 +191,7 @@ public class ColumnServiceImplTest {
     }
 
     @Test(expected = BoardNotFoundException.class)
-    public void saveShouldThrowBoardNotFoundExceptionWhenBoardDoesNotExist() throws ColumnAlreadyExistsException, BoardNotFoundException {
+    public void saveShouldThrowBoardNotFoundExceptionWhenBoardDoesNotExist() throws ColumnAlreadyExistsException, DataNotFoundException {
         // Given
         given(this.boardService.get(BOARD_ID)).willReturn(Optional.empty());
 
@@ -198,7 +202,7 @@ public class ColumnServiceImplTest {
     }
 
     @Test(expected = ColumnAlreadyExistsException.class)
-    public void saveShouldThrowColumnAlreadyExistsExceptionWhenColumnAlreadyExists() throws ColumnAlreadyExistsException, BoardNotFoundException {
+    public void saveShouldThrowColumnAlreadyExistsExceptionWhenColumnAlreadyExists() throws ColumnAlreadyExistsException, DataNotFoundException {
         // Given
         given(this.boardService.get(BOARD_ID)).willReturn(Optional.of(boardDto));
 
@@ -209,7 +213,7 @@ public class ColumnServiceImplTest {
     }
 
     @Test
-    public void saveShouldBeSuccessfulSavingWhenColumnDtoIdIsNull() throws BoardNotFoundException, ColumnAlreadyExistsException {
+    public void saveShouldBeSuccessfulSavingWhenColumnDtoIdIsNull() throws DataNotFoundException, ColumnAlreadyExistsException {
         // Given
         final ColumnDto columnDtoWithoutId = ColumnDto.builder()
                 .id(null)
@@ -237,7 +241,7 @@ public class ColumnServiceImplTest {
     }
 
     @Test
-    public void saveShouldBeSuccessfulSavingWhenColumnDtoDoesNotExistOnTheBoard() throws BoardNotFoundException, ColumnAlreadyExistsException {
+    public void saveShouldBeSuccessfulSavingWhenColumnDtoDoesNotExistOnTheBoard() throws DataNotFoundException, ColumnAlreadyExistsException {
         // Given
         final ColumnDto newColumnDto = ColumnDto.builder()
                 .id(FOURTH_COLUMN_ID)
@@ -265,8 +269,9 @@ public class ColumnServiceImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void updateShouldThrowIllegalArgumentExceptionWhenParamColumnDtoIsNull() throws ColumnNotFoundException {
+    public void updateShouldThrowIllegalArgumentExceptionWhenParamColumnDtoIsNull() throws DataNotFoundException {
         // Given
+        doThrow(IllegalArgumentException.class).when(this.singleColumnDataUpdateService).update(null);
 
         // When
         this.columnService.update(null);
@@ -275,9 +280,11 @@ public class ColumnServiceImplTest {
     }
 
     @Test(expected = ColumnNotFoundException.class)
-    public void updateShouldThrowColumnNotFoundExceptionWhenColumnIdIsNull() throws ColumnNotFoundException {
+    public void updateShouldThrowColumnNotFoundExceptionWhenColumnIdIsNull() throws DataNotFoundException {
         // Given
         final ColumnDto columnDto = ColumnDto.builder().id(null).build();
+
+        doThrow(ColumnNotFoundException.class).when(this.singleColumnDataUpdateService).update(columnDto);
 
         // When
         this.columnService.update(columnDto);
@@ -286,19 +293,18 @@ public class ColumnServiceImplTest {
     }
 
     @Test
-    public void updateShouldBeSuccessfulUpdatingWhenColumnExists() throws ColumnNotFoundException {
+    public void updateShouldBeSuccessfulUpdatingWhenColumnExists() throws DataNotFoundException {
         // Given
-        given(this.modelMapper.map(firstColumnDto, ColumnEntity.class)).willReturn(firstColumnEntity);
+        doNothing().when(this.singleColumnDataUpdateService).update(firstColumnDto);
 
         // When
         this.columnService.update(firstColumnDto);
 
         // Then
-        then(this.columnRepository).should().saveAndFlush(firstColumnEntity);
-        then(this.modelMapper).should().map(firstColumnDto, ColumnEntity.class);
-        verifyNoMoreInteractions(this.columnRepository, this.modelMapper);
+        then(this.singleColumnDataUpdateService).should().update(firstColumnDto);
+        verifyNoMoreInteractions(this.singleColumnDataUpdateService);
     }
-*/
+
     @Test(expected = IllegalArgumentException.class)
     public void removeShouldThrowIllegalArgumentExceptionWhenParamColumnIdDoesNotExist() throws ColumnNotFoundException {
         // Given
