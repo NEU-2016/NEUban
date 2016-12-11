@@ -24,7 +24,7 @@ public class GlobalControllerExceptionHandler {
 	})
 	public ModelAndView defaultErrorHandler(Exception e) {
 		final ModelAndView modelAndView = new ModelAndView(ERROR_VIEW);
-		modelAndView.addObject(ERROR_MESSAGE_MODEL_OBJECT_NAME, e.getMessage());
+		modelAndView.addObject(ERROR_MESSAGE_MODEL_OBJECT_NAME, e.getClass().getSimpleName() + ": " + e.getMessage());
 		return modelAndView;
 	}
 }
