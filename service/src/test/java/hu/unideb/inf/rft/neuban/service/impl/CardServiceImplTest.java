@@ -6,12 +6,17 @@ import hu.unideb.inf.rft.neuban.persistence.repositories.CardRepository;
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
+import hu.unideb.inf.rft.neuban.service.exceptions.CardAlreadyExistsException;
 import hu.unideb.inf.rft.neuban.service.exceptions.data.CardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.ColumnNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.DataNotFoundException;
+import hu.unideb.inf.rft.neuban.service.impl.shared.SingleDataUpdateServiceImpl;
 import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -22,9 +27,10 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CardServiceImplTest {
@@ -109,6 +115,8 @@ public class CardServiceImplTest {
     private ModelMapper modelMapper;
     @Mock
     private SingleDataGetService<CardDto, Long> singleCardDataGetService;
+    @Mock
+    private SingleDataUpdateServiceImpl<CardEntity, CardDto, Long, CardNotFoundException> singleCardDataUpdateService;
 
     @Test(expected = IllegalArgumentException.class)
     public void getShouldThrowIllegalArgumentExceptionWhenParamUserIdIsNull() {
@@ -198,9 +206,8 @@ public class CardServiceImplTest {
         verifyNoMoreInteractions(this.columnService);
     }
 
-    /*
     @Test(expected = IllegalArgumentException.class)
-    public void saveShouldThrowIllegalArgumentExceptionWhenParamColumnIdIsNull() throws CardAlreadyExistsException, ColumnNotFoundException {
+    public void saveShouldThrowIllegalArgumentExceptionWhenParamColumnIdIsNull() throws CardAlreadyExistsException, DataNotFoundException {
         // Given
         given(this.columnService.get(null)).willThrow(IllegalArgumentException.class);
 
@@ -211,7 +218,7 @@ public class CardServiceImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void saveShouldThrowIllegalArgumentExceptionWhenParamCardDtoIsNull() throws CardAlreadyExistsException, ColumnNotFoundException {
+    public void saveShouldThrowIllegalArgumentExceptionWhenParamCardDtoIsNull() throws CardAlreadyExistsException, DataNotFoundException {
         // Given
 
         // When
@@ -221,7 +228,7 @@ public class CardServiceImplTest {
     }
 
     @Test(expected = ColumnNotFoundException.class)
-    public void saveShouldThrowColumnNotFoundExceptionWhenColumnDoesNotExist() throws CardAlreadyExistsException, ColumnNotFoundException {
+    public void saveShouldThrowColumnNotFoundExceptionWhenColumnDoesNotExist() throws CardAlreadyExistsException, DataNotFoundException {
         // Given
         given(this.columnService.get(COLUMN_ID)).willReturn(Optional.empty());
 
@@ -232,7 +239,7 @@ public class CardServiceImplTest {
     }
 
     @Test(expected = CardAlreadyExistsException.class)
-    public void saveShouldThrowCardAlreadyExistsExceptionWhenCardAlreadyExists() throws CardAlreadyExistsException, ColumnNotFoundException {
+    public void saveShouldThrowCardAlreadyExistsExceptionWhenCardAlreadyExists() throws CardAlreadyExistsException, DataNotFoundException {
         // Given
         given(this.columnService.get(COLUMN_ID)).willReturn(Optional.of(columnDto));
 
@@ -243,7 +250,7 @@ public class CardServiceImplTest {
     }
 
     @Test
-    public void saveShouldBeSuccessfulSavingWhenCardDtoIdIsNull() throws CardAlreadyExistsException, ColumnNotFoundException {
+    public void saveShouldBeSuccessfulSavingWhenCardDtoIdIsNull() throws CardAlreadyExistsException, DataNotFoundException {
         // Given
         final CardDto cardDtoWithoutId = CardDto.builder()
                 .id(null)
@@ -271,7 +278,7 @@ public class CardServiceImplTest {
     }
 
     @Test
-    public void saveShouldBeSuccessfulSavingWhenCardDtoDoesNotExistOnTheColumn() throws CardAlreadyExistsException, ColumnNotFoundException {
+    public void saveShouldBeSuccessfulSavingWhenCardDtoDoesNotExistOnTheColumn() throws CardAlreadyExistsException, DataNotFoundException {
         // Given
         final CardDto newCardDto = CardDto.builder()
                 .id(FOURTH_CARD_ID)
@@ -299,8 +306,9 @@ public class CardServiceImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void updateShouldThrowIllegalArgumentExceptionWhenParamCardDtoIsNull() throws CardNotFoundException {
+    public void updateShouldThrowIllegalArgumentExceptionWhenParamCardDtoIsNull() throws DataNotFoundException {
         // Given
+        doThrow(IllegalArgumentException.class).when(this.singleCardDataUpdateService).update(null);
 
         // When
         this.cardService.update(null);
@@ -309,9 +317,11 @@ public class CardServiceImplTest {
     }
 
     @Test(expected = CardNotFoundException.class)
-    public void updateShouldThrowCardNotFoundExceptionWhenCardIdIsNull() throws CardNotFoundException {
+    public void updateShouldThrowCardNotFoundExceptionWhenCardIdIsNull() throws DataNotFoundException {
         // Given
         final CardDto cardDto = CardDto.builder().id(null).build();
+
+        doThrow(CardNotFoundException.class).when(this.singleCardDataUpdateService).update(cardDto);
 
         // When
         this.cardService.update(cardDto);
@@ -320,19 +330,18 @@ public class CardServiceImplTest {
     }
 
     @Test
-    public void updateShouldBeSuccessfulUpdatingWhenCardExists() throws CardNotFoundException {
+    public void updateShouldBeSuccessfulUpdatingWhenCardExists() throws DataNotFoundException {
         // Given
-        given(this.modelMapper.map(firstCardDto, CardEntity.class)).willReturn(firstCardEntity);
+        doNothing().when(this.singleCardDataUpdateService).update(firstCardDto);
 
         // When
         this.cardService.update(firstCardDto);
 
         // Then
-        then(this.cardRepository).should().saveAndFlush(firstCardEntity);
-        then(this.modelMapper).should().map(firstCardDto, CardEntity.class);
-        verifyNoMoreInteractions(this.cardRepository, this.modelMapper);
+        then(this.singleCardDataUpdateService).should().update(firstCardDto);
+        verifyNoMoreInteractions(this.singleCardDataUpdateService);
     }
-*/
+
     @Test(expected = IllegalArgumentException.class)
     public void removeShouldThrowIllegalArgumentExceptionWhenParamCardIdDoesNotExist() throws CardNotFoundException {
         // Given
