@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
         final UserDto userDto = this.get(userId).orElseThrow(() -> new UserNotFoundException(String.valueOf(userId)));
         final CardDto cardDto = this.cardService.get(cardId).orElseThrow(() -> new CardNotFoundException(String.valueOf(cardId)));
 
-        if (this.userDoesNotExistOnCard(userDto, cardDto)) {
+        if (!this.userExistsOnCard(userDto, cardDto)) {
             throw new UserNotFoundOnCardException(String.valueOf(userId), String.valueOf(cardId));
         }
 
@@ -113,9 +113,5 @@ public class UserServiceImpl implements UserService {
 
     private boolean userExistsOnCard(final UserDto userDto, final CardDto cardDto) {
         return userDto.getCards().stream().anyMatch(actualCard -> actualCard.getId().equals(cardDto.getId()));
-    }
-
-    private boolean userDoesNotExistOnCard(final UserDto userDto, final CardDto cardDto) {
-        return !this.userExistsOnCard(userDto, cardDto);
     }
 }
