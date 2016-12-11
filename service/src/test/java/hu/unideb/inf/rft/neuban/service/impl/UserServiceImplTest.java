@@ -14,6 +14,7 @@ import hu.unideb.inf.rft.neuban.service.exceptions.data.DataNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.data.UserNotFoundException;
 import hu.unideb.inf.rft.neuban.service.interfaces.CardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataUpdateService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -115,6 +116,8 @@ public class UserServiceImplTest {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Mock
     private SingleDataGetService<UserDto, Long> singleUserDataGetService;
+    @Mock
+    private SingleDataUpdateService<UserDto> singleUserDataUpdateService;
     @Mock
     private CardService cardService;
 
@@ -222,28 +225,28 @@ public class UserServiceImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void saveOrUpdateShouldThrowIllegalArgumentExceptionWhenParamUserDtoIsNull() {
+    public void createShouldThrowIllegalArgumentExceptionWhenParamUserDtoIsNull() {
         // Given
 
         // When
-        this.userService.saveOrUpdate(null);
+        this.userService.create(null);
 
         // Then
     }
 
     @Test(expected = IllegalStateException.class)
-    public void saveOrUpdateShouldThrowIllegalStateExceptionWhenParamUserDtoPasswordFieldExistentWithNullValue() {
+    public void createShouldThrowIllegalStateExceptionWhenParamUserDtoPasswordFieldExistentWithNullValue() {
         // Given
         final UserDto userDto = UserDto.builder().password(null).build();
 
         // When
-        this.userService.saveOrUpdate(userDto);
+        this.userService.create(userDto);
 
         // Then
     }
 
     @Test
-    public void saveOrUpdateShouldBeSuccessfulSaveWhenParamUserDtoIsValid() {
+    public void createShouldBeSuccessfulSaveWhenParamUserDtoIsValid() {
         // Given
         final ArgumentCaptor<UserEntity> captor = ArgumentCaptor.forClass(UserEntity.class);
 
@@ -252,7 +255,7 @@ public class UserServiceImplTest {
         given(this.userRepository.saveAndFlush(any(UserEntity.class))).willReturn(userEntity);
 
         // When
-        this.userService.saveOrUpdate(userDto);
+        this.userService.create(userDto);
 
         // Then
         verify(this.userRepository).saveAndFlush(captor.capture());
@@ -333,14 +336,14 @@ public class UserServiceImplTest {
 
         given(this.cardService.get(FOURTH_CARD_ID)).willReturn(Optional.of(fourthCardDto));
         given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDto));
-        doNothing().when(this.userService).saveOrUpdate(firstUserDto);
+        doNothing().when(this.userService).update(firstUserDto);
 
         final ArgumentCaptor<UserDto> userDtoArgumentCaptor = ArgumentCaptor.forClass(UserDto.class);
 
         // When
         this.userService.addUserToCard(FIRST_USER_ID, FOURTH_CARD_ID);
 
-        verify(this.userService).saveOrUpdate(userDtoArgumentCaptor.capture());
+        verify(this.userService).update(userDtoArgumentCaptor.capture());
 
         // Then
         assertThat(userDtoArgumentCaptor.getValue(), notNullValue());
@@ -350,7 +353,7 @@ public class UserServiceImplTest {
 
         then(this.userService).should(times(2)).get(FIRST_USER_ID);
         then(this.cardService).should().get(FOURTH_CARD_ID);
-        then(this.userService).should().saveOrUpdate(userDtoArgumentCaptor.getValue());
+        then(this.userService).should().update(userDtoArgumentCaptor.getValue());
 
         verifyNoMoreInteractions(this.cardService);
     }
@@ -422,14 +425,14 @@ public class UserServiceImplTest {
 
         given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDto));
         given(this.cardService.get(FOURTH_CARD_ID)).willReturn(Optional.of(fourthCardDto));
-        doNothing().when(this.userService).saveOrUpdate(firstUserDto);
+        doNothing().when(this.userService).update(firstUserDto);
 
         final ArgumentCaptor<UserDto> userDtoArgumentCaptor = ArgumentCaptor.forClass(UserDto.class);
 
         // When
         this.userService.removeUserFromCard(FIRST_USER_ID, FOURTH_CARD_ID);
 
-        verify(this.userService).saveOrUpdate(userDtoArgumentCaptor.capture());
+        verify(this.userService).update(userDtoArgumentCaptor.capture());
 
         // Then
         assertThat(userDtoArgumentCaptor.getValue(), notNullValue());
@@ -439,8 +442,45 @@ public class UserServiceImplTest {
 
         then(this.userService).should(times(2)).get(FIRST_USER_ID);
         then(this.cardService).should().get(FOURTH_CARD_ID);
-        then(this.userService).should().saveOrUpdate(userDtoArgumentCaptor.getValue());
+        then(this.userService).should().update(userDtoArgumentCaptor.getValue());
 
         verifyNoMoreInteractions(this.cardService);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void updateShouldThrowIllegalArgumentExceptionWhenParamUserDtoIsNull() throws DataNotFoundException {
+        // Given
+        doThrow(IllegalArgumentException.class).when(this.singleUserDataUpdateService).update(null);
+
+        // When
+        this.userService.update(null);
+
+        // Then
+    }
+
+    @Test(expected = UserNotFoundException.class)
+    public void updateShouldThrowUserNotFoundExceptionWhenUserIdIsNull() throws DataNotFoundException {
+        // Given
+        final UserDto userDto = UserDto.builder().id(null).build();
+
+        doThrow(UserNotFoundException.class).when(this.singleUserDataUpdateService).update(userDto);
+
+        // When
+        this.userService.update(userDto);
+
+        // Then
+    }
+
+    @Test
+    public void updateShouldBeSuccessfulUpdatingWhenUserExists() throws DataNotFoundException {
+        // Given
+        doNothing().when(this.singleUserDataUpdateService).update(firstUserDto);
+
+        // When
+        this.userService.update(firstUserDto);
+
+        // Then
+        then(this.singleUserDataUpdateService).should().update(firstUserDto);
+        verifyNoMoreInteractions(this.singleUserDataUpdateService);
     }
 }

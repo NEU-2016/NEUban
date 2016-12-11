@@ -13,6 +13,7 @@ import hu.unideb.inf.rft.neuban.service.exceptions.data.UserNotFoundException;
 import hu.unideb.inf.rft.neuban.service.interfaces.CardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataUpdateService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static hu.unideb.inf.rft.neuban.service.provider.beanname.SingleDataGetServiceBeanNameProvider.SINGLE_USER_DATA_GET_SERVICE;
+import static hu.unideb.inf.rft.neuban.service.provider.beanname.SingleDataUpdateServiceBeanNameProvider.SINGLE_USER_DATA_UPDATE_SERVICE;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -44,6 +46,10 @@ public class UserServiceImpl implements UserService {
     @Autowired
     @Qualifier(SINGLE_USER_DATA_GET_SERVICE)
     private SingleDataGetService<UserDto, Long> singleUserDataGetService;
+
+    @Autowired
+    @Qualifier(SINGLE_USER_DATA_UPDATE_SERVICE)
+    private SingleDataUpdateService<UserDto> singleUserDataUpdateService;
 
     @Transactional(readOnly = true)
     @Override
@@ -73,7 +79,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void saveOrUpdate(final UserDto userDto) {
+    public void create(final UserDto userDto) {
         Assert.notNull(userDto);
 
         final String password = Optional.ofNullable(userDto.getPassword()).orElseThrow(NullFieldValueException::new);
@@ -94,7 +100,7 @@ public class UserServiceImpl implements UserService {
         }
 
         userDto.getCards().add(cardDto);
-        this.saveOrUpdate(userDto);
+        this.update(userDto);
     }
 
     @Transactional
@@ -108,10 +114,16 @@ public class UserServiceImpl implements UserService {
         }
 
         userDto.getCards().remove(cardDto);
-        this.saveOrUpdate(userDto);
+        this.update(userDto);
     }
 
     private boolean userExistsOnCard(final UserDto userDto, final CardDto cardDto) {
         return userDto.getCards().stream().anyMatch(actualCard -> actualCard.getId().equals(cardDto.getId()));
+    }
+
+    @Transactional
+    @Override
+    public void update(final UserDto userDto) throws DataNotFoundException {
+        this.singleUserDataUpdateService.update(userDto);
     }
 }

@@ -71,7 +71,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Transactional
     @Override
-    public void remove(final Long boardId) throws BoardNotFoundException {
+    public void remove(final Long boardId) throws DataNotFoundException {
         Assert.notNull(boardId);
 
         List<UserDto> userDtos = userService.getAll();
@@ -84,7 +84,7 @@ public class BoardServiceImpl implements BoardService {
                 .collect(Collectors.toList());
         for (UserDto userDtoIter : userDtos) {
             userDtoIter.getBoards().remove(boardDto);
-            userService.saveOrUpdate(userDtoIter);
+            userService.update(userDtoIter);
         }
         this.boardRepository.delete(boardId);
 
@@ -93,7 +93,7 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     @Override
     public void removeUserFromBoardByUserIdAndByBoardId(final Long userId, final Long boardId)
-            throws NonExistentBoardIdException, RelationNotFoundException, NonExistentUserIdException {
+            throws NonExistentBoardIdException, RelationNotFoundException, NonExistentUserIdException, DataNotFoundException {
 
         Assert.notNull(userId);
         Assert.notNull(boardId);
@@ -106,13 +106,13 @@ public class BoardServiceImpl implements BoardService {
                 || !userDto.getBoards().removeIf(userBoards -> userBoards.getId().equals((boardDto.getId())))) {
             throw new RelationNotFoundException();
         }
-        userService.saveOrUpdate(userDto);
+        userService.update(userDto);
     }
 
     @Transactional
     @Override
     public void addUserToBoardByUserIdAndByBoardId(final Long userId, final Long boardId)
-            throws NonExistentBoardIdException, NonExistentUserIdException {
+            throws NonExistentBoardIdException, NonExistentUserIdException, DataNotFoundException {
 
         Assert.notNull(userId);
         Assert.notNull(boardId);
@@ -127,13 +127,13 @@ public class BoardServiceImpl implements BoardService {
             userDto.setBoards(Lists.newArrayList(boardDto));
         }
 
-        userService.saveOrUpdate(userDto);
+        userService.update(userDto);
 
     }
 
     @Transactional
     @Override
-    public void createBoard(final Long userId, final String title) throws NonExistentUserIdException {
+    public void createBoard(final Long userId, final String title) throws NonExistentUserIdException, DataNotFoundException {
 
         Assert.notNull(userId);
         Assert.notNull(title);
@@ -147,7 +147,7 @@ public class BoardServiceImpl implements BoardService {
         } else {
             userDto.setBoards(Lists.newArrayList(boardDto));
         }
-        userService.saveOrUpdate(userDto);
+        userService.update(userDto);
     }
 
 }
