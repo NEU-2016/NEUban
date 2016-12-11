@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{error.title}"></title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div class="container">
+    <h2 th:text="#{error.header}"></h2>
+    <p th:text="#{error.text}"></p>
+    <p th:if="${errorMessage}" th:text="${errorMessage}"></p>
+    <img th:src="@{/images/errorimg1.png}"/>
+</div>
+</body>
+</html>
