@@ -22,15 +22,33 @@ TODO use a style that is horizontally scrollable with non-fixed sized columns
         <input type="text" class="form-control" th:placeholder="#{board.columntitle}" name="columnTitle"/>
         <button type="submit" class="btn btn-primary" th:text="#{board.button.createcolumn}"></button>
     </form>
-    <div class="row">
-        <div th:each="column : ${board.columns}" class="col-xs-3 well">
-            <h3 th:text="${column.title}"></h3>
-            <form th:action="@{/secure/board/__${board.id}__/removecolumn/__${column.id}__}" th:method="DELETE">
-                <input type="hidden" name="_method" value="delete"/>
-                <button type="submit" class="btn btn-danger" th:text="#{board.button.removecolumn}"></button>
-            </form>
-        </div>
-    </div>
+    <table>
+        <tr valign="top">
+            <td th:nowrap="true" th:each="column : ${board.columns}">
+                <div class="panel panel-info" style="width:300px">
+                    <div class="panel-heading">
+                        <h3 th:text="${column.title}" class="panel-title"></h3>
+                        <form th:action="@{/secure/board/__${board.id}__/removecolumn/__${column.id}__}"
+                              th:method="DELETE">
+                            <input type="hidden" name="_method" value="delete"/>
+                            <button type="submit" class="btn btn-danger"
+                                    th:text="#{board.button.removecolumn}"></button>
+                        </form>
+                    </div>
+                    <div class="panel-body">
+                        <div th:each="card : ${column.cards}" class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 th:text="${card.title}" class="panel-title"></h3>
+                            </div>
+                            <div class="panel-body">
+                                <p th:text="${card.description}"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
 </div>
 </body>
 </html>
