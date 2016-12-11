@@ -22,9 +22,9 @@ TODO use a style that is horizontally scrollable with non-fixed sized columns
         <input type="text" class="form-control" th:placeholder="#{board.columntitle}" name="columnTitle"/>
         <button type="submit" class="btn btn-primary" th:text="#{board.button.createcolumn}"></button>
     </form>
-    <table>
+    <table >
         <tr valign="top">
-            <td th:nowrap="true" th:each="column : ${board.columns}">
+            <td th:nowrap="true" th:each="column : ${board.columns}" align="center">
                 <div class="panel panel-info" style="width:300px">
                     <div class="panel-heading">
                         <h3 th:text="${column.title}" class="panel-title"></h3>
@@ -42,8 +42,19 @@ TODO use a style that is horizontally scrollable with non-fixed sized columns
                             </div>
                             <div class="panel-body">
                                 <p th:text="${card.description}"></p>
+                                <form th:action="@{/secure/board/__${board.id}__/__${column.id}__/removecard/__${card.id}__}"
+                                      th:method="DELETE">
+                                    <input type="hidden" name="_method" value="delete"/>
+                                    <button type="submit" class="btn btn-danger"
+                                            th:text="#{board.button.removecard}"></button>
+                                </form>
                             </div>
                         </div>
+                        <form th:action="@{/secure/board/__${board.id}__/__${column.id}__/addcard}" method="POST">
+                            <input type="text" class="form-control" th:placeholder="#{board.cardtitle}"
+                                   name="cardTitle"/>
+                            <button type="submit" class="btn btn-primary" th:text="#{board.button.addcard}"></button>
+                        </form>
                     </div>
                 </div>
             </td>
