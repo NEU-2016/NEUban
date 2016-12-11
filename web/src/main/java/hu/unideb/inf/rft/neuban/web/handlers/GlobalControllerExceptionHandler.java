@@ -2,9 +2,12 @@ package hu.unideb.inf.rft.neuban.web.handlers;
 
 import hu.unideb.inf.rft.neuban.service.exceptions.ColumnAlreadyExistsException;
 import hu.unideb.inf.rft.neuban.service.exceptions.data.DataNotFoundException;
+import hu.unideb.inf.rft.neuban.web.exceptions.InvalidRegistrationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.ConstraintViolationException;
 
 @ControllerAdvice
 public class GlobalControllerExceptionHandler {
@@ -14,6 +17,8 @@ public class GlobalControllerExceptionHandler {
 
 	//TODO might break down for different scenarios
 	@ExceptionHandler(value = {
+			InvalidRegistrationException.class,
+			ConstraintViolationException.class,
 			DataNotFoundException.class,
 			ColumnAlreadyExistsException.class,
 	})
