@@ -60,7 +60,7 @@ public class BoardController {
 	@PostMapping(path = "/{columnId}/addcard")
 	public ModelAndView addCard(@PathVariable final Long boardId, @PathVariable final Long columnId, @RequestParam final String cardTitle) throws CardAlreadyExistsException, DataNotFoundException {
 		final ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_BOARD_VIEW + "/" + boardId);
-		cardService.save(columnId, CardDto.builder().title(cardTitle).description("").build());
+		cardService.save(columnId, CardDto.builder().title(cardTitle).build());
 		return modelAndView;
 	}
 
