@@ -32,10 +32,7 @@ public class BoardController {
 	@GetMapping
 	public ModelAndView loadBoardView(@PathVariable final Long boardId) throws BoardNotFoundException {
 		final ModelAndView modelAndView = new ModelAndView(BOARD_VIEW);
-		BoardDto boardModelObject = boardService.get(boardId).orElse(null);
-		if (boardModelObject == null) {
-			throw new BoardNotFoundException(String.valueOf(boardId));
-		}
+		BoardDto boardModelObject = boardService.get(boardId).orElseThrow(() -> new BoardNotFoundException(String.valueOf(boardId)));
 		modelAndView.addObject(BOARD_MODEL_OBJECT_NAME, boardModelObject);
 		return modelAndView;
 	}
