@@ -210,7 +210,7 @@ public class BoardServiceImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowIllegalArgumentExceptionWhenUserIdIsNull()
-            throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException {
+            throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException, DataNotFoundException {
 
         this.boardService.removeUserFromBoardByUserIdAndByBoardId(null, EXPECTED_BOARD_ID);
 
@@ -218,7 +218,7 @@ public class BoardServiceImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowIllegalArgumentExceptionWhenBoardIdIsNull()
-            throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException {
+            throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException, DataNotFoundException {
 
         this.boardService.removeUserFromBoardByUserIdAndByBoardId(USER_ID, null);
 
@@ -226,7 +226,7 @@ public class BoardServiceImplTest {
 
     @Test
     public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowNonExistentUserIdExceptionWhenUserNotExists()
-            throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException {
+            throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException, DataNotFoundException {
         // Given
         given(this.userService.get(NON_EXISTENT_USER_ID)).willReturn(Optional.empty());
         expectedException.expect(NonExistentUserIdException.class);
@@ -344,7 +344,7 @@ public class BoardServiceImplTest {
     */
     @Test(expected = IllegalArgumentException.class)
     public void addUserToBoardByUserIdAndByBoardIdShouldThrowIllegalArgumentExceptionWhenUserIdIsNull()
-            throws NonExistentUserIdException, NonExistentBoardIdException {
+            throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
 
         this.boardService.addUserToBoardByUserIdAndByBoardId(null, EXPECTED_BOARD_ID);
 
@@ -352,7 +352,7 @@ public class BoardServiceImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void addUserToBoardByUserIdAndByBoardIdShouldThrowIllegalArgumentExceptionWhenBoardIdIsNull()
-            throws NonExistentUserIdException, NonExistentBoardIdException {
+            throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
 
         this.boardService.addUserToBoardByUserIdAndByBoardId(USER_ID, null);
 
@@ -360,7 +360,7 @@ public class BoardServiceImplTest {
 
     @Test
     public void addUserToBoardByUserIdAndByBoardIdShouldThrowNonExistentUserIdExceptionWhenUserNotExists()
-            throws NonExistentUserIdException, NonExistentBoardIdException {
+            throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
         // Given
         given(this.userService.get(NON_EXISTENT_USER_ID)).willReturn(Optional.empty());
         expectedException.expect(NonExistentUserIdException.class);
@@ -427,7 +427,7 @@ public class BoardServiceImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void createBoardShouldThrowIllegalArgumentExceptionWhenBoardTitleIsNull()
-            throws NonExistentUserIdException, NonExistentBoardIdException {
+            throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
 
         this.boardService.createBoard(USER_ID, null);
 
@@ -435,14 +435,14 @@ public class BoardServiceImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void createBoardShouldThrowIllegalArgumentExceptionWhenUserIdIsNull()
-            throws NonExistentUserIdException, NonExistentBoardIdException {
+            throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
 
         this.boardService.createBoard(null, BOARD_TITLE);
 
     }
 
     @Test
-    public void createBoardShouldThrowNonExistentUserIdExceptionWhenUserNotExists() throws NonExistentUserIdException {
+    public void createBoardShouldThrowNonExistentUserIdExceptionWhenUserNotExists() throws NonExistentUserIdException, DataNotFoundException {
         // Given
         given(this.userService.get(NON_EXISTENT_USER_ID)).willReturn(Optional.empty());
         expectedException.expect(NonExistentUserIdException.class);
@@ -488,12 +488,12 @@ public class BoardServiceImplTest {
 	}*/
 
     @Test(expected = IllegalArgumentException.class)
-    public void removeShouldThrowIllegalArgumentExceptionWhenBoardIdIsNull() throws BoardNotFoundException {
+    public void removeShouldThrowIllegalArgumentExceptionWhenBoardIdIsNull() throws DataNotFoundException {
         this.boardService.remove(null);
     }
 
     @Test
-    public void removeShouldThrowBoardNotFoundExceptionWhenBoardDoesNotExist() throws BoardNotFoundException {
+    public void removeShouldThrowBoardNotFoundExceptionWhenBoardDoesNotExist() throws DataNotFoundException {
         // Given
 
         given(this.boardRepository.findOne(BOARD_ID)).willReturn(null);
@@ -505,7 +505,7 @@ public class BoardServiceImplTest {
     }
 
     @Test
-    public void removeShouldDeleteRelationThenDeleteBoard() throws BoardNotFoundException {
+    public void removeShouldDeleteRelationThenDeleteBoard() throws DataNotFoundException {
         // Given
 
         final UserDto userDtoBeforeDelete = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)

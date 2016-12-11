@@ -46,7 +46,7 @@ public class RegisterController {
 		if (bindingResult.hasErrors()) {
 			throw new InvalidRegistrationException();
 		}
-		userService.saveOrUpdate(userDto);
+		userService.create(userDto);
 		return modelAndView;
 	}
 }
