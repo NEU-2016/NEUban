@@ -3,12 +3,14 @@ package hu.unideb.inf.rft.neuban.service.configuration;
 import hu.unideb.inf.rft.neuban.persistence.entities.BoardEntity;
 import hu.unideb.inf.rft.neuban.persistence.entities.CardEntity;
 import hu.unideb.inf.rft.neuban.persistence.entities.ColumnEntity;
+import hu.unideb.inf.rft.neuban.persistence.entities.CommentEntity;
 import hu.unideb.inf.rft.neuban.persistence.entities.UserEntity;
 import hu.unideb.inf.rft.neuban.service.converter.SingleDataConverter;
 import hu.unideb.inf.rft.neuban.service.converter.impl.GenericDataListConverter;
 import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
+import hu.unideb.inf.rft.neuban.service.domain.CommentDto;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -45,5 +47,11 @@ public class DataListConverterConfiguration {
     public GenericDataListConverter<CardEntity, CardDto> cardDataListConverter() {
         return new GenericDataListConverter(CardEntity.class, CardDto.class,
                 this.context.getBean(SINGLE_CARD_DATA_CONVERTER, SingleDataConverter.class));
+    }
+    
+    @Bean
+    public GenericDataListConverter<CommentEntity, CommentDto> commentDataListConverter() {
+        return new GenericDataListConverter(CommentEntity.class, CommentDto.class,
+                this.context.getBean(SINGLE_COMMENT_DATA_CONVERTER, SingleDataConverter.class));
     }
 }

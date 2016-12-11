@@ -6,17 +6,14 @@ import hu.unideb.inf.rft.neuban.persistence.repositories.CardRepository;
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
-import hu.unideb.inf.rft.neuban.service.exceptions.*;
 import hu.unideb.inf.rft.neuban.service.exceptions.data.CardNotFoundException;
-import hu.unideb.inf.rft.neuban.service.exceptions.data.ColumnNotFoundException;
 import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
 
@@ -25,10 +22,9 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CardServiceImplTest {
@@ -100,7 +96,6 @@ public class CardServiceImplTest {
             .password(PASSWORD_HASH)
             .build();
 
-    @Spy
     @InjectMocks
     private CardServiceImpl cardService;
 
@@ -112,10 +107,13 @@ public class CardServiceImplTest {
     private CardRepository cardRepository;
     @Mock
     private ModelMapper modelMapper;
-/*
+    @Mock
+    private SingleDataGetService<CardDto, Long> singleCardDataGetService;
+
     @Test(expected = IllegalArgumentException.class)
     public void getShouldThrowIllegalArgumentExceptionWhenParamUserIdIsNull() {
         // Given
+        given(this.singleCardDataGetService.get(null)).willThrow(IllegalArgumentException.class);
 
         // When
         this.cardService.get(null);
@@ -126,7 +124,7 @@ public class CardServiceImplTest {
     @Test
     public void getShouldReturnWithEmptyOptionalWhenCardDoesNotExist() {
         // Given
-        given(this.cardRepository.findOne(FIRST_CARD_ID)).willReturn(null);
+        given(this.singleCardDataGetService.get(FIRST_CARD_ID)).willReturn(Optional.empty());
 
         // When
         final Optional<CardDto> result = this.cardService.get(FIRST_CARD_ID);
@@ -135,16 +133,14 @@ public class CardServiceImplTest {
         assertThat(result, notNullValue());
         assertThat(result.isPresent(), is(false));
 
-        then(this.cardRepository).should().findOne(FIRST_CARD_ID);
-        verifyNoMoreInteractions(this.cardRepository);
-        verifyZeroInteractions(this.modelMapper);
+        then(this.singleCardDataGetService).should().get(FIRST_CARD_ID);
+        verifyNoMoreInteractions(this.singleCardDataGetService);
     }
 
     @Test
-    public void getShouldReturnWithNotEmptyOptionalWhenCardDoesExist() {
+    public void getShouldReturnWithNonEmptyOptionalWhenCardDoesExist() {
         // Given
-        given(this.cardRepository.findOne(FIRST_CARD_ID)).willReturn(firstCardEntity);
-        given(this.modelMapper.map(firstCardEntity, CardDto.class)).willReturn(firstCardDto);
+        given(this.singleCardDataGetService.get(FIRST_CARD_ID)).willReturn(Optional.of(firstCardDto));
 
         // When
         final Optional<CardDto> result = this.cardService.get(FIRST_CARD_ID);
@@ -154,11 +150,10 @@ public class CardServiceImplTest {
         assertThat(result.isPresent(), is(true));
         assertThat(result.get(), equalTo(firstCardDto));
 
-        then(this.cardRepository).should().findOne(FIRST_CARD_ID);
-        then(this.modelMapper).should().map(firstCardEntity, CardDto.class);
-        verifyNoMoreInteractions(this.cardRepository, this.modelMapper);
+        then(this.singleCardDataGetService).should().get(FIRST_CARD_ID);
+        verifyNoMoreInteractions(this.singleCardDataGetService);
     }
-*/
+
     @Test(expected = IllegalArgumentException.class)
     public void getAllByColumnIdShouldThrowIllegalArgumentExceptionWhenParamColumnIdIsNull() {
         // Given
@@ -372,181 +367,4 @@ public class CardServiceImplTest {
         then(this.cardRepository).should().delete(FIRST_CARD_ID);
         verifyNoMoreInteractions(this.cardRepository);
     }
-
-    /*
-    @Test(expected = IllegalArgumentException.class)
-    public void addUserToCardShouldThrowIllegalArgumentExceptionWhenParamUserIdIsNull() throws UserNotFoundException, UserAlreadyExistsOnCardException, CardNotFoundException {
-        // Given
-        given(this.userService.get(null)).willThrow(IllegalArgumentException.class);
-
-        // When
-        this.cardService.addUserToCard(null, FIRST_CARD_ID);
-
-        // Then
-    }
-
-    @Test(expected = UserNotFoundException.class)
-    public void addUserToCardShouldThrowUserNotFoundExceptionWhenUserDoesNotExist() throws UserNotFoundException, UserAlreadyExistsOnCardException, CardNotFoundException {
-        // Given
-        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.empty());
-
-        // When
-        this.cardService.addUserToCard(FIRST_USER_ID, FIRST_CARD_ID);
-
-        // Then
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void addUserToCardShouldThrowIllegalArgumentExceptionWhenParamCardIdIsNull() throws UserNotFoundException, UserAlreadyExistsOnCardException, CardNotFoundException {
-        // Given
-        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDto));
-        doThrow(IllegalArgumentException.class).when(this.cardService).get(null);
-
-        // When
-        this.cardService.addUserToCard(FIRST_USER_ID, null);
-
-        // Then
-    }
-
-    @Test(expected = CardNotFoundException.class)
-    public void addUserToCardShouldThrowCardNotFoundExceptionWhenCardDoesNotExist() throws UserNotFoundException, UserAlreadyExistsOnCardException, CardNotFoundException {
-        // Given
-        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDto));
-        doReturn(Optional.empty()).when(this.cardService).get(FIRST_CARD_ID);
-
-        // When
-        this.cardService.addUserToCard(FIRST_USER_ID, FIRST_CARD_ID);
-
-        // Then
-    }
-
-    @Test(expected = UserAlreadyExistsOnCardException.class)
-    public void addUserToCardShouldBeNotSuccessfulAddingWhenUserAlreadyExistsOnCard() throws UserNotFoundException, UserAlreadyExistsOnCardException, CardNotFoundException {
-        // Given
-        firstCardDto.setUsers(Collections.singletonList(firstUserDto));
-
-        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDto));
-        doReturn(Optional.of(firstCardDto)).when(this.cardService).get(FIRST_CARD_ID);
-
-        // When
-        this.cardService.addUserToCard(FIRST_USER_ID, FIRST_CARD_ID);
-
-        // Then
-    }
-
-    @Test
-    public void addUserToCardShouldBeSuccessfulAddingWhenUserDoesNotExistOnCard() throws UserNotFoundException, UserAlreadyExistsOnCardException, CardNotFoundException {
-        // Given
-        firstCardDto.setUsers(Lists.newArrayList(firstUserDto, secondUserDto, thirdUserDto));
-
-        given(this.userService.get(FOURTH_USER_ID)).willReturn(Optional.of(fourthUserDto));
-        doReturn(Optional.of(firstCardDto)).when(this.cardService).get(FIRST_CARD_ID);
-
-        final ArgumentCaptor<CardDto> cardDtoArgumentCaptor = ArgumentCaptor.forClass(CardDto.class);
-
-        // When
-        this.cardService.addUserToCard(FOURTH_USER_ID, FIRST_CARD_ID);
-
-        verify(this.cardService).update(cardDtoArgumentCaptor.capture());
-
-        // Then
-        assertThat(cardDtoArgumentCaptor.getValue(), notNullValue());
-        assertThat(cardDtoArgumentCaptor.getValue().getUsers(), notNullValue());
-        assertThat(cardDtoArgumentCaptor.getValue().getUsers().size(), equalTo(4));
-        assertThat(cardDtoArgumentCaptor.getValue().getUsers().contains(fourthUserDto), is(true));
-
-        then(this.userService).should().get(FOURTH_USER_ID);
-        then(this.cardService).should().get(FIRST_CARD_ID);
-        then(this.cardService).should().update(cardDtoArgumentCaptor.getValue());
-
-        verifyNoMoreInteractions(this.userService);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void removeUserFromCardShouldThrowIllegalArgumentExceptionWhenParamUserIdIsNull() throws UserNotFoundException, UserNotFoundOnCardException, CardNotFoundException {
-        // Given
-        given(this.userService.get(null)).willThrow(IllegalArgumentException.class);
-
-        // When
-        this.cardService.removeUserFromCard(null, FIRST_CARD_ID);
-
-        // Then
-    }
-
-    @Test(expected = UserNotFoundException.class)
-    public void removeUserFromCardShouldThrowUserNotFoundExceptionWhenUserDoesNotExist() throws UserNotFoundException, UserNotFoundOnCardException, CardNotFoundException {
-        // Given
-        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.empty());
-
-        // When
-        this.cardService.removeUserFromCard(FIRST_USER_ID, FIRST_CARD_ID);
-
-        // Then
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void removeUserFromCardShouldThrowIllegalArgumentExceptionWhenParamCardIdIsNull() throws UserNotFoundException, UserNotFoundOnCardException, CardNotFoundException {
-        // Given
-        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDto));
-        doThrow(IllegalArgumentException.class).when(this.cardService).get(null);
-
-        // When
-        this.cardService.removeUserFromCard(FIRST_USER_ID, null);
-
-        // Then
-    }
-
-    @Test(expected = CardNotFoundException.class)
-    public void removeUserFromCardShouldThrowCardNotFoundExceptionWhenCardDoesNotExist() throws UserNotFoundException, UserNotFoundOnCardException, CardNotFoundException {
-        // Given
-        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDto));
-        doReturn(Optional.empty()).when(this.cardService).get(FIRST_CARD_ID);
-
-        // When
-        this.cardService.removeUserFromCard(FIRST_USER_ID, FIRST_CARD_ID);
-
-        // Then
-    }
-
-    @Test(expected = UserNotFoundOnCardException.class)
-    public void removeUserFromCardShouldBeNotSuccessfulRemovingWhenUserDoesNotExistsOnCard() throws UserNotFoundException, UserNotFoundOnCardException, CardNotFoundException {
-        // Given
-        firstCardDto.setUsers(Collections.emptyList());
-
-        given(this.userService.get(FIRST_USER_ID)).willReturn(Optional.of(firstUserDto));
-        doReturn(Optional.of(firstCardDto)).when(this.cardService).get(FIRST_CARD_ID);
-
-        // When
-        this.cardService.removeUserFromCard(FIRST_USER_ID, FIRST_CARD_ID);
-
-        // Then
-    }
-
-    @Test
-    public void removeUserFromCardShouldBeSuccessfulRemovingWhenUserDoesExistOnCard() throws UserNotFoundException, UserNotFoundOnCardException, CardNotFoundException {
-        // Given
-        firstCardDto.setUsers(Lists.newArrayList(firstUserDto, secondUserDto, thirdUserDto, fourthUserDto));
-
-        given(this.userService.get(FOURTH_USER_ID)).willReturn(Optional.of(fourthUserDto));
-        doReturn(Optional.of(firstCardDto)).when(this.cardService).get(FIRST_CARD_ID);
-
-        final ArgumentCaptor<CardDto> cardDtoArgumentCaptor = ArgumentCaptor.forClass(CardDto.class);
-
-        // When
-        this.cardService.removeUserFromCard(FOURTH_USER_ID, FIRST_CARD_ID);
-
-        verify(this.cardService).update(cardDtoArgumentCaptor.capture());
-
-        // Then
-        assertThat(cardDtoArgumentCaptor.getValue(), notNullValue());
-        assertThat(cardDtoArgumentCaptor.getValue().getUsers(), notNullValue());
-        assertThat(cardDtoArgumentCaptor.getValue().getUsers().size(), equalTo(3));
-        assertThat(cardDtoArgumentCaptor.getValue().getUsers().contains(fourthUserDto), is(false));
-
-        then(this.userService).should().get(FOURTH_USER_ID);
-        then(this.cardService).should().get(FIRST_CARD_ID);
-        then(this.cardService).should().update(cardDtoArgumentCaptor.getValue());
-
-        verifyNoMoreInteractions(this.userService);
-    }*/
 }

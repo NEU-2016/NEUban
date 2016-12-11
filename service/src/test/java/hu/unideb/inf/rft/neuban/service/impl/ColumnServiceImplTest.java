@@ -9,6 +9,7 @@ import hu.unideb.inf.rft.neuban.service.exceptions.data.BoardNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.ColumnAlreadyExistsException;
 import hu.unideb.inf.rft.neuban.service.exceptions.data.ColumnNotFoundException;
 import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -73,10 +74,13 @@ public class ColumnServiceImplTest {
     private ColumnRepository columnRepository;
     @Mock
     private ModelMapper modelMapper;
-/*
+    @Mock
+    private SingleDataGetService<ColumnDto, Long> singleColumnDataGetService;
+
     @Test(expected = IllegalArgumentException.class)
     public void getShouldThrowIllegalArgumentExceptionWhenParamColumnIdIsNull() {
         // Given
+        given(this.singleColumnDataGetService.get(null)).willThrow(IllegalArgumentException.class);
 
         // When
         this.columnService.get(null);
@@ -87,7 +91,7 @@ public class ColumnServiceImplTest {
     @Test
     public void getShouldReturnWithEmptyOptionalWhenColumnDoesNotExist() {
         // Given
-        given(this.columnRepository.findOne(FIRST_COLUMN_ID)).willReturn(null);
+        given(this.singleColumnDataGetService.get(FIRST_COLUMN_ID)).willReturn(Optional.empty());
 
         // When
         final Optional<ColumnDto> result = this.columnService.get(FIRST_COLUMN_ID);
@@ -96,16 +100,14 @@ public class ColumnServiceImplTest {
         assertThat(result, notNullValue());
         assertThat(result.isPresent(), is(false));
 
-        then(this.columnRepository).should().findOne(FIRST_COLUMN_ID);
-        verifyNoMoreInteractions(this.columnRepository);
-        verifyZeroInteractions(this.modelMapper);
+        then(this.singleColumnDataGetService).should().get(FIRST_COLUMN_ID);
+        verifyNoMoreInteractions(this.singleColumnDataGetService);
     }
 
     @Test
-    public void getShouldReturnWithNotEmptyOptionalWhenColumnDoesExist() {
+    public void getShouldReturnWithNonEmptyOptionalWhenColumnDoesExist() {
         // Given
-        given(this.columnRepository.findOne(FIRST_COLUMN_ID)).willReturn(firstColumnEntity);
-        given(this.modelMapper.map(firstColumnEntity, ColumnDto.class)).willReturn(firstColumnDto);
+        given(this.singleColumnDataGetService.get(FIRST_COLUMN_ID)).willReturn(Optional.of(firstColumnDto));
 
         // When
         final Optional<ColumnDto> result = this.columnService.get(FIRST_COLUMN_ID);
@@ -115,10 +117,9 @@ public class ColumnServiceImplTest {
         assertThat(result.isPresent(), is(true));
         assertThat(result.get(), equalTo(firstColumnDto));
 
-        then(this.columnRepository).should().findOne(FIRST_COLUMN_ID);
-        then(this.modelMapper).should().map(firstColumnEntity, ColumnDto.class);
-        verifyNoMoreInteractions(this.columnRepository, this.modelMapper);
-    }*/
+        then(this.singleColumnDataGetService).should().get(FIRST_COLUMN_ID);
+        verifyNoMoreInteractions(this.singleColumnDataGetService);
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public void getAllByBoardIdShouldThrowIllegalArgumentExceptionWhenParamBoardIdIsNull() {
