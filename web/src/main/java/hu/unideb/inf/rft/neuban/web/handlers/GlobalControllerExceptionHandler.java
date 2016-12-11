@@ -10,14 +10,16 @@ import org.springframework.web.servlet.ModelAndView;
 public class GlobalControllerExceptionHandler {
 
 	private static final String ERROR_VIEW = "error";
+	private static final String ERROR_MESSAGE_MODEL_OBJECT_NAME = "errorMessage";
 
 	//TODO might break down for different scenarios
 	@ExceptionHandler(value = {
 			DataNotFoundException.class,
 			ColumnAlreadyExistsException.class,
 	})
-	public ModelAndView defaultErrorHandler() {
+	public ModelAndView defaultErrorHandler(Exception e) {
 		final ModelAndView modelAndView = new ModelAndView(ERROR_VIEW);
+		modelAndView.addObject(ERROR_MESSAGE_MODEL_OBJECT_NAME, e.getMessage());
 		return modelAndView;
 	}
 }
