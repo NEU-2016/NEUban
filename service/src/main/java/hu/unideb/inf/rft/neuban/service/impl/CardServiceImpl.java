@@ -5,12 +5,9 @@ import hu.unideb.inf.rft.neuban.persistence.repositories.CardRepository;
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
 import hu.unideb.inf.rft.neuban.service.exceptions.CardAlreadyExistsException;
-import hu.unideb.inf.rft.neuban.service.exceptions.UserAlreadyExistsOnCardException;
-import hu.unideb.inf.rft.neuban.service.exceptions.UserNotFoundOnCardException;
 import hu.unideb.inf.rft.neuban.service.exceptions.data.CardNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.data.ColumnNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.data.DataNotFoundException;
-import hu.unideb.inf.rft.neuban.service.exceptions.data.UserNotFoundException;
 import hu.unideb.inf.rft.neuban.service.interfaces.CardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
@@ -96,40 +93,4 @@ public class CardServiceImpl implements CardService {
 
         this.cardRepository.delete(cardId);
     }
-
-    @Override
-    public void addUserToCard(Long userId, Long cardId) throws UserNotFoundException, CardNotFoundException, UserAlreadyExistsOnCardException {
-
-    }
-
-    @Override
-    public void removeUserFromCard(Long userId, Long cardId) throws UserNotFoundException, CardNotFoundException, UserNotFoundOnCardException {
-
-    }
-
-    /*@Transactional
-    @Override
-    public void addUserToCard(final Long userId, final Long cardId) throws UserNotFoundException, CardNotFoundException, UserAlreadyExistsOnCardException {
-        final UserDto userDto = this.userService.get(userId).orElseThrow(() -> new UserNotFoundException(String.valueOf(userId)));
-        final CardDto cardDto = this.get(cardId).orElseThrow(() -> new CardNotFoundException(String.valueOf(cardId)));
-
-        if (cardDto.getUsers().stream().anyMatch(actualUser -> actualUser.getId().equals(userDto.getId()))) {
-            throw new UserAlreadyExistsOnCardException(String.valueOf(userId), String.valueOf(cardId));
-        }
-        cardDto.getUsers().add(userDto);
-        this.update(cardDto);
-    }
-
-    @Transactional
-    @Override
-    public void removeUserFromCard(final Long userId, final Long cardId) throws UserNotFoundException, CardNotFoundException, UserNotFoundOnCardException {
-        final UserDto userDto = this.userService.get(userId).orElseThrow(() -> new UserNotFoundException(String.valueOf(userId)));
-        final CardDto cardDto = this.get(cardId).orElseThrow(() -> new CardNotFoundException(String.valueOf(cardId)));
-
-        if (cardDto.getUsers().stream().noneMatch(actualUser -> actualUser.getId().equals(userDto.getId()))) {
-            throw new UserNotFoundOnCardException(String.valueOf(userId), String.valueOf(cardId));
-        }
-        cardDto.getUsers().removeIf(actualUser -> actualUser.getId().equals(userDto.getId()));
-        this.update(cardDto);
-    }*/
 }
