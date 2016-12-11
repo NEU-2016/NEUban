@@ -28,7 +28,7 @@ public class GlobalControllerExceptionHandler {
 			DataNotFoundException.class,
 			ColumnAlreadyExistsException.class,
 	})
-	public ModelAndView defaultErrorHandler(Exception e) {
+	public ModelAndView defaultErrorHandler(final Exception e) {
 		final ModelAndView modelAndView = new ModelAndView(ERROR_VIEW);
 		modelAndView.addObject(ERROR_MESSAGE_MODEL_OBJECT_NAME, e.getClass().getSimpleName() + ": " + e.getMessage());
 		return modelAndView;

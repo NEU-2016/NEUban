@@ -34,15 +34,15 @@ public class RegisterController {
 
 	@GetMapping
 	public ModelAndView loadRegisterView() {
-		ModelAndView modelAndView = new ModelAndView(REGISTER_VIEW);
+		final ModelAndView modelAndView = new ModelAndView(REGISTER_VIEW);
 		modelAndView.addObject(USER_DTO_MODEL_OBJECT_NAME, new UserDto());
 		return modelAndView;
 	}
 
 	@PostMapping
-	public ModelAndView userRegister(@Valid @ModelAttribute UserDto userDto, BindingResult bindingResult) throws InvalidRegistrationException {
+	public ModelAndView userRegister(@Valid @ModelAttribute final UserDto userDto, final BindingResult bindingResult) throws InvalidRegistrationException {
 		this.userValidator.validate(userDto, bindingResult);
-		ModelAndView modelAndView = new ModelAndView(INDEX_VIEW);
+		final ModelAndView modelAndView = new ModelAndView(INDEX_VIEW);
 		if (bindingResult.hasErrors()) {
 			throw new InvalidRegistrationException();
 		}
