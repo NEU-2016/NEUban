@@ -7,12 +7,13 @@
 </head>
 <body>
 <div class="container">
-    <h2 th:text="|#{welcome.header.prefix}${#httpServletRequest.remoteUser}#{welcome.header.suffix}|"></h2>
+    <h1 th:text="|#{welcome.header.prefix}${#httpServletRequest.remoteUser}#{welcome.header.suffix}|"></h1>
     <form th:action="@{/appLogout}" method="POST">
         <button type="submit" class="btn btn-default" th:text="#{welcome.button.logout}"></button>
     </form>
 </div>
 <div class="container-fluid">
+    <h2 th:text="#{welcome.boards}"></h2>
     <form th:action="@{/secure/welcome/createboard}" method="POST">
         <label th:text="#{welcome.boardtitle}"></label>
         <input type="text" class="form-control" th:placeholder="#{welcome.boardtitle}" name="boardTitle"/>
@@ -40,6 +41,7 @@
             </td>
         </tr>
     </table>
+    <h2 th:text="#{welcome.cards}"></h2>
     <table>
         <tr valign="top">
             <td th:each="card : ${cardList}" align="center">

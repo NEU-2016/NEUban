@@ -7,7 +7,7 @@
 </head>
 <body>
 <div class="container">
-    <h2 th:text="#{register.header}"></h2>
+    <h1 th:text="#{register.header}"></h1>
     <form action="#" th:action="@{/register}" th:object="${userDto}" method="POST">
         <label th:text="#{register.username}"></label>
         <input type="text" class="form-control" th:field="*{userName}"
