@@ -24,13 +24,9 @@
             <td th:each="board : ${boardList}" align="center">
                 <div class="panel panel-success" style="width:300px">
                     <div class="panel-heading">
-                        <label th:text="${board.title}" class="panel-title"></label>
+                        <a th:href="@{/secure/board/__${board.id}__}" th:text="${board.title}" class="panel-title"></a>
                     </div>
                     <div class="panel-body">
-                        <form th:action="@{/secure/board/__${board.id}__}" method="GET">
-                            <button type="submit" th:text="#{welcome.button.boarddetails}"
-                                    class="btn btn-primary"></button>
-                        </form>
                         <form th:action="@{/secure/welcome/removeboard/__${board.id}__}" th:method="DELETE">
                             <input type="hidden" name="_method" value="delete"/>
                             <button type="submit" th:text="#{welcome.button.removeboard}"

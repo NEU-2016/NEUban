@@ -35,7 +35,7 @@
                     <div class="panel-body">
                         <div th:each="card : ${column.cards}" class="panel panel-primary">
                             <div class="panel-heading">
-                                <label th:text="${card.title}" class="panel-title"></label>
+                                <a th:href="@{/secure/card/__${card.id}__}" th:text="${card.title}" class="panel-title"></a>
                             </div>
                             <div class="panel-body">
                                 <p th:text="${card.description}"></p>
