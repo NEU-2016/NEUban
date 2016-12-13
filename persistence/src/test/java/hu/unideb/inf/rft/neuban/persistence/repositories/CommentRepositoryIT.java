@@ -3,7 +3,6 @@ package hu.unideb.inf.rft.neuban.persistence.repositories;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,12 +43,13 @@ public class CommentRepositoryIT {
 		final List<CommentEntity> actualCommentList = this.commentRepository.findByCardIdOrderByCreatedTimeDesc(1L);
 
 		// Then
-		Arrays.asList("fee", "fi", "foe");
 		assertThat(actualCommentList, notNullValue());
 		assertThat(actualCommentList.isEmpty(), is(false));
 		assertThat(actualCommentList.size(), is(3));
+		List<Long> actualOrder = Arrays.asList(actualCommentList.get(0).getId(), actualCommentList.get(1).getId(),
+				actualCommentList.get(2).getId());
 
-		assertThat(actualCommentList, assertion);
+		assertThat(actualOrder, is(expectedOrder));
 
 	}
 }

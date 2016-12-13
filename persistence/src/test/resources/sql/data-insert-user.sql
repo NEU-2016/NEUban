@@ -86,16 +86,23 @@ values (7,'Sample description for task 7','Task 7',4);
 insert into card (id,description,title,column_id)
 values (8,'Sample description for task 8','Task 8',4);
 
-insert into comment (id,content,created_time,user_id,card_id)
-values (1,'Some content',NOW()-3,3,1);
+--insert into comment (id,content,user_id,card_id)
+--values (1,'Some content',3,1);
+
+--insert into comment (id,content,user_id,card_id)
+--values (2,'Some content',2,1);
+
+--insert into comment (id,content,user_id,card_id)
+--values (3,'Some content',1,1);
 
 insert into comment (id,content,created_time,user_id,card_id)
-values (2,'Some content',NOW()-1,2,1);
+values (1,'Some content','1481649880',2,1);
 
 insert into comment (id,content,created_time,user_id,card_id)
-values (3,'Some content',NOW()-2,1,1);
+values (2,'Some content','1481649880' ,1,1);
 
-
+insert into comment (id,content,created_time,user_id,card_id)
+values (3,'Some content','1481649880' ,3,1);
 
 -- User-Card
 

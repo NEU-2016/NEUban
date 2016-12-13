@@ -2,7 +2,7 @@ package hu.unideb.inf.rft.neuban.persistence.entities;
 
 
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -36,7 +36,7 @@ public class CommentEntity extends SuperEntity<Long> {
 	private String content;
 
 	@Column(name = "created_time")
-	private Date createdTime;
+	private LocalDateTime createdTime;
 
 	@JoinColumn
 	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.REMOVE })
@@ -47,7 +47,7 @@ public class CommentEntity extends SuperEntity<Long> {
 	private CardEntity card;
 
 	@Builder
-	public CommentEntity(final Long id, final String content, final Date createdDateTime,
+	public CommentEntity(final Long id, final String content, final LocalDateTime createdDateTime,
 			final UserEntity user, final CardEntity card) {
 		super(id);
 		this.content = content;
