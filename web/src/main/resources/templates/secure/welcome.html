@@ -7,7 +7,7 @@
 </head>
 <body>
 <div class="container">
-    <h1 th:text="|#{welcome.header.prefix}${#httpServletRequest.remoteUser}#{welcome.header.suffix}|"></h1>
+    <h1 th:text="|#{welcome.header.prefix}${username}#{welcome.header.suffix}|"></h1>
     <form th:action="@{/appLogout}" method="POST">
         <button type="submit" class="btn btn-default" th:text="#{welcome.button.logout}"></button>
     </form>
