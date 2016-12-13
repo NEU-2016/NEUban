@@ -20,6 +20,7 @@ public class WelcomeController {
 	private static final String WELCOME_VIEW = "secure/welcome";
 	private static final String REDIRECT_URL_TO_WELCOME_VIEW = "redirect:/" + WELCOME_VIEW;
 
+	private static final String USERNAME_MODEL_OBJECT_NAME = "username";
 	private static final String BOARD_LIST_MODEL_OBJECT_NAME = "boardList";
 	private static final String CARD_LIST_MODEL_OBJECT_NAME = "cardList";
 
@@ -33,6 +34,7 @@ public class WelcomeController {
 	public ModelAndView loadWelcomeView(final Principal principal) throws NonExistentPrincipalUserException {
 		final ModelAndView modelAndView = new ModelAndView(WELCOME_VIEW);
 		final UserDto currentUser = userService.getByUserName(principal.getName()).orElseThrow(() -> new NonExistentPrincipalUserException(principal.getName()));
+		modelAndView.addObject(USERNAME_MODEL_OBJECT_NAME, currentUser.getUserName());
 		modelAndView.addObject(BOARD_LIST_MODEL_OBJECT_NAME, boardService.getAllByUserId(currentUser.getId()));
 		modelAndView.addObject(CARD_LIST_MODEL_OBJECT_NAME, currentUser.getCards());
 		return modelAndView;
