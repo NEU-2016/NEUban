@@ -84,6 +84,15 @@ values (7,'Sample description for task 7','Task 7',4);
 insert into card (id,description,title,column_id)
 values (8,'Sample description for task 8','Task 8',4);
 
+insert into comment (id,content,created_time,user_id,card_id)
+values (1,"Some content",12345,1,1);
+
+insert into comment (id,content,created_time,user_id,card_id)
+values (2,"Some content",12345,2,1);
+
+insert into comment (id,content,created_time,user_id,card_id)
+values (3,"Some content",12345,3,1);
+
 -- User-Card
 
 -- delete from user_card_relation_table where user_id = 1;
