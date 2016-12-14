@@ -43,20 +43,16 @@ public class CommentServiceImplTest {
 
 	@InjectMocks
 	private CommentServiceImpl commentService;
-
 	@Mock
 	private BoardServiceImpl boardService;
-
 	@Mock
 	private UserService userService;
 	@Mock
 	private CardService cardService;
 	@Mock
 	private CommentRepository commentRepository;
-
 	@Mock
 	private CardRepository cardrepository;
-
 	@Mock
 	private ModelMapper modelMapper;
 
@@ -67,7 +63,6 @@ public class CommentServiceImplTest {
 	private static final long NEWER_COMMENT_ID = 2L;
 	private static final long CARD_ID = 1L;
 	private static final long USER_ID = 1L;
-	private static final long CARD_ID_WITH_TWO_COMMENTS = 2L;
 	private static final String CARD_TITLE = "Title";
 	private static final String COMMENT_CONTENT = "Just a random comment passing by";
 	private static final LocalDateTime COMMENT_DATE = LocalDateTime.of(1994, 8, 19, 0, 0);
@@ -76,9 +71,6 @@ public class CommentServiceImplTest {
 
 	private final CommentEntity commentEntity = CommentEntity.builder().id(COMMENT_ID).createdDateTime(COMMENT_DATE)
 			.content(COMMENT_CONTENT).build();
-
-	private final CommentEntity secondCommentEntity = CommentEntity.builder().id(NEWER_COMMENT_ID)
-			.createdDateTime(NEWER_COMMENT_DATE).content(COMMENT_CONTENT).build();
 
 	private final CommentDto commentDto = CommentDto.builder().id(COMMENT_ID).createdDateTime(COMMENT_DATE)
 			.content(COMMENT_CONTENT).card(null).build();
@@ -89,11 +81,14 @@ public class CommentServiceImplTest {
 	private final CardDto cardDto = CardDto.builder().id(CARD_ID).title(CARD_TITLE).comments(Lists.newArrayList())
 			.build();
 
-	private final Optional<CardDto> cardDtoWithTwoComments = Optional.of(CardDto.builder().id(CARD_ID_WITH_TWO_COMMENTS)
-			.title(CARD_TITLE).comments(Lists.newArrayList(commentDto, newerCommentDto)).build());
-	
 	private final Optional<CardDto> cardDtoWithTwoCommentsForGetAll = Optional.of(CardDto.builder().id(CARD_ID)
 			.title(CARD_TITLE).comments(Lists.newArrayList(commentDto, newerCommentDto)).build());
+
+	@Test(expected = IllegalArgumentException.class)
+	public void getAllShouldThrowIllegalArgumentExceptionWhenParamCardIdIsNull() throws CommentNotFoundException {
+		// When
+		commentService.getAll(null);
+	}
 
 	@Test
 	public void getAllShouldReturnEmptyListWhenCardDoesNotExist() throws CardNotFoundException {
@@ -115,11 +110,12 @@ public class CommentServiceImplTest {
 	public void getAllShouldReturnOrderedCommentsByDateWhenCardExists() {
 		// Given
 		given(this.cardService.get(CARD_ID)).willReturn(cardDtoWithTwoCommentsForGetAll);
-		
+
 		final Type listType = new TypeToken<List<CommentDto>>() {
 		}.getType();
-		given(this.modelMapper.map(commentRepository.findByCardIdOrderByCreatedTimeDesc(cardDtoWithTwoCommentsForGetAll.get().getId()),
-				listType)).willReturn(Arrays.asList(secondCommentEntity,commentEntity));
+		given(this.modelMapper.map(
+				commentRepository.findByCardIdOrderByCreatedTimeDesc(cardDtoWithTwoCommentsForGetAll.get().getId()),
+				listType)).willReturn(Arrays.asList(newerCommentDto, commentDto));
 		// When
 
 		final List<CommentDto> result = this.commentService.getAll(CARD_ID);
@@ -128,7 +124,7 @@ public class CommentServiceImplTest {
 		assertThat(result, notNullValue());
 
 		assertThat(result.size(), equalTo(2));
-		assertThat(result, equalTo(Lists.newArrayList(secondCommentEntity,commentEntity)));
+		assertThat(result, equalTo(Lists.newArrayList(newerCommentDto, commentDto)));
 
 		then(this.cardService).should().get(CARD_ID);
 		verifyNoMoreInteractions(this.cardService);
