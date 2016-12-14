@@ -1,10 +1,16 @@
 package hu.unideb.inf.rft.neuban.persistence.entities;
 
+
+
 import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -29,20 +35,25 @@ public class CommentEntity extends SuperEntity<Long> {
 	@Column(name = "content")
 	private String content;
 
-	@NotNull
 	@Column(name = "created_time")
 	private LocalDateTime createdTime;
 
-	@NotNull
-	@Column(name = "user_id")
+	@JoinColumn
+	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.REMOVE })
 	private UserEntity user;
 
+	@JoinColumn(name = "card_id")
+	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.REMOVE })
+	private CardEntity card;
+
 	@Builder
-	public CommentEntity(final Long id,final String content,final LocalDateTime createdDateTime,final UserEntity user) {
+	public CommentEntity(final Long id, final String content, final LocalDateTime createdDateTime,
+			final UserEntity user, final CardEntity card) {
 		super(id);
 		this.content = content;
 		this.createdTime = createdDateTime;
 		this.user = user;
+		this.card = card;
 	}
 
 }

@@ -26,13 +26,17 @@ public class CommentDto extends BaseDto<Long> {
 
 	@NotNull
 	private UserDto user;
+	
+	@NotNull
+	private CardDto card;
 
 	@Builder
-	public CommentDto(final Long id, final String content, final LocalDateTime createdDateTime, final UserDto user) {
+	public CommentDto(final Long id, final String content, final LocalDateTime createdDateTime, final UserDto user , final CardDto card) {
 		super(id);
 		this.content = content;
 		this.createdDateTime = createdDateTime;
 		this.user = user;
+		this.card = card;
 	}
 
 }

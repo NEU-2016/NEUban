@@ -73,6 +73,6 @@ public class UserRepositoryIT {
         assertThat(actualUserEntity.getRole(), equalTo(Role.ADMIN));
 
         assertThat(actualUserEntity.getBoards(), notNullValue());
-        assertThat(actualUserEntity.getBoards().isEmpty(), is(true));
+        assertThat(actualUserEntity.getBoards().isEmpty(), is(false));
     }
 }

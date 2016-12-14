@@ -8,7 +8,9 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 
 import hu.unideb.inf.rft.neuban.persistence.entities.CommentEntity;
 import hu.unideb.inf.rft.neuban.persistence.repositories.CardRepository;
@@ -40,20 +43,16 @@ public class CommentServiceImplTest {
 
 	@InjectMocks
 	private CommentServiceImpl commentService;
-
 	@Mock
 	private BoardServiceImpl boardService;
-
 	@Mock
 	private UserService userService;
 	@Mock
 	private CardService cardService;
 	@Mock
 	private CommentRepository commentRepository;
-
 	@Mock
 	private CardRepository cardrepository;
-
 	@Mock
 	private ModelMapper modelMapper;
 
@@ -64,26 +63,32 @@ public class CommentServiceImplTest {
 	private static final long NEWER_COMMENT_ID = 2L;
 	private static final long CARD_ID = 1L;
 	private static final long USER_ID = 1L;
-	private static final long CARD_ID_WITH_TWO_COMMENTS = 2L;
 	private static final String CARD_TITLE = "Title";
 	private static final String COMMENT_CONTENT = "Just a random comment passing by";
 	private static final LocalDateTime COMMENT_DATE = LocalDateTime.of(1994, 8, 19, 0, 0);
+	private static final LocalDateTime NEWER_COMMENT_DATE = LocalDateTime.of(1995, 8, 19, 0, 0);
 	private static final String CARD_DESCRIPTION = "Test Descrtipton";
 
 	private final CommentEntity commentEntity = CommentEntity.builder().id(COMMENT_ID).createdDateTime(COMMENT_DATE)
 			.content(COMMENT_CONTENT).build();
 
 	private final CommentDto commentDto = CommentDto.builder().id(COMMENT_ID).createdDateTime(COMMENT_DATE)
-			.content(COMMENT_CONTENT).build();
+			.content(COMMENT_CONTENT).card(null).build();
 
 	private final CommentDto newerCommentDto = CommentDto.builder().id(NEWER_COMMENT_ID)
-			.createdDateTime(LocalDateTime.of(1995, 8, 19, 0, 0)).content(COMMENT_CONTENT).build();
+			.createdDateTime(NEWER_COMMENT_DATE).content(COMMENT_CONTENT).card(null).build();
 
 	private final CardDto cardDto = CardDto.builder().id(CARD_ID).title(CARD_TITLE).comments(Lists.newArrayList())
 			.build();
 
-	private final Optional<CardDto> cardDtoWithTwoComments = Optional.of(CardDto.builder().id(CARD_ID_WITH_TWO_COMMENTS)
+	private final Optional<CardDto> cardDtoWithTwoCommentsForGetAll = Optional.of(CardDto.builder().id(CARD_ID)
 			.title(CARD_TITLE).comments(Lists.newArrayList(commentDto, newerCommentDto)).build());
+
+	@Test(expected = IllegalArgumentException.class)
+	public void getAllShouldThrowIllegalArgumentExceptionWhenParamCardIdIsNull() throws CommentNotFoundException {
+		// When
+		commentService.getAll(null);
+	}
 
 	@Test
 	public void getAllShouldReturnEmptyListWhenCardDoesNotExist() throws CardNotFoundException {
@@ -104,19 +109,25 @@ public class CommentServiceImplTest {
 	@Test
 	public void getAllShouldReturnOrderedCommentsByDateWhenCardExists() {
 		// Given
-		given(this.cardService.get(CARD_ID_WITH_TWO_COMMENTS)).willReturn(cardDtoWithTwoComments);
+		given(this.cardService.get(CARD_ID)).willReturn(cardDtoWithTwoCommentsForGetAll);
+
+		final Type listType = new TypeToken<List<CommentDto>>() {
+		}.getType();
+		given(this.modelMapper.map(
+				commentRepository.findByCardIdOrderByCreatedTimeDesc(cardDtoWithTwoCommentsForGetAll.get().getId()),
+				listType)).willReturn(Arrays.asList(newerCommentDto, commentDto));
 		// When
 
-		final List<CommentDto> result = this.commentService.getAll(CARD_ID_WITH_TWO_COMMENTS);
+		final List<CommentDto> result = this.commentService.getAll(CARD_ID);
 
 		// Then
 		assertThat(result, notNullValue());
 
 		assertThat(result.size(), equalTo(2));
-		assertThat(result, equalTo(Lists.newArrayList(commentDto, newerCommentDto)));
+		assertThat(result, equalTo(Lists.newArrayList(newerCommentDto, commentDto)));
 
-		then(this.cardService).should().get(CARD_ID_WITH_TWO_COMMENTS);
-		verifyNoMoreInteractions(this.boardService);
+		then(this.cardService).should().get(CARD_ID);
+		verifyNoMoreInteractions(this.cardService);
 
 	}
 
