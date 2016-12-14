@@ -96,13 +96,13 @@ values (8,'Sample description for task 8','Task 8',4);
 --values (3,'Some content',1,1);
 
 insert into comment (id,content,created_time,user_id,card_id)
-values (1,'Some content','1481649880',2,1);
+values (1,'Some content',CURRENT_TIMESTAMP()-5,2,1);
 
 insert into comment (id,content,created_time,user_id,card_id)
-values (2,'Some content','1481649880' ,1,1);
+values (2,'Some content',CURRENT_TIMESTAMP()+5 ,1,1);
 
 insert into comment (id,content,created_time,user_id,card_id)
-values (3,'Some content','1481649880' ,3,1);
+values (3,'Some content',CURRENT_TIMESTAMP() ,3,1);
 
 -- User-Card
 

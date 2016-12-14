@@ -85,13 +85,13 @@ insert into card (id,description,title,column_id)
 values (8,'Sample description for task 8','Task 8',4);
 
 insert into comment (id,content,created_time,user_id,card_id)
-values (1,"Some content",12345,1,1);
+values (1,"Some birthday content",'1993-12-03 12:30',1,1);
 
 insert into comment (id,content,created_time,user_id,card_id)
-values (2,"Some content",12345,2,1);
+values (2,"Some birthday content",'1994-08-20 12:30',2,1);
 
 insert into comment (id,content,created_time,user_id,card_id)
-values (3,"Some content",12345,3,1);
+values (3,"Some birthday content",'1994-08-19 06:30',3,1);
 
 -- User-Card
 

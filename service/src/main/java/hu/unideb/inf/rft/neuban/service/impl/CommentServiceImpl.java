@@ -1,9 +1,12 @@
 package hu.unideb.inf.rft.neuban.service.impl;
 
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,9 @@ public class CommentServiceImpl implements CommentService {
 
 	@Autowired
 	private CommentRepository commentRepository;
+	
+	@Autowired
+	private ModelMapper modelMapper;
 
 	@Autowired
 	private CardService cardService;
@@ -63,7 +69,11 @@ public class CommentServiceImpl implements CommentService {
 		final Optional<CardDto> cardDtoOptional = this.cardService.get(cardId);
 
 		if (cardDtoOptional.isPresent()) {
-			return cardDtoOptional.get().getComments();
+			final Type listType = new TypeToken<List<CommentDto>>() {
+			}.getType();
+	        // TODO After baseservice refactor this is not necessary
+			return modelMapper.map(commentRepository.findByCardIdOrderByCreatedTimeDesc(cardDtoOptional.get().getId()),
+					listType);
 		}
 		return Lists.newArrayList();
 	}
