@@ -37,7 +37,7 @@ public class CommentRepositoryIT {
 	public void findByCardIdOrderByCreatedTimeDescShouldReturnCommentsInOrder() {
 		// Given
 
-		List<Long> expectedOrder = Arrays.asList(2L, 3L, 1L);
+		final List<Long> expectedOrder = Arrays.asList(2L, 3L, 1L);
 
 		// When
 		final List<CommentEntity> actualCommentList = this.commentRepository.findByCardIdOrderByCreatedTimeDesc(1L);
@@ -46,7 +46,7 @@ public class CommentRepositoryIT {
 		assertThat(actualCommentList, notNullValue());
 		assertThat(actualCommentList.isEmpty(), is(false));
 		assertThat(actualCommentList.size(), is(3));
-		List<Long> actualOrder = Arrays.asList(actualCommentList.get(0).getId(), actualCommentList.get(1).getId(),
+		final List<Long> actualOrder = Arrays.asList(actualCommentList.get(0).getId(), actualCommentList.get(1).getId(),
 				actualCommentList.get(2).getId());
 
 		assertThat(actualOrder, is(expectedOrder));
