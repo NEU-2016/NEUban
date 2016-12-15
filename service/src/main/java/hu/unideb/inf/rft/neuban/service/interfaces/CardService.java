@@ -16,4 +16,6 @@ public interface CardService extends SingleDataGetService<CardDto, Long>, Single
     void save(Long columnId, CardDto cardDto) throws DataNotFoundException, CardAlreadyExistsException;
 
     void remove(Long cardId) throws CardNotFoundException;
+    
+    List<CardDto> getAllByTitleContaining(String searchString);
 }
