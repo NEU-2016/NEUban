@@ -36,7 +36,7 @@ public class UserEntity extends SuperEntity<Long> {
             inverseJoinColumns = @JoinColumn(name = "board_id", referencedColumnName = "id"))
     private List<BoardEntity> boards;
 
-    @ManyToMany(cascade = CascadeType.MERGE)
+    @ManyToMany(cascade = {CascadeType.PERSIST})
     @JoinTable(name = "user_card_relation_table",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "card_id", referencedColumnName = "id"))
