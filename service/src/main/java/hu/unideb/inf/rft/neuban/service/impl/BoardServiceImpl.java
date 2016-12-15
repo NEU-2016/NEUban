@@ -95,9 +95,9 @@ public class BoardServiceImpl implements BoardService {
 	public void removeUserFromBoardByUserIdAndByBoardId(final Long userId, final Long boardId)
 			throws NonExistentBoardIdException, RelationNotFoundException, NonExistentUserIdException,
 			DataNotFoundException {
-		
-		//TODO Refactor needed
-		
+
+		// TODO Refactor needed
+
 		Assert.notNull(userId);
 		Assert.notNull(boardId);
 
@@ -110,7 +110,7 @@ public class BoardServiceImpl implements BoardService {
 			userDto.setBoards(userDto.getBoards().stream()
 					.filter(userBoards -> userBoards.getId().equals(boardDto.getId())).collect(Collectors.toList()));
 		}
-		
+
 		if (userDto.getBoards().isEmpty() || Integer.compare(userDto.getBoards().size(), sizeOfUserDtoBoards) != 0) {
 			throw new RelationNotFoundException();
 		}
@@ -153,11 +153,8 @@ public class BoardServiceImpl implements BoardService {
 
 		BoardDto boardDto = BoardDto.builder().title(title).build();
 
-		if (userDto.getBoards() != null) {
-			userDto.getBoards().add(boardDto);
-		} else {
-			userDto.setBoards(Lists.newArrayList(boardDto));
-		}
+		userDto.getBoards().add(boardDto);
+
 		userService.update(userDto);
 	}
 
