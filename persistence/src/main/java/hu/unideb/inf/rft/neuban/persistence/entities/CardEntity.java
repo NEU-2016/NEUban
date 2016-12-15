@@ -3,14 +3,7 @@ package hu.unideb.inf.rft.neuban.persistence.entities;
 import java.util.Collections;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -43,6 +36,16 @@ public class CardEntity extends SuperEntity<Long> {
 	@JoinColumn(name = "card_id")
 	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.REMOVE })
 	private List<CommentEntity> comments;
+
+	@ManyToMany(mappedBy = "cards")
+	private List<UserEntity> users;
+
+	@PreRemove
+	private void removeCardsFromUsers() {
+		for (UserEntity userEntity : users) {
+			userEntity.getCards().remove(this);
+		}
+	}
 
 	@Builder
 	public CardEntity(final Long id, final String title, final String description, final List<CommentEntity> comments) {
