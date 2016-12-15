@@ -17,6 +17,10 @@ public class SingleCommentDataConverter implements SingleDataConverter<CommentEn
 	@Qualifier("singleUserDataConverter")
 	private SingleUserDataConverter singleUserDataConverter;
 
+	@Autowired
+	@Qualifier("singleCardDataConverter")
+	private SingleCardDataConverter singleCardDataConverter;
+
 	@Override
 	public Optional<CommentEntity> convertToSource(final CommentDto commentDto) {
 		if (commentDto == null) {
@@ -24,7 +28,8 @@ public class SingleCommentDataConverter implements SingleDataConverter<CommentEn
 		}
 		return Optional.of(CommentEntity.builder().id(commentDto.getId()).content(commentDto.getContent())
 				.createdDateTime(commentDto.getCreatedDateTime())
-				.user(singleUserDataConverter.convertToSource(commentDto.getUser()).get()).build());
+				.user(this.singleUserDataConverter.convertToSource(commentDto.getUser()).get())
+				.card(this.singleCardDataConverter.convertToSource(commentDto.getCard()).get()).build());
 	}
 
 	@Override
@@ -34,6 +39,7 @@ public class SingleCommentDataConverter implements SingleDataConverter<CommentEn
 		}
 		return Optional.of(CommentDto.builder().id(commentEntity.getId()).content(commentEntity.getContent())
 				.createdDateTime(commentEntity.getCreatedTime())
-				.user(this.singleUserDataConverter.convertToTarget(commentEntity.getUser()).get()).build());
+				.user(this.singleUserDataConverter.convertToTarget(commentEntity.getUser()).get())
+				.card(this.singleCardDataConverter.convertToTarget(commentEntity.getCard()).get()).build());
 	}
 }
