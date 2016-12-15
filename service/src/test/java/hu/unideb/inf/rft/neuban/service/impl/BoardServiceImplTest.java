@@ -487,6 +487,7 @@ public class BoardServiceImplTest {
 		assertThat(actualUserDtoAfterSave, notNullValue());
 		assertThat(actualUserDtoAfterSave.isPresent(), is(true));
 		assertThat(actualUserDtoAfterSave.get(), equalTo(expectedUserDtoForGetByIdAfterSave));
+		
 	}
 
 	@Test(expected = IllegalArgumentException.class)
