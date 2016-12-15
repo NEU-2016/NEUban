@@ -507,7 +507,7 @@ public class BoardServiceImplTest {
 		this.boardService.remove(BOARD_ID);
 	}
 
-	@Test
+	/*@Test
 	public void removeShouldDeleteRelationThenDeleteBoard() throws DataNotFoundException {
 		// Given
 
@@ -545,6 +545,6 @@ public class BoardServiceImplTest {
 		then(this.boardRepository).should().findOne(BOARD_ID);
 		then(this.boardRepository).should().delete(BOARD_ID);
 
-	}
+	}*/
 
 }
