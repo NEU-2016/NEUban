@@ -28,6 +28,16 @@ public class BoardEntity extends SuperEntity<Long> {
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     private List<ColumnEntity> columns;
 
+    @ManyToMany(mappedBy = "boards")
+    private List<UserEntity> users;
+
+    @PreRemove
+    private void removeBoardsFromUsers() {
+        for (UserEntity userEntity : users) {
+            userEntity.getBoards().remove(this);
+        }
+    }
+
     @Builder
     public BoardEntity(final Long id, final String title, final List<ColumnEntity> columns) {
         super(id);
