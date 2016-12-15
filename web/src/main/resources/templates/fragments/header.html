@@ -1,3 +1,6 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
 <div th:fragment="header">
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
@@ -5,11 +8,14 @@
                 <a th:href="@{/secure/welcome}" class="navbar-left">
                     <img th:src="@{/images/neulogo.png}"/>
                 </a>
-                <h2 th:text="#{header.brand}" class="navbar-text"></h2>
+                <h2 th:text="${username}" class="navbar-text"></h2>
                 <form th:action="@{/appLogout}" method="POST" class="navbar-form navbar-right">
-                    <button type="submit" class="btn btn-default navbar-btn" th:text="#{header.button.logout}"></button>
+                    <button type="submit" class="btn btn-default navbar-btn"
+                            th:text="#{header.button.signout}"></button>
                 </form>
             </div>
         </div>
     </nav>
 </div>
+</body>
+</html>
