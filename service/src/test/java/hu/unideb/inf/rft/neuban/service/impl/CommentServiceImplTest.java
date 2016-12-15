@@ -6,6 +6,8 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.lang.reflect.Type;
@@ -35,8 +37,10 @@ import hu.unideb.inf.rft.neuban.service.exceptions.CommentNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.data.CardNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.data.DataNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.data.UserNotFoundException;
+import hu.unideb.inf.rft.neuban.service.impl.shared.SingleDataUpdateServiceImpl;
 import hu.unideb.inf.rft.neuban.service.interfaces.CardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CommentServiceImplTest {
@@ -55,6 +59,10 @@ public class CommentServiceImplTest {
 	private CardRepository cardrepository;
 	@Mock
 	private ModelMapper modelMapper;
+	@Mock
+	private SingleDataGetService<CommentDto, Long> singleCommentDataGetService;
+	@Mock
+	private SingleDataUpdateServiceImpl<CommentEntity, CommentDto, Long, CommentNotFoundException> singleCommentDataUpdateService;
 
 	@Rule
 	public final ExpectedException expectedException = ExpectedException.none();
@@ -83,6 +91,50 @@ public class CommentServiceImplTest {
 
 	private final Optional<CardDto> cardDtoWithTwoCommentsForGetAll = Optional.of(CardDto.builder().id(CARD_ID)
 			.title(CARD_TITLE).comments(Lists.newArrayList(commentDto, newerCommentDto)).build());
+
+	@Test(expected = IllegalArgumentException.class)
+	public void getShouldThrowIllegalArgumentExceptionWhenParamCommentIdIsNull() {
+		// Given
+		given(this.singleCommentDataGetService.get(null)).willThrow(IllegalArgumentException.class);
+
+		// When
+		this.commentService.get(null);
+
+		// Then
+	}
+
+	@Test
+	public void getShouldReturnWithEmptyOptionalWhenCommentDoesNotExist() {
+		// Given
+		given(this.singleCommentDataGetService.get(COMMENT_ID)).willReturn(Optional.empty());
+
+		// When
+		final Optional<CommentDto> result = this.commentService.get(COMMENT_ID);
+
+		// Then
+		assertThat(result, notNullValue());
+		assertThat(result.isPresent(), is(false));
+
+		then(this.singleCommentDataGetService).should().get(COMMENT_ID);
+		verifyNoMoreInteractions(this.singleCommentDataGetService);
+	}
+
+	@Test
+	public void getShouldReturnWithNonEmptyOptionalWhenCommentDoesExist() {
+		// Given
+		given(this.singleCommentDataGetService.get(COMMENT_ID)).willReturn(Optional.of(commentDto));
+
+		// When
+		final Optional<CommentDto> result = this.commentService.get(COMMENT_ID);
+
+		// Then
+		assertThat(result, notNullValue());
+		assertThat(result.isPresent(), is(true));
+		assertThat(result.get(), equalTo(commentDto));
+
+		then(this.singleCommentDataGetService).should().get(COMMENT_ID);
+		verifyNoMoreInteractions(this.singleCommentDataGetService);
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void getAllShouldThrowIllegalArgumentExceptionWhenParamCardIdIsNull() throws CommentNotFoundException {
@@ -129,6 +181,43 @@ public class CommentServiceImplTest {
 		then(this.cardService).should().get(CARD_ID);
 		verifyNoMoreInteractions(this.cardService);
 
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void updateShouldThrowIllegalArgumentExceptionWhenParamCommentDtoIsNull() throws DataNotFoundException {
+		// Given
+		doThrow(IllegalArgumentException.class).when(this.singleCommentDataUpdateService).update(null);
+
+		// When
+		this.commentService.update(null);
+
+		// Then
+	}
+
+	@Test(expected = CommentNotFoundException.class)
+	public void updateShouldThrowCommentNotFoundExceptionWhenCommentIdIsNull() throws DataNotFoundException {
+		// Given
+		final CommentDto commentDto = CommentDto.builder().id(null).build();
+
+		doThrow(CommentNotFoundException.class).when(this.singleCommentDataUpdateService).update(commentDto);
+
+		// When
+		this.commentService.update(commentDto);
+
+		// Then
+	}
+
+	@Test
+	public void updateShouldBeSuccessfulUpdatingWhenCommentExists() throws DataNotFoundException {
+		// Given
+		doNothing().when(this.singleCommentDataUpdateService).update(commentDto);
+
+		// When
+		this.commentService.update(commentDto);
+
+		// Then
+		then(this.singleCommentDataUpdateService).should().update(commentDto);
+		verifyNoMoreInteractions(this.singleCommentDataUpdateService);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
