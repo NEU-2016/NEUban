@@ -31,123 +31,134 @@ import static hu.unideb.inf.rft.neuban.service.provider.beanname.SingleDataUpdat
 @Service
 public class BoardServiceImpl implements BoardService {
 
-    @Autowired
-    private BoardRepository boardRepository;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private ModelMapper modelMapper;
+	@Autowired
+	private BoardRepository boardRepository;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private ModelMapper modelMapper;
 
-    @Autowired
-    @Qualifier(SINGLE_BOARD_DATA_GET_SERVICE)
-    private SingleDataGetService<BoardDto, Long> singleBoardDataGetService;
+	@Autowired
+	@Qualifier(SINGLE_BOARD_DATA_GET_SERVICE)
+	private SingleDataGetService<BoardDto, Long> singleBoardDataGetService;
 
-    @Autowired
-    @Qualifier(SINGLE_BOARD_DATA_UPDATE_SERVICE)
-    private SingleDataUpdateService<BoardDto> singleBoardDataUpdateService;
+	@Autowired
+	@Qualifier(SINGLE_BOARD_DATA_UPDATE_SERVICE)
+	private SingleDataUpdateService<BoardDto> singleBoardDataUpdateService;
 
-    @Transactional(readOnly = true)
-    @Override
-    public Optional<BoardDto> get(final Long boardId) {
-        return this.singleBoardDataGetService.get(boardId);
-    }
+	@Transactional(readOnly = true)
+	@Override
+	public Optional<BoardDto> get(final Long boardId) {
+		return this.singleBoardDataGetService.get(boardId);
+	}
 
-    @Transactional(readOnly = true)
-    @Override
-    public List<BoardDto> getAllByUserId(final Long userId) {
-        final Optional<UserDto> userDtoOptional = this.userService.get(userId);
+	@Transactional(readOnly = true)
+	@Override
+	public List<BoardDto> getAllByUserId(final Long userId) {
+		final Optional<UserDto> userDtoOptional = this.userService.get(userId);
 
-        if (userDtoOptional.isPresent()) {
-            return userDtoOptional.get().getBoards();
-        }
-        return Lists.newArrayList();
-    }
+		if (userDtoOptional.isPresent()) {
+			return userDtoOptional.get().getBoards();
+		}
+		return Lists.newArrayList();
+	}
 
-    @Transactional
-    @Override
-    public void update(final BoardDto boardDto) throws DataNotFoundException {
-        this.singleBoardDataUpdateService.update(boardDto);
-    }
+	@Transactional
+	@Override
+	public void update(final BoardDto boardDto) throws DataNotFoundException {
+		this.singleBoardDataUpdateService.update(boardDto);
+	}
 
-    @Transactional
-    @Override
-    public void remove(final Long boardId) throws DataNotFoundException {
-        Assert.notNull(boardId);
+	@Transactional
+	@Override
+	public void remove(final Long boardId) throws DataNotFoundException {
+		Assert.notNull(boardId);
 
-        List<UserDto> userDtos = userService.getAll();
+		List<UserDto> userDtos = userService.getAll();
 
-        final BoardEntity boardEntity = Optional.ofNullable(this.boardRepository.findOne(boardId))
-                .orElseThrow(() -> new BoardNotFoundException(boardId.toString()));
+		final BoardEntity boardEntity = Optional.ofNullable(this.boardRepository.findOne(boardId))
+				.orElseThrow(() -> new BoardNotFoundException(boardId.toString()));
 
-        final BoardDto boardDto = modelMapper.map(boardEntity, BoardDto.class);
-        userDtos = userDtos.stream().filter(userDto -> userDto.getBoards().contains(boardDto))
-                .collect(Collectors.toList());
-        for (UserDto userDtoIter : userDtos) {
-            userDtoIter.getBoards().remove(boardDto);
-            userService.update(userDtoIter);
-        }
-        this.boardRepository.delete(boardId);
+		final BoardDto boardDto = modelMapper.map(boardEntity, BoardDto.class);
+		userDtos = userDtos.stream().filter(userDto -> userDto.getBoards().contains(boardDto))
+				.collect(Collectors.toList());
+		for (UserDto userDtoIter : userDtos) {
+			userDtoIter.getBoards().remove(boardDto);
+			userService.update(userDtoIter);
+		}
+		this.boardRepository.delete(boardId);
 
-    }
+	}
 
-    @Transactional
-    @Override
-    public void removeUserFromBoardByUserIdAndByBoardId(final Long userId, final Long boardId)
-            throws NonExistentBoardIdException, RelationNotFoundException, NonExistentUserIdException, DataNotFoundException {
+	@Transactional
+	@Override
+	public void removeUserFromBoardByUserIdAndByBoardId(final Long userId, final Long boardId)
+			throws NonExistentBoardIdException, RelationNotFoundException, NonExistentUserIdException,
+			DataNotFoundException {
+		
+		//TODO Refactor needed
+		
+		Assert.notNull(userId);
+		Assert.notNull(boardId);
 
-        Assert.notNull(userId);
-        Assert.notNull(boardId);
+		UserDto userDto = this.userService.get(userId).orElseThrow(() -> new NonExistentUserIdException(userId));
+		final int sizeOfUserDtoBoards = userDto.getBoards().size();
 
-        UserDto userDto = this.userService.get(userId).orElseThrow(() -> new NonExistentUserIdException(userId));
+		BoardDto boardDto = get(boardId).orElseThrow(() -> new NonExistentBoardIdException(boardId));
 
-        BoardDto boardDto = get(boardId).orElseThrow(() -> new NonExistentBoardIdException(boardId));
+		if (userDto.getBoards() != null) {
+			userDto.setBoards(userDto.getBoards().stream()
+					.filter(userBoards -> userBoards.getId().equals(boardDto.getId())).collect(Collectors.toList()));
+		}
+		
+		if (userDto.getBoards().isEmpty() || Integer.compare(userDto.getBoards().size(), sizeOfUserDtoBoards) != 0) {
+			throw new RelationNotFoundException();
+		}
 
-        if (userDto.getBoards() == null
-                || !userDto.getBoards().removeIf(userBoards -> userBoards.getId().equals((boardDto.getId())))) {
-            throw new RelationNotFoundException();
-        }
-        userService.update(userDto);
-    }
+		userService.update(userDto);
 
-    @Transactional
-    @Override
-    public void addUserToBoardByUserIdAndByBoardId(final Long userId, final Long boardId)
-            throws NonExistentBoardIdException, NonExistentUserIdException, DataNotFoundException {
+	}
 
-        Assert.notNull(userId);
-        Assert.notNull(boardId);
+	@Transactional
+	@Override
+	public void addUserToBoardByUserIdAndByBoardId(final Long userId, final Long boardId)
+			throws NonExistentBoardIdException, NonExistentUserIdException, DataNotFoundException {
 
-        UserDto userDto = this.userService.get(userId).orElseThrow(() -> new NonExistentUserIdException(userId));
+		Assert.notNull(userId);
+		Assert.notNull(boardId);
 
-        BoardDto boardDto = get(boardId).orElseThrow(() -> new NonExistentBoardIdException(boardId));
+		UserDto userDto = this.userService.get(userId).orElseThrow(() -> new NonExistentUserIdException(userId));
 
-        if (userDto.getBoards() != null) {
-            userDto.getBoards().add(boardDto);
-        } else {
-            userDto.setBoards(Lists.newArrayList(boardDto));
-        }
+		BoardDto boardDto = get(boardId).orElseThrow(() -> new NonExistentBoardIdException(boardId));
 
-        userService.update(userDto);
+		if (userDto.getBoards() != null) {
+			userDto.getBoards().add(boardDto);
+		} else {
+			userDto.setBoards(Lists.newArrayList(boardDto));
+		}
 
-    }
+		userService.update(userDto);
 
-    @Transactional
-    @Override
-    public void createBoard(final Long userId, final String title) throws NonExistentUserIdException, DataNotFoundException {
+	}
 
-        Assert.notNull(userId);
-        Assert.notNull(title);
+	@Transactional
+	@Override
+	public void createBoard(final Long userId, final String title)
+			throws NonExistentUserIdException, DataNotFoundException {
 
-        UserDto userDto = this.userService.get(userId).orElseThrow(() -> new NonExistentUserIdException(userId));
+		Assert.notNull(userId);
+		Assert.notNull(title);
 
-        BoardDto boardDto = BoardDto.builder().title(title).build();
+		UserDto userDto = this.userService.get(userId).orElseThrow(() -> new NonExistentUserIdException(userId));
 
-        if (userDto.getBoards() != null) {
-            userDto.getBoards().add(boardDto);
-        } else {
-            userDto.setBoards(Lists.newArrayList(boardDto));
-        }
-        userService.update(userDto);
-    }
+		BoardDto boardDto = BoardDto.builder().title(title).build();
+
+		if (userDto.getBoards() != null) {
+			userDto.getBoards().add(boardDto);
+		} else {
+			userDto.setBoards(Lists.newArrayList(boardDto));
+		}
+		userService.update(userDto);
+	}
 
 }
