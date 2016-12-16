@@ -7,13 +7,44 @@
 </head>
 <body>
 <div class="container">
-    <h1 th:text="#{index.header}"></h1>
-    <form th:action="@{/login}" method="GET">
-        <button type="submit" class="btn btn-default" th:text="#{index.button.login}"></button>
-    </form>
-    <form th:action="@{/register}" method="GET">
-        <button type="submit" class="btn btn-default" th:text="#{index.button.register}"></button>
-    </form>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <label class="panel-title">Take out the trash</label>
+                </div>
+                <div class="panel-body">
+                    <p>I'M THE THRAAAASH MAAAAN</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <label th:text="#{index.header}" class="panel-title"></label>
+                </div>
+                <div class="panel-body">
+                    <p th:text="#{index.description}"></p>
+                    <form th:action="@{/login}" method="GET">
+                        <button type="submit" class="btn btn-default" th:text="#{index.button.login}"></button>
+                    </form>
+                    <form th:action="@{/register}" method="GET">
+                        <button type="submit" class="btn btn-default" th:text="#{index.button.register}"></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <label class="panel-title">Take out the trash</label>
+                </div>
+                <div class="panel-body">
+                    <p>I'M THE THRAAAASH MAAAAN</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>
