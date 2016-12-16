@@ -75,7 +75,7 @@ public class BoardController {
 		return modelAndView;
 	}
 
-	@DeleteMapping(path = "/{columnId}/removecard/{cardId}")
+	@DeleteMapping(path = "/removecard/{cardId}")
 	public ModelAndView removeCard(@PathVariable final Long boardId, @PathVariable final Long cardId) throws CardNotFoundException {
 		final ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_BOARD_VIEW + "/" + boardId);
 		cardService.remove(cardId);
