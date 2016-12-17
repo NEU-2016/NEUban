@@ -23,6 +23,7 @@ public class UserRepositoryIT {
     private static final long ADMIN_ID = 1L;
     private static final String ADMIN_USER_NAME = "admin";
     private static final String ADMIN_PASSWORD = "admin";
+    private static final String ADMIN_EMAIL = "admin@gmail.com";
     private static final String USER_NAME_NON_EXISTENT = "non-existent username";
 
     @Autowired
@@ -65,6 +66,9 @@ public class UserRepositoryIT {
 
         assertThat(actualUserEntity.getUserName(), notNullValue());
         assertThat(actualUserEntity.getUserName(), equalTo(ADMIN_USER_NAME));
+
+        assertThat(actualUserEntity.getEmail(), notNullValue());
+        assertThat(actualUserEntity.getEmail(), equalTo(ADMIN_EMAIL));
 
         assertThat(actualUserEntity.getPassword(), notNullValue());
         assertThat(actualUserEntity.getPassword(), equalTo(ADMIN_PASSWORD));
