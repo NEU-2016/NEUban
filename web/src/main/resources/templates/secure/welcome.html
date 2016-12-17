@@ -39,14 +39,7 @@
     <table>
         <tr valign="top">
             <td th:each="card : ${cardList}" align="center">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <label th:text="${card.title}" class="panel-title"></label>
-                    </div>
-                    <div class="panel-body">
-                        <p th:text="${card.description}"></p>
-                    </div>
-                </div>
+                <div th:replace="fragments/card :: card-welcome (card = ${card})"></div>
             </td>
         </tr>
     </table>

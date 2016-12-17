@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="card-welcome (card)">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <a th:href="@{/secure/card/__${card.id}__}" th:text="${card.title}" class="panel-title"></a>
+        </div>
+        <div class="panel-body">
+            <p th:text="${card.description}"></p>
+        </div>
+    </div>
+</div>
+<div th:fragment="card-board (board, card)">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <a th:href="@{/secure/card/__${card.id}__}" th:text="${card.title}" class="panel-title"></a>
+        </div>
+        <div class="panel-body">
+            <p th:text="${card.description}"></p>
+            <form th:action="@{/secure/board/__${board.id}__/removecard/__${card.id}__}"
+                  th:method="DELETE">
+                <input type="hidden" name="_method" value="delete"/>
+                <button type="submit" class="btn btn-danger"
+                        th:text="#{board.button.removecard}"></button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

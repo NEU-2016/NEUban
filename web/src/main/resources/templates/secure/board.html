@@ -31,19 +31,8 @@
                         </form>
                     </div>
                     <div class="panel-body">
-                        <div th:each="card : ${column.cards}" class="panel panel-primary">
-                            <div class="panel-heading">
-                                <a th:href="@{/secure/card/__${card.id}__}" th:text="${card.title}" class="panel-title"></a>
-                            </div>
-                            <div class="panel-body">
-                                <p th:text="${card.description}"></p>
-                                <form th:action="@{/secure/board/__${board.id}__/__${column.id}__/removecard/__${card.id}__}"
-                                      th:method="DELETE">
-                                    <input type="hidden" name="_method" value="delete"/>
-                                    <button type="submit" class="btn btn-danger"
-                                            th:text="#{board.button.removecard}"></button>
-                                </form>
-                            </div>
+                        <div th:each="card : ${column.cards}">
+                            <div th:replace="fragments/card :: card-board (board = ${board}, card = ${card})"></div>
                         </div>
                         <form th:action="@{/secure/board/__${board.id}__/__${column.id}__/addcard}" method="POST">
                             <input type="text" class="form-control" th:placeholder="#{board.cardtitle}"
