@@ -39,8 +39,9 @@ public class RegisterController {
 		return modelAndView;
 	}
 
+	// Valid annotation is necessary here!!!
 	@PostMapping
-	public ModelAndView userRegister(@Valid @ModelAttribute final UserDto userDto, final BindingResult bindingResult) throws InvalidRegistrationException {
+	public ModelAndView userRegister(@ModelAttribute final UserDto userDto, final BindingResult bindingResult) throws InvalidRegistrationException {
 		this.userValidator.validate(userDto, bindingResult);
 		final ModelAndView modelAndView = new ModelAndView(INDEX_VIEW);
 		if (bindingResult.hasErrors()) {
