@@ -104,7 +104,7 @@ public class CardServiceImpl implements CardService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<CardDto> getAllByTitleContaining(String searchString) {
+	public List<CardDto> getAllByTitleContaining(final String searchString) {
 		Assert.notNull(searchString);
 		
 		final Type listType = new TypeToken<List<CardDto>>() {
