@@ -4,12 +4,8 @@ import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
-import hu.unideb.inf.rft.neuban.service.exceptions.CardAlreadyExistsException;
-import hu.unideb.inf.rft.neuban.service.exceptions.ColumnAlreadyExistsException;
-import hu.unideb.inf.rft.neuban.service.exceptions.data.BoardNotFoundException;
-import hu.unideb.inf.rft.neuban.service.exceptions.data.CardNotFoundException;
-import hu.unideb.inf.rft.neuban.service.exceptions.data.ColumnNotFoundException;
-import hu.unideb.inf.rft.neuban.service.exceptions.data.DataNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.*;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.*;
 import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.CardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
@@ -79,6 +75,22 @@ public class BoardController {
 	public ModelAndView removeCard(@PathVariable final Long boardId, @PathVariable final Long cardId) throws CardNotFoundException {
 		final ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_BOARD_VIEW + "/" + boardId);
 		cardService.remove(cardId);
+		return modelAndView;
+	}
+
+	@PostMapping(path = "/adduser")
+	public ModelAndView addUser(@PathVariable final Long boardId, @RequestParam final String username) throws DataNotFoundException, NonExistentUserIdException, NonExistentBoardIdException {
+		final ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_BOARD_VIEW + "/" + boardId);
+		final UserDto userDto = userService.getByUserName(username).orElseThrow(() -> new UserNotFoundException(username));
+		boardService.addUserToBoardByUserIdAndByBoardId(userDto.getId(), boardId);
+		return modelAndView;
+	}
+
+	@DeleteMapping(path = "/removeuser")
+	public ModelAndView removeUser(@PathVariable final Long boardId, @RequestParam final String username) throws DataNotFoundException, NonExistentBoardIdException, NonExistentUserIdException, RelationNotFoundException {
+		final ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_BOARD_VIEW + "/" + boardId);
+		final UserDto userDto = userService.getByUserName(username).orElseThrow(() -> new UserNotFoundException(username));
+		boardService.removeUserFromBoardByUserIdAndByBoardId(userDto.getId(), boardId);
 		return modelAndView;
 	}
 }
