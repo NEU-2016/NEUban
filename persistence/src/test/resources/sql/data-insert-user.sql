@@ -82,6 +82,12 @@ values (7,'Sample description for task 7','Task 7',4);
 insert into card (id,description,title,column_id)
 values (8,'Sample description for task 8','Task 8',4);
 
+insert into card (id,description,title,column_id)
+values (9,'Sample description for test','test 9',1);
+
+insert into card (id,description,title,column_id)
+values (10,'Sample description for test','test 10',1);
+
 --insert into comment (id,content,user_id,card_id)
 --values (1,'Some content',3,1);
 
