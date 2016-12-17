@@ -31,6 +31,7 @@ public class SingleUserDataConverterTest {
     private static final long USER_ID = 1L;
     private static final String USERNAME = "Username";
     private static final String PASSWORD = "Password";
+    private static final String EMAIL = "eatSalt@gmail.com";
 
     private static final long FIRST_ID = 1L;
     private static final long SECOND_ID = 2L;
@@ -67,6 +68,7 @@ public class SingleUserDataConverterTest {
     private final UserEntity userEntity = UserEntity.builder()
             .id(USER_ID)
             .userName(USERNAME)
+            .email(EMAIL)
             .password(PASSWORD)
             .boards(boardEntityList)
             .cards(cardEntityList)
@@ -76,6 +78,7 @@ public class SingleUserDataConverterTest {
     private final UserDto userDto = UserDto.builder()
             .id(USER_ID)
             .userName(USERNAME)
+            .email(EMAIL)
             .password(PASSWORD)
             .boards(boardDtoList)
             .cards(cardDtoList)
