@@ -26,6 +26,10 @@ public class UserEntity extends SuperEntity<Long> {
     private String userName;
 
     @NotNull
+    @Column(name = "email", unique = true)
+    private String email;
+
+    @NotNull
     @Size(min = 5)
     @Column(name = "password")
     private String password;
@@ -47,10 +51,11 @@ public class UserEntity extends SuperEntity<Long> {
     private Role role;
 
     @Builder
-    public UserEntity(final Long id, final String userName, final String password, final Role role,
+    public UserEntity(final Long id, final String userName, final String email, final String password, final Role role,
                       final List<BoardEntity> boards, final List<CardEntity> cards) {
         super(id);
         this.userName = userName;
+        this.email = email;
         this.password = password;
         this.role = role;
         this.boards = boards;
