@@ -12,6 +12,19 @@
     <h2 th:text="${board.title}"></h2>
 </div>
 <div class="container-fluid">
+
+    <form th:action="@{/secure/board/__${board.id}__/adduser}" method="POST">
+        <label th:text="#{board.adduser}"></label>
+        <input type="text" class="form-control" th:placeholder="#{board.username}" name="username"/>
+        <button type="submit" class="btn btn-primary" th:text="#{board.button.adduser}"></button>
+    </form>
+    <form th:action="@{/secure/board/__${board.id}__/removeuser}" th:method="DELETE">
+        <input type="hidden" name="_method" value="delete"/>
+        <label th:text="#{board.removeuser}"></label>
+        <input type="text" class="form-control" th:placeholder="#{board.username}" name="username"/>
+        <button type="submit" class="btn btn-primary" th:text="#{board.button.removeuser}"></button>
+    </form>
+
     <form th:action="@{/secure/board/__${board.id}__/createcolumn}" method="POST">
         <label th:text="#{board.createcolumn}"></label>
         <input type="text" class="form-control" th:placeholder="#{board.columntitle}" name="columnTitle"/>
