@@ -7,44 +7,49 @@
 </head>
 <body>
 <div class="container">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="panel panel-primary">
+    <h1 th:text="#{index.header}"></h1>
+</div>
+<div class="container-fluid">
+    <table align="center">
+        <tr valign="middle">
+            <td align="center">
+            <div class="panel panel-primary" style="width:300px">
                 <div class="panel-heading">
-                    <label class="panel-title">Take out the trash</label>
+                    <label th:text="#{index.leftcard.header}" class="panel-title"></label>
                 </div>
                 <div class="panel-body">
-                    <p>I'M THE THRAAAASH MAAAAN</p>
+                    <p th:text="#{index.leftcard.description}"></p>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="panel panel-primary">
+            </td>
+            <td align="center">
+                <div class="panel panel-primary" style="width:400px">
                 <div class="panel-heading">
-                    <label th:text="#{index.header}" class="panel-title"></label>
+                    <h1 th:text="#{index.middlecard.header}"></h1>
                 </div>
                 <div class="panel-body">
-                    <p th:text="#{index.description}"></p>
-                    <form th:action="@{/login}" method="GET">
-                        <button type="submit" class="btn btn-default" th:text="#{index.button.login}"></button>
-                    </form>
+                    <h2 th:text="#{index.middlecard.description}"></h2>
                     <form th:action="@{/register}" method="GET">
-                        <button type="submit" class="btn btn-default" th:text="#{index.button.register}"></button>
+                        <button type="submit" class="btn btn-default" th:text="#{index.middlecard.button.register}"></button>
                     </form>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="panel panel-primary">
+            </td>
+            <td align="center">
+                <div class="panel panel-primary" style="width:300px">
                 <div class="panel-heading">
-                    <label class="panel-title">Take out the trash</label>
+                    <label th:text="#{index.rightcard.header}" class="panel-title"></label>
                 </div>
                 <div class="panel-body">
-                    <p>I'M THE THRAAAASH MAAAAN</p>
+                    <p th:text="#{index.rightcard.description}"></p>
+                    <form th:action="@{/login}" method="GET">
+                        <button type="submit" class="btn btn-default" th:text="#{index.rightcard.button.login}"></button>
+                    </form>
                 </div>
             </div>
-        </div>
-    </div>
+            </td>
+        </tr>
+    </table>
 </div>
 </body>
 </html>
