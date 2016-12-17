@@ -5,6 +5,7 @@ import hu.unideb.inf.rft.neuban.service.annotations.FieldMatch;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +24,10 @@ public class UserDto extends BaseDto<Long> {
     private String userName;
 
     @NotNull
+    @Pattern(regexp = "(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$)")
+    private String email;
+
+    @NotNull
     @Size(min = 5)
     private String password;
 
@@ -37,10 +42,11 @@ public class UserDto extends BaseDto<Long> {
     private List<CardDto> cards;
 
     @Builder
-    public UserDto(final Long id, final String userName, final String password, final String passwordConfirmation,
-                   final Role role, final List<BoardDto> boards, final List<CardDto> cards) {
+    public UserDto(final Long id, final String userName, final String email, final String password,
+                   final String passwordConfirmation, final Role role, final List<BoardDto> boards, final List<CardDto> cards) {
         super(id);
         this.userName = userName;
+        this.email = email;
         this.password = password;
         this.passwordConfirmation = passwordConfirmation;
         this.role = role;
