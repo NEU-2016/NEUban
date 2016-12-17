@@ -5,21 +5,34 @@
     <meta charset="utf-8"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
 </head>
-<body>
+<body style="background-color:lightblue">
 <div class="container">
-    <h1 th:text="#{register.header}"></h1>
-    <form action="#" th:action="@{/register}" th:object="${userDto}" method="POST">
-        <label th:text="#{register.username}"></label>
-        <input type="text" class="form-control" th:field="*{userName}"
-               th:placeholder="#{register.username}"/>
-        <label th:text="#{register.password}"></label>
-        <input type="password" class="form-control" th:field="*{password}"
-               th:placeholder="#{register.password}"/>
-        <label th:text="#{register.passwordconfirmation}"></label>
-        <input type="password" class="form-control" th:field="*{passwordConfirmation}"
-               th:placeholder="#{register.password}"/>
-        <button type="submit" class="btn btn-primary" th:text="#{register.button.register}"></button>
-    </form>
+    <table align="center">
+        <tr valign="middle">
+            <td align="center">
+                <div class="panel panel-primary" style="width:300px">
+                    <div class="panel-heading">
+                        <h1 th:text="#{register.header}"></h1>
+                    </div>
+                    <div class="panel-body">
+                        <form action="#" th:action="@{/register}" th:object="${userDto}" method="POST">
+                            <label th:text="#{register.username}"></label>
+                            <input type="text" class="form-control" th:field="*{userName}"
+                                   th:placeholder="#{register.username}"/>
+                            <label th:text="#{register.password}"></label>
+                            <input type="password" class="form-control" th:field="*{password}"
+                                   th:placeholder="#{register.password}"/>
+                            <label th:text="#{register.passwordconfirmation}"></label>
+                            <input type="password" class="form-control" th:field="*{passwordConfirmation}"
+                                   th:placeholder="#{register.password}"/>
+                            <button type="submit" class="btn btn-primary"
+                                    th:text="#{register.button.register}"></button>
+                        </form>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
 </div>
 </body>
 </html>

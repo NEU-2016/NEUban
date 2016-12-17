@@ -5,16 +5,29 @@
     <meta charset="utf-8"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
 </head>
-<body>
+<body style="background-color:lightblue">
 <div class="container">
-    <h1 th:text="#{login.header}"></h1>
-    <form th:action="@{/appLogin}" method="POST">
-        <label th:text="#{login.username}"></label>
-        <input type="text" class="form-control" th:placeholder="#{login.username}" name="username"/>
-        <label th:text="#{login.password}"></label>
-        <input type="password" class="form-control" th:placeholder="#{login.password}" name="password"/>
-        <button type="submit" class="btn btn-primary" th:text="#{login.button.login}"></button>
-    </form>
+    <table align="center">
+        <tr valign="middle">
+            <td align="center">
+                <div class="panel panel-primary" style="width:300px">
+                    <div class="panel-heading">
+                        <h1 th:text="#{login.header}"></h1>
+                    </div>
+                    <div class="panel-body">
+                        <form th:action="@{/appLogin}" method="POST">
+                            <label th:text="#{login.username}"></label>
+                            <input type="text" class="form-control" th:placeholder="#{login.username}" name="username"/>
+                            <label th:text="#{login.password}"></label>
+                            <input type="password" class="form-control" th:placeholder="#{login.password}"
+                                   name="password"/>
+                            <button type="submit" class="btn btn-primary" th:text="#{login.button.login}"></button>
+                        </form>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
 </div>
 </body>
 </html>
