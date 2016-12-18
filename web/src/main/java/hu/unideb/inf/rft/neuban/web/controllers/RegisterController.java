@@ -5,7 +5,7 @@ import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import hu.unideb.inf.rft.neuban.web.exceptions.InvalidRegistrationException;
 import hu.unideb.inf.rft.neuban.web.mail.NotificationService;
 import hu.unideb.inf.rft.neuban.web.mail.factory.SimpleMailMessageFactory;
-import hu.unideb.inf.rft.neuban.web.mail.message.MessageCategory;
+import hu.unideb.inf.rft.neuban.web.mail.message.MailMessageCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -53,7 +53,7 @@ public class RegisterController {
 			throw new InvalidRegistrationException();
 		}
 		userService.create(userDto);
-		notificationService.sendNotification(SimpleMailMessageFactory.create(MessageCategory.CATEGORY_REGISTRATION, userDto.getEmail()));
+		notificationService.sendNotification(SimpleMailMessageFactory.create(MailMessageCategory.CATEGORY_REGISTRATION, userDto.getEmail()));
 		return modelAndView;
 	}
 }
