@@ -11,6 +11,9 @@ import hu.unideb.inf.rft.neuban.service.interfaces.CardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import hu.unideb.inf.rft.neuban.web.exceptions.NonExistentPrincipalUserException;
+import hu.unideb.inf.rft.neuban.web.mail.NotificationService;
+import hu.unideb.inf.rft.neuban.web.mail.factory.SimpleMailMessageFactory;
+import hu.unideb.inf.rft.neuban.web.mail.message.MailMessageCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +42,9 @@ public class BoardController {
 
 	@Autowired
 	private CardService cardService;
+
+	@Autowired
+	private NotificationService notificationService;
 
 	@GetMapping
 	public ModelAndView loadBoardView(@PathVariable final Long boardId, final Principal principal) throws BoardNotFoundException, NonExistentPrincipalUserException {
@@ -83,6 +89,8 @@ public class BoardController {
 		final ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_BOARD_VIEW + "/" + boardId);
 		final UserDto userDto = userService.getByUserName(username).orElseThrow(() -> new UserNotFoundException(username));
 		boardService.addUserToBoardByUserIdAndByBoardId(userDto.getId(), boardId);
+		notificationService.sendNotification(SimpleMailMessageFactory.create(MailMessageCategory.CATEGORY_ADD_USER_TO_BOARD, userDto.getEmail()));
+		//TODO circular notification to everyone on the board
 		return modelAndView;
 	}
 
@@ -91,6 +99,8 @@ public class BoardController {
 		final ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_BOARD_VIEW + "/" + boardId);
 		final UserDto userDto = userService.getByUserName(username).orElseThrow(() -> new UserNotFoundException(username));
 		boardService.removeUserFromBoardByUserIdAndByBoardId(userDto.getId(), boardId);
+		notificationService.sendNotification(SimpleMailMessageFactory.create(MailMessageCategory.CATEGORY_REMOVE_USER_FROM_BOARD, userDto.getEmail()));
+		//TODO circular notification to everyone on the board
 		return modelAndView;
 	}
 }

@@ -11,7 +11,7 @@ import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
-import static hu.unideb.inf.rft.neuban.web.mail.message.MessageCategory.CATEGORY_REGISTRATION;
+import static hu.unideb.inf.rft.neuban.web.mail.message.MailMessageCategory.CATEGORY_REGISTRATION;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;

@@ -18,7 +18,8 @@ import java.util.Locale;
 @ComponentScan(basePackages = {
 		"hu.unideb.inf.rft.neuban.web.controllers",
 		"hu.unideb.inf.rft.neuban.web.handlers",
-		"hu.unideb.inf.rft.neuban.web.validators"})
+		"hu.unideb.inf.rft.neuban.web.validators",
+		"hu.unideb.inf.rft.neuban.web.mail"})
 @Import(ServiceConfiguration.class)
 public class WebConfiguration extends WebMvcConfigurerAdapter {
 

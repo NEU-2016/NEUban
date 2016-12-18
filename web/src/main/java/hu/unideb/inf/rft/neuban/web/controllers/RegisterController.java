@@ -3,6 +3,9 @@ package hu.unideb.inf.rft.neuban.web.controllers;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import hu.unideb.inf.rft.neuban.web.exceptions.InvalidRegistrationException;
+import hu.unideb.inf.rft.neuban.web.mail.NotificationService;
+import hu.unideb.inf.rft.neuban.web.mail.factory.SimpleMailMessageFactory;
+import hu.unideb.inf.rft.neuban.web.mail.message.MailMessageCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -32,6 +35,9 @@ public class RegisterController {
 	@Qualifier("userValidator")
 	private Validator userValidator;
 
+	@Autowired
+	private NotificationService notificationService;
+
 	@GetMapping
 	public ModelAndView loadRegisterView() {
 		final ModelAndView modelAndView = new ModelAndView(REGISTER_VIEW);
@@ -39,15 +45,15 @@ public class RegisterController {
 		return modelAndView;
 	}
 
-	// Valid annotation is necessary here!!!
 	@PostMapping
-	public ModelAndView userRegister(@ModelAttribute final UserDto userDto, final BindingResult bindingResult) throws InvalidRegistrationException {
+	public ModelAndView userRegister(@Valid @ModelAttribute final UserDto userDto, final BindingResult bindingResult) throws InvalidRegistrationException {
 		this.userValidator.validate(userDto, bindingResult);
 		final ModelAndView modelAndView = new ModelAndView(INDEX_VIEW);
 		if (bindingResult.hasErrors()) {
 			throw new InvalidRegistrationException();
 		}
 		userService.create(userDto);
+		notificationService.sendNotification(SimpleMailMessageFactory.create(MailMessageCategory.CATEGORY_REGISTRATION, userDto.getEmail()));
 		return modelAndView;
 	}
 }

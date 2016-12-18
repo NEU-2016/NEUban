@@ -6,7 +6,7 @@ import org.springframework.mail.SimpleMailMessage;
 
 import static hu.unideb.inf.rft.neuban.web.mail.message.MailMessageSubjectProvider.SUBJECT_REGISTRATION;
 import static hu.unideb.inf.rft.neuban.web.mail.message.MailMessageTextProvider.TEXT_REGISTRATION;
-import static hu.unideb.inf.rft.neuban.web.mail.message.MessageCategory.CATEGORY_REGISTRATION;
+import static hu.unideb.inf.rft.neuban.web.mail.message.MailMessageCategory.CATEGORY_REGISTRATION;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
