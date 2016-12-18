@@ -13,7 +13,6 @@ import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataUpdateService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -34,8 +33,6 @@ public class BoardServiceImpl implements BoardService {
     private BoardRepository boardRepository;
     @Autowired
     private UserService userService;
-    @Autowired
-    private ModelMapper modelMapper;
 
     @Autowired
     @Qualifier(SINGLE_BOARD_DATA_GET_SERVICE)
