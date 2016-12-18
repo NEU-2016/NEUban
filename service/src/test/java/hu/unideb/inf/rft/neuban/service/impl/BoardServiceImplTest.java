@@ -1,30 +1,5 @@
 package hu.unideb.inf.rft.neuban.service.impl;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import org.assertj.core.util.Lists;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.modelmapper.ModelMapper;
-
 import hu.unideb.inf.rft.neuban.persistence.entities.BoardEntity;
 import hu.unideb.inf.rft.neuban.persistence.enums.Role;
 import hu.unideb.inf.rft.neuban.persistence.repositories.BoardRepository;
@@ -38,477 +13,486 @@ import hu.unideb.inf.rft.neuban.service.exceptions.data.DataNotFoundException;
 import hu.unideb.inf.rft.neuban.service.impl.shared.SingleDataUpdateServiceImpl;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
+import org.assertj.core.util.Lists;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BoardServiceImplTest {
 
-	private static final Long EXPECTED_BOARD_ID = 1L;
-	private static final Long NOT_EXPECTED_BOARD_ID = 2L;
-	private static final Long NON_EXISTENT_USER_ID = 0L;
-	private static final Long NON_EXISTENT_BOARD_ID = 0L;
-	private static final long BOARD_ID = 1L;
-	private static final String BOARD_TITLE = "Title";
-
-	private static final long USER_ID = 1L;
-	private static final long USER2_ID = 2L;
-	private static final String USERNAME = "username";
-	private static final String PASSWORD = "passwordHash";
-	private static final String USERNAME2 = "username2";
-	private static final String PASSWORD2 = "passwordHash2";
-
-	private final BoardEntity boardEntity = BoardEntity.builder().id(BOARD_ID).title(BOARD_TITLE)
-			.columns(Collections.emptyList()).build();
-
-	private final BoardEntity not_Expectedboard_Entity = BoardEntity.builder().id(NOT_EXPECTED_BOARD_ID)
-			.title(BOARD_TITLE).columns(Collections.emptyList()).build();
-
-	private final BoardDto boardDto = BoardDto.builder().id(BOARD_ID).title(BOARD_TITLE)
-			.columns(Collections.emptyList()).build();
-
-	private final UserDto userDto = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD).role(Role.USER)
-			.boards(Collections.nCopies(3, boardDto)).build();
-
-	private final UserDto userDto2 = UserDto.builder().id(USER2_ID).userName(USERNAME2).password(PASSWORD2)
-			.role(Role.USER).boards(Collections.nCopies(3, boardDto)).build();
-
-	@InjectMocks
-	private BoardServiceImpl boardService;
-
-	@Mock
-	private UserService userService;
-	@Mock
-	private BoardRepository boardRepository;
-	@Mock
-	private ModelMapper modelMapper;
-	@Mock
-	private SingleDataGetService<BoardDto, Long> singleBoardDataGetService;
-	@Mock
-	private SingleDataUpdateServiceImpl<BoardEntity, BoardDto, Long, BoardNotFoundException> singleBoardDataUpdateService;
-
-	@Rule
-	public final ExpectedException expectedException = ExpectedException.none();
-
-	@Test(expected = IllegalArgumentException.class)
-	public void getShouldThrowIllegalArgumentExceptionWhenParamBoardIdIsNull() {
-		// Given
-		given(this.singleBoardDataGetService.get(null)).willThrow(IllegalArgumentException.class);
-
-		// When
-		this.boardService.get(null);
-
-		// Then
-	}
-
-	@Test
-	public void getShouldReturnEmptyOptionalWhenBoardDoesNotExist() {
-		// Given
-		given(this.singleBoardDataGetService.get(BOARD_ID)).willReturn(Optional.empty());
-
-		// When
-		Optional<BoardDto> result = this.boardService.get(BOARD_ID);
-
-		// Then
-		assertThat(result, notNullValue());
-		assertThat(result.isPresent(), is(false));
-
-		then(this.singleBoardDataGetService).should().get(BOARD_ID);
-		verifyNoMoreInteractions(this.singleBoardDataGetService);
-	}
-
-	@Test
-	public void getShouldReturnWithNonEmptyOptionalWhenBoardDoesExist() {
-		// Given
-		given(this.singleBoardDataGetService.get(BOARD_ID)).willReturn(Optional.of(boardDto));
-
-		// When
-		Optional<BoardDto> result = this.boardService.get(BOARD_ID);
-
-		// Then
-		assertThat(result, notNullValue());
-		assertThat(result.isPresent(), is(true));
-		assertThat(result.get(), equalTo(boardDto));
-
-		then(this.singleBoardDataGetService).should().get(BOARD_ID);
-		verifyNoMoreInteractions(this.singleBoardDataGetService);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void getAllByUserIdShouldThrowIllegalArgumentExceptionWhenParamUserIdIsNull() {
-		// Given
-		given(this.userService.get(null)).willThrow(IllegalArgumentException.class);
-
-		// When
-		this.boardService.getAllByUserId(null);
-
-		// Then
-	}
-
-	@Test
-	public void getAllByUserIdShouldReturnEmptyListWhenUserDoesNotExist() {
-		// Given
-		given(this.userService.get(USER_ID)).willReturn(Optional.empty());
+    private static final Long EXPECTED_BOARD_ID = 1L;
+    private static final Long NOT_EXPECTED_BOARD_ID = 2L;
+    private static final Long NON_EXISTENT_USER_ID = 0L;
+    private static final Long NON_EXISTENT_BOARD_ID = 0L;
+    private static final long BOARD_ID = 1L;
+    private static final String BOARD_TITLE = "Title";
+
+    private static final long USER_ID = 1L;
+    private static final long USER2_ID = 2L;
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "passwordHash";
+    private static final String USERNAME2 = "username2";
+    private static final String PASSWORD2 = "passwordHash2";
+
+    private final BoardDto boardDto = BoardDto.builder().id(BOARD_ID).title(BOARD_TITLE)
+            .columns(Collections.emptyList()).build();
+
+    private final UserDto userDto = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD).role(Role.USER)
+            .boards(Collections.nCopies(3, boardDto)).build();
+
+
+    @InjectMocks
+    private BoardServiceImpl boardService;
+
+    @Mock
+    private UserService userService;
+    @Mock
+    private BoardRepository boardRepository;
+    @Mock
+    private SingleDataGetService<BoardDto, Long> singleBoardDataGetService;
+    @Mock
+    private SingleDataUpdateServiceImpl<BoardEntity, BoardDto, Long, BoardNotFoundException> singleBoardDataUpdateService;
+
+    @Rule
+    public final ExpectedException expectedException = ExpectedException.none();
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getShouldThrowIllegalArgumentExceptionWhenParamBoardIdIsNull() {
+        // Given
+        given(this.singleBoardDataGetService.get(null)).willThrow(IllegalArgumentException.class);
+
+        // When
+        this.boardService.get(null);
+
+        // Then
+    }
+
+    @Test
+    public void getShouldReturnEmptyOptionalWhenBoardDoesNotExist() {
+        // Given
+        given(this.singleBoardDataGetService.get(BOARD_ID)).willReturn(Optional.empty());
+
+        // When
+        Optional<BoardDto> result = this.boardService.get(BOARD_ID);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.isPresent(), is(false));
+
+        then(this.singleBoardDataGetService).should().get(BOARD_ID);
+        verifyNoMoreInteractions(this.singleBoardDataGetService);
+    }
+
+    @Test
+    public void getShouldReturnWithNonEmptyOptionalWhenBoardDoesExist() {
+        // Given
+        given(this.singleBoardDataGetService.get(BOARD_ID)).willReturn(Optional.of(boardDto));
+
+        // When
+        Optional<BoardDto> result = this.boardService.get(BOARD_ID);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.isPresent(), is(true));
+        assertThat(result.get(), equalTo(boardDto));
+
+        then(this.singleBoardDataGetService).should().get(BOARD_ID);
+        verifyNoMoreInteractions(this.singleBoardDataGetService);
+    }
 
-		// When
-		final List<BoardDto> result = this.boardService.getAllByUserId(USER_ID);
+    @Test(expected = IllegalArgumentException.class)
+    public void getAllByUserIdShouldThrowIllegalArgumentExceptionWhenParamUserIdIsNull() {
+        // Given
+        given(this.userService.get(null)).willThrow(IllegalArgumentException.class);
 
-		// Then
-		assertThat(result, notNullValue());
-		assertThat(result.isEmpty(), is(true));
+        // When
+        this.boardService.getAllByUserId(null);
+
+        // Then
+    }
+
+    @Test
+    public void getAllByUserIdShouldReturnEmptyListWhenUserDoesNotExist() {
+        // Given
+        given(this.userService.get(USER_ID)).willReturn(Optional.empty());
 
-		then(this.userService).should().get(USER_ID);
-		verifyNoMoreInteractions(this.userService);
-	}
+        // When
+        final List<BoardDto> result = this.boardService.getAllByUserId(USER_ID);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.isEmpty(), is(true));
 
-	@Test
-	public void getAllByUserIdShouldReturnListWithThreeElementsWhenUserDoesExist() {
-		// Given
-		given(this.userService.get(USER_ID)).willReturn(Optional.of(userDto));
+        then(this.userService).should().get(USER_ID);
+        verifyNoMoreInteractions(this.userService);
+    }
 
-		// When
-		final List<BoardDto> result = this.boardService.getAllByUserId(USER_ID);
+    @Test
+    public void getAllByUserIdShouldReturnListWithThreeElementsWhenUserDoesExist() {
+        // Given
+        given(this.userService.get(USER_ID)).willReturn(Optional.of(userDto));
 
-		// Then
-		assertThat(result, notNullValue());
-		assertThat(result.isEmpty(), is(false));
-		assertThat(result.size(), equalTo(3));
-		assertThat(result, equalTo(Collections.nCopies(3, boardDto)));
+        // When
+        final List<BoardDto> result = this.boardService.getAllByUserId(USER_ID);
 
-		then(this.userService).should().get(USER_ID);
-		verifyNoMoreInteractions(this.userService);
-	}
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.isEmpty(), is(false));
+        assertThat(result.size(), equalTo(3));
+        assertThat(result, equalTo(Collections.nCopies(3, boardDto)));
 
-	@Test(expected = IllegalArgumentException.class)
-	public void updateShouldThrowIllegalArgumentExceptionWhenParamBoardDtoDoesNotExist() throws DataNotFoundException {
-		// Given
-		doThrow(IllegalArgumentException.class).when(this.singleBoardDataUpdateService).update(null);
+        then(this.userService).should().get(USER_ID);
+        verifyNoMoreInteractions(this.userService);
+    }
 
-		// When
-		this.boardService.update(null);
+    @Test(expected = IllegalArgumentException.class)
+    public void updateShouldThrowIllegalArgumentExceptionWhenParamBoardDtoDoesNotExist() throws DataNotFoundException {
+        // Given
+        doThrow(IllegalArgumentException.class).when(this.singleBoardDataUpdateService).update(null);
 
-		// Then
-	}
+        // When
+        this.boardService.update(null);
 
-	@Test(expected = BoardNotFoundException.class)
-	public void updateShouldThrowBoardNotFoundExceptionWhenParamBoardDtoIdIsInvalid() throws DataNotFoundException {
-		// Given
-		final BoardDto boardDtoWithoutId = BoardDto.builder().id(null).build();
+        // Then
+    }
 
-		doThrow(BoardNotFoundException.class).when(this.singleBoardDataUpdateService).update(boardDtoWithoutId);
+    @Test(expected = BoardNotFoundException.class)
+    public void updateShouldThrowBoardNotFoundExceptionWhenParamBoardDtoIdIsInvalid() throws DataNotFoundException {
+        // Given
+        final BoardDto boardDtoWithoutId = BoardDto.builder().id(null).build();
 
-		// When
-		this.boardService.update(boardDtoWithoutId);
+        doThrow(BoardNotFoundException.class).when(this.singleBoardDataUpdateService).update(boardDtoWithoutId);
 
-		// Then
-	}
+        // When
+        this.boardService.update(boardDtoWithoutId);
 
-	@Test
-	public void updateShouldBeSuccessFulUpdatingWhenParamBoardDtoExistsAndValid() throws DataNotFoundException {
-		// Given
-		doNothing().when(this.singleBoardDataUpdateService).update(boardDto);
+        // Then
+    }
 
-		// When
-		this.boardService.update(boardDto);
-		// Then
+    @Test
+    public void updateShouldBeSuccessFulUpdatingWhenParamBoardDtoExistsAndValid() throws DataNotFoundException {
+        // Given
+        doNothing().when(this.singleBoardDataUpdateService).update(boardDto);
 
-		then(this.singleBoardDataUpdateService).should().update(boardDto);
-		verifyNoMoreInteractions(this.singleBoardDataUpdateService);
-	}
+        // When
+        this.boardService.update(boardDto);
+        // Then
 
-	@Test(expected = IllegalArgumentException.class)
-	public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowIllegalArgumentExceptionWhenUserIdIsNull()
-			throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException,
-			DataNotFoundException {
+        then(this.singleBoardDataUpdateService).should().update(boardDto);
+        verifyNoMoreInteractions(this.singleBoardDataUpdateService);
+    }
 
-		this.boardService.removeUserFromBoardByUserIdAndByBoardId(null, EXPECTED_BOARD_ID);
+    @Test(expected = IllegalArgumentException.class)
+    public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowIllegalArgumentExceptionWhenUserIdIsNull()
+            throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException,
+            DataNotFoundException {
 
-	}
+        this.boardService.removeUserFromBoardByUserIdAndByBoardId(null, EXPECTED_BOARD_ID);
 
-	@Test(expected = IllegalArgumentException.class)
-	public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowIllegalArgumentExceptionWhenBoardIdIsNull()
-			throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException,
-			DataNotFoundException {
+    }
 
-		this.boardService.removeUserFromBoardByUserIdAndByBoardId(USER_ID, null);
+    @Test(expected = IllegalArgumentException.class)
+    public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowIllegalArgumentExceptionWhenBoardIdIsNull()
+            throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException,
+            DataNotFoundException {
 
-	}
+        this.boardService.removeUserFromBoardByUserIdAndByBoardId(USER_ID, null);
 
-	@Test
-	public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowNonExistentUserIdExceptionWhenUserNotExists()
-			throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException,
-			DataNotFoundException {
-		// Given
-		given(this.userService.get(NON_EXISTENT_USER_ID)).willReturn(Optional.empty());
-		expectedException.expect(NonExistentUserIdException.class);
+    }
 
-		// When
-		this.boardService.removeUserFromBoardByUserIdAndByBoardId(NON_EXISTENT_USER_ID, EXPECTED_BOARD_ID);
-		// Then
+    @Test
+    public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowNonExistentUserIdExceptionWhenUserNotExists()
+            throws NonExistentUserIdException, NonExistentBoardIdException, RelationNotFoundException,
+            DataNotFoundException {
+        // Given
+        given(this.userService.get(NON_EXISTENT_USER_ID)).willReturn(Optional.empty());
+        expectedException.expect(NonExistentUserIdException.class);
 
-		then(this.userService).should().get(NON_EXISTENT_USER_ID);
-	}
+        // When
+        this.boardService.removeUserFromBoardByUserIdAndByBoardId(NON_EXISTENT_USER_ID, EXPECTED_BOARD_ID);
+        // Then
 
-	@Test
-	public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowNoRelationFoundExceptionWhenUserHasNoBoards()
-			throws DataNotFoundException, NonExistentBoardIdException, RelationNotFoundException,
-			NonExistentUserIdException {
+        then(this.userService).should().get(NON_EXISTENT_USER_ID);
+    }
 
-		// Given
+    @Test
+    public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowNoRelationFoundExceptionWhenUserHasNoBoards()
+            throws DataNotFoundException, NonExistentBoardIdException, RelationNotFoundException,
+            NonExistentUserIdException {
 
-		final BoardDto expectedBoardDto = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null)
-				.build();
-		final UserDto expectedUserDtoWithoutExpectedBoard = UserDto.builder().id(USER_ID).userName(USERNAME)
-				.password(PASSWORD).boards(Lists.emptyList()).build();
+        // Given
 
-		given(this.userService.get(USER_ID)).willReturn(Optional.of(expectedUserDtoWithoutExpectedBoard));
-		given(this.boardService.get(EXPECTED_BOARD_ID)).willReturn(Optional.of(expectedBoardDto));
+        final BoardDto expectedBoardDto = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null)
+                .build();
+        final UserDto expectedUserDtoWithoutExpectedBoard = UserDto.builder().id(USER_ID).userName(USERNAME)
+                .password(PASSWORD).boards(Lists.emptyList()).build();
 
-		expectedException.expect(RelationNotFoundException.class);
+        given(this.userService.get(USER_ID)).willReturn(Optional.of(expectedUserDtoWithoutExpectedBoard));
+        given(this.boardService.get(EXPECTED_BOARD_ID)).willReturn(Optional.of(expectedBoardDto));
 
-		// When
-		this.boardService.removeUserFromBoardByUserIdAndByBoardId(USER_ID, EXPECTED_BOARD_ID);
+        expectedException.expect(RelationNotFoundException.class);
 
-		// Then
-		then(this.userService).should().get(USER_ID);
-		then(this.boardService).should().get(EXPECTED_BOARD_ID);
-	}
+        // When
+        this.boardService.removeUserFromBoardByUserIdAndByBoardId(USER_ID, EXPECTED_BOARD_ID);
 
-	@Test
-	public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowNoRelationFoundExceptionWhenUserDoNotHaveExpectedBoard()
-			throws DataNotFoundException, NonExistentBoardIdException, RelationNotFoundException,
-			NonExistentUserIdException {
+        // Then
+        then(this.userService).should().get(USER_ID);
+        then(this.boardService).should().get(EXPECTED_BOARD_ID);
+    }
 
-		// Given
+    @Test
+    public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowNoRelationFoundExceptionWhenUserDoNotHaveExpectedBoard()
+            throws DataNotFoundException, NonExistentBoardIdException, RelationNotFoundException,
+            NonExistentUserIdException {
 
-		final BoardDto notExpectedBoardDto = BoardDto.builder().id(NOT_EXPECTED_BOARD_ID).title(BOARD_TITLE)
-				.columns(null).build();
+        // Given
 
-		final BoardDto expectedBoardDto = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null)
-				.build();
+        final BoardDto notExpectedBoardDto = BoardDto.builder().id(NOT_EXPECTED_BOARD_ID).title(BOARD_TITLE)
+                .columns(null).build();
 
-		final UserDto expectedUserDtoWithoutExpectedBoard = UserDto.builder().id(USER_ID).userName(USERNAME)
-				.password(PASSWORD).boards(Arrays.asList(expectedBoardDto)).build();
+        final BoardDto expectedBoardDto = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null)
+                .build();
 
-		given(this.userService.get(USER_ID)).willReturn(Optional.of(expectedUserDtoWithoutExpectedBoard));
-		given(this.boardService.get(NOT_EXPECTED_BOARD_ID)).willReturn(Optional.of(notExpectedBoardDto));
+        final UserDto expectedUserDtoWithoutExpectedBoard = UserDto.builder().id(USER_ID).userName(USERNAME)
+                .password(PASSWORD).boards(Arrays.asList(expectedBoardDto)).build();
 
-		expectedException.expect(RelationNotFoundException.class);
+        given(this.userService.get(USER_ID)).willReturn(Optional.of(expectedUserDtoWithoutExpectedBoard));
+        given(this.boardService.get(NOT_EXPECTED_BOARD_ID)).willReturn(Optional.of(notExpectedBoardDto));
 
-		// When
-		this.boardService.removeUserFromBoardByUserIdAndByBoardId(USER_ID, NOT_EXPECTED_BOARD_ID);
+        expectedException.expect(RelationNotFoundException.class);
 
-		// Then
-		then(this.userService).should().get(USER_ID);
-		then(this.boardService).should().get(NOT_EXPECTED_BOARD_ID);
-	}
+        // When
+        this.boardService.removeUserFromBoardByUserIdAndByBoardId(USER_ID, NOT_EXPECTED_BOARD_ID);
 
-	@Test
-	public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowNonExistentBoardIdExceptionWhenBoardNotExists()
-			throws DataNotFoundException, NonExistentBoardIdException, RelationNotFoundException,
-			NonExistentUserIdException {
+        // Then
+        then(this.userService).should().get(USER_ID);
+        then(this.boardService).should().get(NOT_EXPECTED_BOARD_ID);
+    }
 
-		// Given
-		final UserDto expectedUserDto = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
-				.boards(Lists.emptyList()).build();
+    @Test
+    public void removeUserFromBoardByUserIdAndByBoardIdShouldThrowNonExistentBoardIdExceptionWhenBoardNotExists()
+            throws DataNotFoundException, NonExistentBoardIdException, RelationNotFoundException,
+            NonExistentUserIdException {
 
-		given(this.userService.get(USER_ID)).willReturn(Optional.of(expectedUserDto));
-		given(this.boardService.get(NON_EXISTENT_BOARD_ID)).willReturn(Optional.empty());
-		expectedException.expect(NonExistentBoardIdException.class);
+        // Given
+        final UserDto expectedUserDto = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
+                .boards(Lists.emptyList()).build();
 
-		// When
-		this.boardService.removeUserFromBoardByUserIdAndByBoardId(USER_ID, NON_EXISTENT_BOARD_ID);
+        given(this.userService.get(USER_ID)).willReturn(Optional.of(expectedUserDto));
+        given(this.boardService.get(NON_EXISTENT_BOARD_ID)).willReturn(Optional.empty());
+        expectedException.expect(NonExistentBoardIdException.class);
 
-		// Then
-		then(this.boardService).should().get(NON_EXISTENT_BOARD_ID);
-	}
+        // When
+        this.boardService.removeUserFromBoardByUserIdAndByBoardId(USER_ID, NON_EXISTENT_BOARD_ID);
 
-	@Test
-	public void removeUserFromBoardByUserIdAndByBoardIdTest() throws NonExistentUserIdException,
-			NonExistentBoardIdException, RelationNotFoundException, DataNotFoundException {
+        // Then
+        then(this.boardService).should().get(NON_EXISTENT_BOARD_ID);
+    }
 
-		// Given
-		final BoardDto expectedUserBoard = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null)
-				.build();
+    @Test
+    public void removeUserFromBoardByUserIdAndByBoardIdTest() throws NonExistentUserIdException,
+            NonExistentBoardIdException, RelationNotFoundException, DataNotFoundException {
 
-		final UserDto expectedUserDtoBeforeRemove = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
-				.boards(Arrays.asList(expectedUserBoard)).build();
+        // Given
+        final BoardDto expectedUserBoard = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null)
+                .build();
 
-		final UserDto expectedUserDtoAfterRemove = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
-				.boards(Lists.newArrayList()).build();
+        final UserDto expectedUserDtoBeforeRemove = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
+                .boards(Arrays.asList(expectedUserBoard)).build();
 
-		given(this.userService.get(USER_ID)).willReturn(Optional.of(expectedUserDtoBeforeRemove),
-				Optional.of(expectedUserDtoAfterRemove));
+        final UserDto expectedUserDtoAfterRemove = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
+                .boards(Lists.newArrayList()).build();
 
-		given(this.boardService.get(EXPECTED_BOARD_ID)).willReturn(Optional.of(boardDto));
+        given(this.userService.get(USER_ID)).willReturn(Optional.of(expectedUserDtoBeforeRemove),
+                Optional.of(expectedUserDtoAfterRemove));
 
-		// When
-		this.boardService.removeUserFromBoardByUserIdAndByBoardId(USER_ID, EXPECTED_BOARD_ID);
+        given(this.boardService.get(EXPECTED_BOARD_ID)).willReturn(Optional.of(boardDto));
 
-		final Optional<UserDto> actualUserDto = this.userService.get(USER_ID);
+        // When
+        this.boardService.removeUserFromBoardByUserIdAndByBoardId(USER_ID, EXPECTED_BOARD_ID);
 
-		// Then assertThat(actualUserDto, notNullValue());
-		assertThat(actualUserDto.isPresent(), is(true));
-		assertThat(actualUserDto.get(), equalTo(expectedUserDtoAfterRemove));
-	}
+        final Optional<UserDto> actualUserDto = this.userService.get(USER_ID);
 
-	@Test(expected = IllegalArgumentException.class)
-	public void addUserToBoardByUserIdAndByBoardIdShouldThrowIllegalArgumentExceptionWhenUserIdIsNull()
-			throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
+        // Then assertThat(actualUserDto, notNullValue());
+        assertThat(actualUserDto.isPresent(), is(true));
+        assertThat(actualUserDto.get(), equalTo(expectedUserDtoAfterRemove));
+    }
 
-		this.boardService.addUserToBoardByUserIdAndByBoardId(null, EXPECTED_BOARD_ID);
+    @Test(expected = IllegalArgumentException.class)
+    public void addUserToBoardByUserIdAndByBoardIdShouldThrowIllegalArgumentExceptionWhenUserIdIsNull()
+            throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
 
-	}
+        this.boardService.addUserToBoardByUserIdAndByBoardId(null, EXPECTED_BOARD_ID);
 
-	@Test(expected = IllegalArgumentException.class)
-	public void addUserToBoardByUserIdAndByBoardIdShouldThrowIllegalArgumentExceptionWhenBoardIdIsNull()
-			throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
+    }
 
-		this.boardService.addUserToBoardByUserIdAndByBoardId(USER_ID, null);
+    @Test(expected = IllegalArgumentException.class)
+    public void addUserToBoardByUserIdAndByBoardIdShouldThrowIllegalArgumentExceptionWhenBoardIdIsNull()
+            throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
 
-	}
+        this.boardService.addUserToBoardByUserIdAndByBoardId(USER_ID, null);
 
-	@Test
-	public void addUserToBoardByUserIdAndByBoardIdShouldThrowNonExistentUserIdExceptionWhenUserNotExists()
-			throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
-		// Given
-		given(this.userService.get(NON_EXISTENT_USER_ID)).willReturn(Optional.empty());
-		expectedException.expect(NonExistentUserIdException.class);
+    }
 
-		// When
-		this.boardService.addUserToBoardByUserIdAndByBoardId(NON_EXISTENT_USER_ID, EXPECTED_BOARD_ID);
-		// Then
+    @Test
+    public void addUserToBoardByUserIdAndByBoardIdShouldThrowNonExistentUserIdExceptionWhenUserNotExists()
+            throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
+        // Given
+        given(this.userService.get(NON_EXISTENT_USER_ID)).willReturn(Optional.empty());
+        expectedException.expect(NonExistentUserIdException.class);
 
-		then(this.userService).should().get(NON_EXISTENT_USER_ID);
-	}
+        // When
+        this.boardService.addUserToBoardByUserIdAndByBoardId(NON_EXISTENT_USER_ID, EXPECTED_BOARD_ID);
+        // Then
 
-	@Test
-	public void addUserToBoardByUserIdAndByBoardIdShouldThrowNonExistentBoardIdExceptionWhenBoardNotExists()
-			throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
+        then(this.userService).should().get(NON_EXISTENT_USER_ID);
+    }
 
-		// Given
-		final UserDto expectedUserDto = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
-				.boards(Lists.emptyList()).build();
+    @Test
+    public void addUserToBoardByUserIdAndByBoardIdShouldThrowNonExistentBoardIdExceptionWhenBoardNotExists()
+            throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
 
-		given(this.userService.get(USER_ID)).willReturn(Optional.of(expectedUserDto));
-		given(this.boardService.get(NON_EXISTENT_BOARD_ID)).willReturn(Optional.empty());
-		expectedException.expect(NonExistentBoardIdException.class);
+        // Given
+        final UserDto expectedUserDto = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
+                .boards(Lists.emptyList()).build();
 
-		// When
-		this.boardService.addUserToBoardByUserIdAndByBoardId(USER_ID, NON_EXISTENT_BOARD_ID);
+        given(this.userService.get(USER_ID)).willReturn(Optional.of(expectedUserDto));
+        given(this.boardService.get(NON_EXISTENT_BOARD_ID)).willReturn(Optional.empty());
+        expectedException.expect(NonExistentBoardIdException.class);
 
-		// Then
-		then(this.boardService).should().get(NON_EXISTENT_BOARD_ID);
-	}
+        // When
+        this.boardService.addUserToBoardByUserIdAndByBoardId(USER_ID, NON_EXISTENT_BOARD_ID);
 
-	@Test
-	public void addUserToBoardByUserIdAndByBoardIdTest()
-			throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
+        // Then
+        then(this.boardService).should().get(NON_EXISTENT_BOARD_ID);
+    }
 
-		// Given
+    @Test
+    public void addUserToBoardByUserIdAndByBoardIdTest()
+            throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
 
-		final BoardDto expectedUserBoard = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null)
-				.build();
-		final UserDto expectedUserDtoBeforeAdd = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
-				.boards(Lists.newArrayList()).build();
+        // Given
 
-		final UserDto expectedUserDtoAfterAdd = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
-				.boards(Arrays.asList(expectedUserBoard)).build();
+        final BoardDto expectedUserBoard = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null)
+                .build();
+        final UserDto expectedUserDtoBeforeAdd = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
+                .boards(Lists.newArrayList()).build();
 
-		given(this.userService.get(USER_ID)).willReturn(Optional.of(expectedUserDtoBeforeAdd),
-				Optional.of(expectedUserDtoAfterAdd));
-		given(this.boardService.get(EXPECTED_BOARD_ID)).willReturn(Optional.of(boardDto));
+        final UserDto expectedUserDtoAfterAdd = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
+                .boards(Arrays.asList(expectedUserBoard)).build();
 
-		// When
-		this.boardService.addUserToBoardByUserIdAndByBoardId(USER_ID, EXPECTED_BOARD_ID);
+        given(this.userService.get(USER_ID)).willReturn(Optional.of(expectedUserDtoBeforeAdd),
+                Optional.of(expectedUserDtoAfterAdd));
+        given(this.boardService.get(EXPECTED_BOARD_ID)).willReturn(Optional.of(boardDto));
 
-		final Optional<UserDto> actualUserDto = this.userService.get(USER_ID);
+        // When
+        this.boardService.addUserToBoardByUserIdAndByBoardId(USER_ID, EXPECTED_BOARD_ID);
 
-		// Then
-		assertThat(actualUserDto, notNullValue());
-		assertThat(actualUserDto.isPresent(), is(true));
-		assertThat(actualUserDto.get(), equalTo(expectedUserDtoAfterAdd));
+        final Optional<UserDto> actualUserDto = this.userService.get(USER_ID);
 
-	}
+        // Then
+        assertThat(actualUserDto, notNullValue());
+        assertThat(actualUserDto.isPresent(), is(true));
+        assertThat(actualUserDto.get(), equalTo(expectedUserDtoAfterAdd));
 
-	@Test(expected = IllegalArgumentException.class)
-	public void createBoardShouldThrowIllegalArgumentExceptionWhenBoardTitleIsNull()
-			throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
+    }
 
-		this.boardService.createBoard(USER_ID, null);
+    @Test(expected = IllegalArgumentException.class)
+    public void createBoardShouldThrowIllegalArgumentExceptionWhenBoardTitleIsNull()
+            throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
 
-	}
+        this.boardService.createBoard(USER_ID, null);
 
-	@Test(expected = IllegalArgumentException.class)
-	public void createBoardShouldThrowIllegalArgumentExceptionWhenUserIdIsNull()
-			throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
+    }
 
-		this.boardService.createBoard(null, BOARD_TITLE);
+    @Test(expected = IllegalArgumentException.class)
+    public void createBoardShouldThrowIllegalArgumentExceptionWhenUserIdIsNull()
+            throws NonExistentUserIdException, NonExistentBoardIdException, DataNotFoundException {
 
-	}
+        this.boardService.createBoard(null, BOARD_TITLE);
 
-	@Test
-	public void createBoardShouldThrowNonExistentUserIdExceptionWhenUserNotExists()
-			throws NonExistentUserIdException, DataNotFoundException {
-		// Given
-		given(this.userService.get(NON_EXISTENT_USER_ID)).willReturn(Optional.empty());
-		expectedException.expect(NonExistentUserIdException.class);
+    }
 
-		// When
-		this.boardService.createBoard(NON_EXISTENT_USER_ID, BOARD_TITLE);
-		// Then
+    @Test
+    public void createBoardShouldThrowNonExistentUserIdExceptionWhenUserNotExists()
+            throws NonExistentUserIdException, DataNotFoundException {
+        // Given
+        given(this.userService.get(NON_EXISTENT_USER_ID)).willReturn(Optional.empty());
+        expectedException.expect(NonExistentUserIdException.class);
 
-		then(this.userService).should().get(NON_EXISTENT_USER_ID);
-	}
+        // When
+        this.boardService.createBoard(NON_EXISTENT_USER_ID, BOARD_TITLE);
+        // Then
 
-	@Test
-	public void createBoardTest() throws NonExistentUserIdException, DataNotFoundException {
-		// Given
-		final BoardDto expectedBoardDto = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null)
-				.build();
-		final UserDto expectedUserDtoForGetByIdBeforeSave = UserDto.builder().id(USER_ID).userName(USERNAME)
-				.password(PASSWORD).boards(Lists.newArrayList()).build();
-		final UserDto expectedUserDtoForGetByIdAfterSave = UserDto.builder().id(USER_ID).userName(USERNAME)
-				.password(PASSWORD).boards(Arrays.asList(expectedBoardDto)).build();
+        then(this.userService).should().get(NON_EXISTENT_USER_ID);
+    }
 
-		given(this.userService.get(USER_ID)).willReturn(Optional.of(expectedUserDtoForGetByIdBeforeSave),
-				Optional.of(expectedUserDtoForGetByIdAfterSave));
-		given(this.boardService.get(EXPECTED_BOARD_ID)).willReturn(Optional.of(expectedBoardDto));
+    @Test
+    public void createBoardTest() throws NonExistentUserIdException, DataNotFoundException {
+        // Given
+        final BoardDto expectedBoardDto = BoardDto.builder().id(EXPECTED_BOARD_ID).title(BOARD_TITLE).columns(null)
+                .build();
+        final UserDto expectedUserDtoForGetByIdBeforeSave = UserDto.builder().id(USER_ID).userName(USERNAME)
+                .password(PASSWORD).boards(Lists.newArrayList()).build();
+        final UserDto expectedUserDtoForGetByIdAfterSave = UserDto.builder().id(USER_ID).userName(USERNAME)
+                .password(PASSWORD).boards(Arrays.asList(expectedBoardDto)).build();
 
-		// When
-		this.boardService.createBoard(USER_ID, BOARD_TITLE);
-		final Optional<BoardDto> actualBoardDto = this.boardService.get(EXPECTED_BOARD_ID);
-		final Optional<UserDto> actualUserDtoAfterSave = this.userService.get(USER_ID);
+        given(this.userService.get(USER_ID)).willReturn(Optional.of(expectedUserDtoForGetByIdBeforeSave),
+                Optional.of(expectedUserDtoForGetByIdAfterSave));
+        given(this.boardService.get(EXPECTED_BOARD_ID)).willReturn(Optional.of(expectedBoardDto));
 
-		// Then
+        // When
+        this.boardService.createBoard(USER_ID, BOARD_TITLE);
+        final Optional<BoardDto> actualBoardDto = this.boardService.get(EXPECTED_BOARD_ID);
+        final Optional<UserDto> actualUserDtoAfterSave = this.userService.get(USER_ID);
 
-		assertThat(actualBoardDto, notNullValue());
-		assertThat(actualBoardDto.isPresent(), is(true));
-		assertThat(actualBoardDto.get(), equalTo(expectedBoardDto));
+        // Then
 
-		assertThat(actualUserDtoAfterSave, notNullValue());
-		assertThat(actualUserDtoAfterSave.isPresent(), is(true));
-		assertThat(actualUserDtoAfterSave.get(), equalTo(expectedUserDtoForGetByIdAfterSave));
-		
-	}
+        assertThat(actualBoardDto, notNullValue());
+        assertThat(actualBoardDto.isPresent(), is(true));
+        assertThat(actualBoardDto.get(), equalTo(expectedBoardDto));
 
-	@Test(expected = IllegalArgumentException.class)
-	public void removeShouldThrowIllegalArgumentExceptionWhenBoardIdIsNull() throws DataNotFoundException {
-		this.boardService.remove(null);
-	}
+        assertThat(actualUserDtoAfterSave, notNullValue());
+        assertThat(actualUserDtoAfterSave.isPresent(), is(true));
+        assertThat(actualUserDtoAfterSave.get(), equalTo(expectedUserDtoForGetByIdAfterSave));
 
-	@Test
-	public void removeShouldThrowBoardNotFoundExceptionWhenBoardDoesNotExist() throws DataNotFoundException {
-		// Given
+    }
 
-		given(this.boardRepository.findOne(BOARD_ID)).willReturn(null);
+    @Test(expected = IllegalArgumentException.class)
+    public void removeShouldThrowIllegalArgumentExceptionWhenBoardIdIsNull() throws DataNotFoundException {
+        this.boardService.remove(null);
+    }
 
-		// When
+    @Test
+    public void removeShouldThrowBoardNotFoundExceptionWhenBoardDoesNotExist() throws DataNotFoundException {
+        // Given
 
-		expectedException.expect(BoardNotFoundException.class);
-		this.boardService.remove(BOARD_ID);
-	}
+        given(this.boardRepository.findOne(BOARD_ID)).willReturn(null);
+
+        // When
+
+        expectedException.expect(BoardNotFoundException.class);
+        this.boardService.remove(BOARD_ID);
+    }
 
 	/*@Test
-	public void removeShouldDeleteRelationThenDeleteBoard() throws DataNotFoundException {
+    public void removeShouldDeleteRelationThenDeleteBoard() throws DataNotFoundException {
 		// Given
 
 		final UserDto userDtoBeforeDelete = UserDto.builder().id(USER_ID).userName(USERNAME).password(PASSWORD)
