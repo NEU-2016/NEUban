@@ -6,8 +6,9 @@ import hu.unideb.inf.rft.neuban.persistence.enums.Role;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -17,7 +18,6 @@ import static org.hamcrest.Matchers.nullValue;
 
 @RunWith(SpringRunner.class)
 @JPARepositoryTest
-@Sql(scripts = "classpath:sql/data-insert-user.sql")
 public class UserRepositoryIT {
 
     private static final long ADMIN_ID = 1L;
@@ -28,6 +28,9 @@ public class UserRepositoryIT {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private BoardRepository boardRepository;
 
     @Test
     public void findByUserNameShouldReturnNullWhenParamUserNameIsNull() {
@@ -78,5 +81,61 @@ public class UserRepositoryIT {
 
         assertThat(actualUserEntity.getBoards(), notNullValue());
         assertThat(actualUserEntity.getBoards().isEmpty(), is(false));
+    }
+
+    @Test
+    public void findAllByBoardIdShouldReturnEmptyListWhenParameterBoardIdIsNull() {
+        // Given
+
+        // When
+        final List<UserEntity> result = this.userRepository.findAllByBoardId(null);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.isEmpty(), is(true));
+    }
+
+    @Test
+    public void findAllByBoardIdShouldReturnEmptyListWhenParameterBoardIdDoesNotExist() {
+        // Given
+
+        // When
+        final List<UserEntity> result = this.userRepository.findAllByBoardId(-1L);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.isEmpty(), is(true));
+    }
+
+    @Test
+    public void findAllByBoardIdShouldReturnListWithSingleElementWhenSingleUserContainsParameterBoardIdInTheirBoardList() {
+        // Given
+        final UserEntity expectedUser = this.userRepository.findOne(1L);
+
+        // When
+        final List<UserEntity> result = this.userRepository.findAllByBoardId(1L);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.size(), is(1));
+        assertThat(result.get(0), equalTo(expectedUser));
+    }
+
+    @Test
+    public void findAllByBoardIdShouldReturnListWithThreeElementsWhenThreeUsersContainParameterBoardIdInTheirBoardList() {
+        // Given
+        final UserEntity expectedFirstUser = this.userRepository.findOne(1L);
+        final UserEntity expectedSecondUser = this.userRepository.findOne(2L);
+        final UserEntity expectedThirdUser = this.userRepository.findOne(3L);
+
+        // When
+        final List<UserEntity> result = this.userRepository.findAllByBoardId(3L);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.size(), is(3));
+        assertThat(result.get(0), equalTo(expectedFirstUser));
+        assertThat(result.get(1), equalTo(expectedSecondUser));
+        assertThat(result.get(2), equalTo(expectedThirdUser));
     }
 }

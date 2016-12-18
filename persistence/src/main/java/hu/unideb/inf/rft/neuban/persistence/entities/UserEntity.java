@@ -16,6 +16,7 @@ import java.util.List;
 @ToString(callSuper = true, exclude = "password")
 @Table(name = "user")
 @Entity
+@NamedQueries(@NamedQuery(name = "UserEntity.findAllByBoardId", query = "SELECT user FROM UserEntity user INNER JOIN user.boards board WHERE board.id = :boardId"))
 public class UserEntity extends SuperEntity<Long> {
 
     private static final long serialVersionUID = 1L;
