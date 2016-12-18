@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(path = "/secure/board/{boardId}")
@@ -90,7 +92,7 @@ public class BoardController {
 		final UserDto userDto = userService.getByUserName(username).orElseThrow(() -> new UserNotFoundException(username));
 		boardService.addUserToBoardByUserIdAndByBoardId(userDto.getId(), boardId);
 		notificationService.sendNotification(SimpleMailMessageFactory.create(MailMessageCategory.CATEGORY_ADD_USER_TO_BOARD, userDto.getEmail()));
-		//TODO circular notification to everyone on the board
+		notificationService.sendNotification(SimpleMailMessageFactory.create(MailMessageCategory.CATEGORY_ADD_USER_TO_BOARD_CIRCULAR, getEmailsFromUserList(userService.getAllByBoardId(boardId))));
 		return modelAndView;
 	}
 
@@ -100,7 +102,11 @@ public class BoardController {
 		final UserDto userDto = userService.getByUserName(username).orElseThrow(() -> new UserNotFoundException(username));
 		boardService.removeUserFromBoardByUserIdAndByBoardId(userDto.getId(), boardId);
 		notificationService.sendNotification(SimpleMailMessageFactory.create(MailMessageCategory.CATEGORY_REMOVE_USER_FROM_BOARD, userDto.getEmail()));
-		//TODO circular notification to everyone on the board
+		notificationService.sendNotification(SimpleMailMessageFactory.create(MailMessageCategory.CATEGORY_REMOVE_USER_FROM_BOARD_CIRCULAR, getEmailsFromUserList(userService.getAllByBoardId(boardId))));
 		return modelAndView;
+	}
+
+	private String[] getEmailsFromUserList(final List<UserDto> userList) {
+		return userList.stream().map(UserDto::getEmail).collect(Collectors.toList()).toArray(new String[userList.size()]);
 	}
 }
