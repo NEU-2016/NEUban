@@ -28,6 +28,9 @@ values (1,'Test board 1');
 insert into board (id,title)
 values (2,'Test board 2');
 
+insert into board (id, title)
+values (3, 'Test board 3');
+
 -- User-Board
 
 delete from user_board_relation_table where user_id = 1;
@@ -38,6 +41,14 @@ values (1,1);
 insert into user_board_relation_table (user_id,board_id)
 values (1,2);
 
+insert into user_board_relation_table (user_id, board_id)
+values (1, 3);
+
+insert into user_board_relation_table (user_id, board_id)
+values (2, 3);
+
+insert into user_board_relation_table (user_id, board_id)
+values (3, 3);
 -- Columns
 
 delete from board_column where id <= 4;

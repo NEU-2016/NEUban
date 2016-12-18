@@ -18,7 +18,6 @@ import hu.unideb.inf.rft.neuban.persistence.entities.CardEntity;
 
 @RunWith(SpringRunner.class)
 @JPARepositoryTest
-@Sql(scripts = "classpath:sql/data-insert-user.sql")
 public class CardRepositoryIT {
 
 	@Autowired

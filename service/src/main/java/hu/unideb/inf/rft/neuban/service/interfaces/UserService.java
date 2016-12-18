@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface UserService extends SingleDataGetService<UserDto, Long>, SingleDataUpdateService<UserDto> {
 
-    List<UserDto> getAll();
+    List<UserDto> getAllByBoardId(Long boardId);
 
     Optional<UserDto> getByUserName(String userName);
 
