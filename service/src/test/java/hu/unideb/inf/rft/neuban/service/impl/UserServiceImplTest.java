@@ -5,6 +5,7 @@ import hu.unideb.inf.rft.neuban.persistence.entities.CardEntity;
 import hu.unideb.inf.rft.neuban.persistence.entities.UserEntity;
 import hu.unideb.inf.rft.neuban.persistence.enums.Role;
 import hu.unideb.inf.rft.neuban.persistence.repositories.UserRepository;
+import hu.unideb.inf.rft.neuban.service.converter.DataListConverter;
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 import hu.unideb.inf.rft.neuban.service.exceptions.UserAlreadyExistsOnCardException;
@@ -26,6 +27,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -45,7 +47,7 @@ public class UserServiceImplTest {
     //private static final String PASSWORD_HASH = "$GDSJDT6464EGDFG5353";
 
 
-    private static final long COLUMN_ID = 1L;
+    private static final long BOARD_ID = 1L;
     private static final long FIRST_CARD_ID = 1L;
     private static final long SECOND_CARD_ID = 2L;
     private static final long THIRD_CARD_ID = 3L;
@@ -84,6 +86,24 @@ public class UserServiceImplTest {
             .title(CARD_TITLE)
             .build();
 
+    private final UserEntity firstUserEntity = UserEntity.builder()
+            .id(FIRST_USER_ID)
+            .userName(USERNAME)
+            .password(PASSWORD_HASH)
+            .build();
+
+    private final UserEntity secondUserEntity = UserEntity.builder()
+            .id(SECOND_USER_ID)
+            .userName(USERNAME)
+            .password(PASSWORD_HASH)
+            .build();
+
+    private final UserEntity thirdUserEntity = UserEntity.builder()
+            .id(THIRD_USER_ID)
+            .userName(USERNAME)
+            .password(PASSWORD_HASH)
+            .build();
+
     private final UserDto firstUserDto = UserDto.builder()
             .id(FIRST_USER_ID)
             .userName(USERNAME)
@@ -118,6 +138,8 @@ public class UserServiceImplTest {
     private SingleDataGetService<UserDto, Long> singleUserDataGetService;
     @Mock
     private SingleDataUpdateService<UserDto> singleUserDataUpdateService;
+    @Mock
+    private DataListConverter<UserEntity, UserDto> userDataListConverter;
     @Mock
     private CardService cardService;
 
@@ -222,6 +244,66 @@ public class UserServiceImplTest {
 
         then(this.userRepository).should().findByUserName(ADMIN_USER_NAME);
         then(this.modelMapper).should().map(userEntity, UserDto.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getAllByBoardIdShouldThrowIllegalArgumentExceptionWhenParameterBoardIdIsNull() {
+        // Given
+
+        // When
+        this.userService.getAllByBoardId(null);
+
+        // Then
+    }
+
+    @Test
+    public void getAllByBoardIdShouldReturnEmptyListWhenParameterBoardIdDoesNotExist() {
+        // Given
+        given(this.userRepository.findAllByBoardId(BOARD_ID)).willReturn(Collections.emptyList());
+        given(this.userDataListConverter.convertToTargets(Collections.emptyList())).willReturn(Collections.emptyList());
+
+        // When
+        final List<UserDto> result = this.userService.getAllByBoardId(BOARD_ID);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.isEmpty(), is(true));
+    }
+
+    @Test
+    public void getAllByBoardIdShouldReturnListWithSingleElementWhenSingleUserContainsParameterBoardIdInTheirBoardList() {
+        // Given
+        final List<UserEntity> userEntityList = Collections.singletonList(firstUserEntity);
+        final List<UserDto> userDtoList = Collections.singletonList(firstUserDto);
+
+        given(this.userRepository.findAllByBoardId(BOARD_ID)).willReturn(userEntityList);
+        given(this.userDataListConverter.convertToTargets(userEntityList)).willReturn(userDtoList);
+
+        // When
+        final List<UserDto> result = this.userService.getAllByBoardId(BOARD_ID);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.size(), is(1));
+        assertThat(result, equalTo(userDtoList));
+    }
+
+    @Test
+    public void getAllByBoardIdShouldReturnListWithThreeElementsWhenThreeUsersContainParameterBoardIdInTheirBoardList() {
+        // Given
+        final List<UserEntity> userEntityList = Lists.newArrayList(firstUserEntity, secondUserEntity, thirdUserEntity);
+        final List<UserDto> userDtoList = Lists.newArrayList(firstUserDto, secondUserDto, thirdUserDto);
+
+        given(this.userRepository.findAllByBoardId(BOARD_ID)).willReturn(userEntityList);
+        given(this.userDataListConverter.convertToTargets(userEntityList)).willReturn(userDtoList);
+
+        // When
+        final List<UserDto> result = this.userService.getAllByBoardId(BOARD_ID);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.size(), is(3));
+        assertThat(result, equalTo(userDtoList));
     }
 
     @Test(expected = IllegalArgumentException.class)
