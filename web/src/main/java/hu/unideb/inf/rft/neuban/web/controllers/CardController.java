@@ -40,4 +40,6 @@ public class CardController {
 		modelAndView.addObject(CARD_MODEL_OBJECT_NAME, cardModelObject);
 		return modelAndView;
 	}
+
+	//TODO notification for card assigning, moving
 }
