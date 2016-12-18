@@ -18,7 +18,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.modelmapper.ModelMapper;
 
 import java.util.List;
 import java.util.Optional;
@@ -74,8 +73,6 @@ public class ColumnServiceImplTest {
     private BoardService boardService;
     @Mock
     private ColumnRepository columnRepository;
-    @Mock
-    private ModelMapper modelMapper;
     @Mock
     private SingleDataGetService<ColumnDto, Long> singleColumnDataGetService;
     @Mock

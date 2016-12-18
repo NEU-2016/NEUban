@@ -3,6 +3,7 @@ package hu.unideb.inf.rft.neuban.service.impl;
 import hu.unideb.inf.rft.neuban.persistence.entities.UserEntity;
 import hu.unideb.inf.rft.neuban.persistence.repositories.UserRepository;
 import hu.unideb.inf.rft.neuban.service.converter.DataListConverter;
+import hu.unideb.inf.rft.neuban.service.converter.SingleDataConverter;
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 import hu.unideb.inf.rft.neuban.service.exceptions.NullFieldValueException;
@@ -15,7 +16,6 @@ import hu.unideb.inf.rft.neuban.service.interfaces.CardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataUpdateService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,8 +35,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private CardService cardService;
@@ -48,6 +46,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     @Qualifier(SINGLE_USER_DATA_UPDATE_SERVICE)
     private SingleDataUpdateService<UserDto> singleUserDataUpdateService;
+
+    @Autowired
+    private SingleDataConverter<UserEntity, UserDto> singleUserDataConverter;
 
     @Autowired
     private DataListConverter<UserEntity, UserDto> userDataListConverter;
@@ -72,7 +73,7 @@ public class UserServiceImpl implements UserService {
         Assert.notNull(userName);
         Optional<UserEntity> userEntity = Optional.ofNullable(this.userRepository.findByUserName(userName));
         if (userEntity.isPresent()) {
-            return Optional.of(this.modelMapper.map(userEntity.get(), UserDto.class));
+            return this.singleUserDataConverter.convertToTarget(userEntity.get());
         }
         return Optional.empty();
     }
@@ -83,7 +84,7 @@ public class UserServiceImpl implements UserService {
         Assert.notNull(userDto);
 
         final String password = Optional.ofNullable(userDto.getPassword()).orElseThrow(NullFieldValueException::new);
-        final UserEntity userEntity = this.modelMapper.map(userDto, UserEntity.class);
+        final UserEntity userEntity = this.singleUserDataConverter.convertToSource(userDto).get();
         userEntity.setPassword(bCryptPasswordEncoder.encode(password));
 
         this.userRepository.saveAndFlush(userEntity);

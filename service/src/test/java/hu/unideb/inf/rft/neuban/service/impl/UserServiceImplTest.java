@@ -6,6 +6,7 @@ import hu.unideb.inf.rft.neuban.persistence.entities.UserEntity;
 import hu.unideb.inf.rft.neuban.persistence.enums.Role;
 import hu.unideb.inf.rft.neuban.persistence.repositories.UserRepository;
 import hu.unideb.inf.rft.neuban.service.converter.DataListConverter;
+import hu.unideb.inf.rft.neuban.service.converter.SingleDataConverter;
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 import hu.unideb.inf.rft.neuban.service.exceptions.UserAlreadyExistsOnCardException;
@@ -23,7 +24,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collections;
@@ -131,13 +131,13 @@ public class UserServiceImplTest {
     @Mock
     private UserRepository userRepository;
     @Mock
-    private ModelMapper modelMapper;
-    @Mock
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Mock
     private SingleDataGetService<UserDto, Long> singleUserDataGetService;
     @Mock
     private SingleDataUpdateService<UserDto> singleUserDataUpdateService;
+    @Mock
+    private SingleDataConverter<UserEntity, UserDto> singleUserDataConverter;
     @Mock
     private DataListConverter<UserEntity, UserDto> userDataListConverter;
     @Mock
@@ -226,24 +226,25 @@ public class UserServiceImplTest {
         assertThat(actualUserDto, nullValue());
 
         then(this.userRepository).should().findByUserName(USER_NAME_NON_EXISTENT);
-        verifyZeroInteractions(this.modelMapper);
+        verifyZeroInteractions(this.singleUserDataConverter);
     }
 
     @Test
     public void getByUserNameShouldReturnAnExistingUserDtoWhenParamUserNameExists() {
         // Given
         given(this.userRepository.findByUserName(ADMIN_USER_NAME)).willReturn(userEntity);
-        given(this.modelMapper.map(userEntity, UserDto.class)).willReturn(userDto);
+        given(this.singleUserDataConverter.convertToTarget(userEntity)).willReturn(Optional.of(userDto));
 
         // When
-        final UserDto actualUserDto = this.userService.getByUserName(ADMIN_USER_NAME).orElse(null);
+        final Optional<UserDto> result = this.userService.getByUserName(ADMIN_USER_NAME);
 
         // Then
-        assertThat(actualUserDto, notNullValue());
-        assertThat(actualUserDto, equalTo(userDto));
+        assertThat(result, notNullValue());
+        assertThat(result.isPresent(), is(true));
+        assertThat(result.get(), equalTo(userDto));
 
         then(this.userRepository).should().findByUserName(ADMIN_USER_NAME);
-        then(this.modelMapper).should().map(userEntity, UserDto.class);
+        then(this.singleUserDataConverter).should().convertToTarget(userEntity);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -332,7 +333,7 @@ public class UserServiceImplTest {
         // Given
         final ArgumentCaptor<UserEntity> captor = ArgumentCaptor.forClass(UserEntity.class);
 
-        given(this.modelMapper.map(userDto, UserEntity.class)).willReturn(userEntity);
+        given(this.singleUserDataConverter.convertToSource(userDto)).willReturn(Optional.of(userEntity));
         given(this.bCryptPasswordEncoder.encode(ADMIN_PASSWORD)).willReturn(PASSWORD_HASH);
         given(this.userRepository.saveAndFlush(any(UserEntity.class))).willReturn(userEntity);
 
@@ -345,10 +346,10 @@ public class UserServiceImplTest {
         assertThat(userEntity.getPassword(), notNullValue());
         assertThat(userEntity.getPassword(), equalTo(PASSWORD_HASH));
 
-        then(this.modelMapper).should().map(userDto, UserEntity.class);
+        then(this.singleUserDataConverter).should().convertToSource(userDto);
         then(this.bCryptPasswordEncoder).should().encode(ADMIN_PASSWORD);
         then(this.userRepository).should().saveAndFlush(userEntity);
-        verifyNoMoreInteractions(this.modelMapper, this.bCryptPasswordEncoder, this.userRepository);
+        verifyNoMoreInteractions(this.singleUserDataConverter, this.bCryptPasswordEncoder, this.userRepository);
     }
 
     @Test(expected = IllegalArgumentException.class)
