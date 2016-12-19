@@ -15,6 +15,8 @@ import java.util.List;
 @ToString(callSuper = true)
 @Table(name = "board")
 @Entity
+@NamedQueries(@NamedQuery(name = "BoardEntity.findParentBoardbyColumnId", 
+query = "SELECT board FROM BoardEntity board INNER JOIN board.columns column WHERE column.id = :columnId"))
 public class BoardEntity extends SuperEntity<Long> {
 
     private static final long serialVersionUID = 1L;
