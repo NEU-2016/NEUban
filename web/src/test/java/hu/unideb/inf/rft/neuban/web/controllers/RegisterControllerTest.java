@@ -95,22 +95,22 @@ public class RegisterControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void userRegisterShouldRenderErrorViewWithInvalidUsername() throws Exception {
+	public void userRegisterShouldRenderErrorViewIfUsernameIsInvalid() throws Exception {
 		testWithIncorrectCredentials(INVALID_USERNAME, VALID_EMAIL, VALID_PASSWORD, VALID_PASSWORDCONFIRMATION);
 	}
 
 	@Test
-	public void userRegisterShouldRenderErrorViewWithInvalidEmail() throws Exception {
+	public void userRegisterShouldRenderErrorViewIfEmailIsInvalid() throws Exception {
 		testWithIncorrectCredentials(VALID_USERNAME, INVALID_EMAIL, VALID_PASSWORD, VALID_PASSWORDCONFIRMATION);
 	}
 
 	@Test
-	public void userRegisterShouldRenderErrorViewWithInvalidPassword() throws Exception {
+	public void userRegisterShouldRenderErrorViewIfPasswordIsInvalid() throws Exception {
 		testWithIncorrectCredentials(VALID_USERNAME, VALID_EMAIL, INVALID_PASSWORD, VALID_PASSWORDCONFIRMATION);
 	}
 
 	@Test
-	public void userRegisterShouldRenderErrorViewWithInvalidPasswordConfirmation() throws Exception {
+	public void userRegisterShouldRenderErrorViewIfPasswordConfirmationIsInvalid() throws Exception {
 		testWithIncorrectCredentials(VALID_USERNAME, VALID_EMAIL, VALID_PASSWORD, INVALID_PASSWORDCONFIRMATION);
 	}
 
