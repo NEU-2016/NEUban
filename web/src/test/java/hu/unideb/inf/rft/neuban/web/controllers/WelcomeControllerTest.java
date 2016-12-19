@@ -1,5 +1,6 @@
 package hu.unideb.inf.rft.neuban.web.controllers;
 
+import com.google.common.collect.Lists;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
@@ -24,6 +25,13 @@ public class WelcomeControllerTest extends AbstractControllerTest {
 	private static final String REQUEST_URL = "/secure/welcome";
 	private static final String VIEW_NAME = "secure/welcome";
 
+	private static final String USERNAME_MODEL_OBJECT_NAME = "username";
+	private static final String BOARD_LIST_MODEL_OBJECT_NAME = "boardList";
+	private static final String CARD_LIST_MODEL_OBJECT_NAME = "cardList";
+
+	private static final String EXISTING_PRINCIPAL_USERNAME = "admin";
+	private static final String NON_EXISTING_PRINCIPAL_USERNAME = "admin_but_this_time_it_does_not_exist_haha";
+
 	@InjectMocks
 	private WelcomeController welcomeController;
 
@@ -42,14 +50,16 @@ public class WelcomeControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void loadWelcomeViewShouldRenderWelcomeView() throws Exception {
-		when(principal.getName()).thenReturn("test");
-		when(userService.getByUserName(anyString())).thenReturn(Optional.of(UserDto.builder().id(1L).build()));
-		when(boardService.getAllByUserId(anyLong())).thenReturn(null);
+	public void loadWelcomeViewShouldRenderWelcomeViewIfPrincipalExists() throws Exception {
+		when(principal.getName()).thenReturn(EXISTING_PRINCIPAL_USERNAME);
+		when(userService.getByUserName(anyString())).thenReturn(Optional.of(UserDto.builder().id(1L).userName(EXISTING_PRINCIPAL_USERNAME).build()));
+		when(boardService.getAllByUserId(anyLong())).thenReturn(Lists.newArrayList());
 		this.mockMvc.perform(get(REQUEST_URL).principal(principal))
 				.andExpect(status().isOk())
 				.andExpect(view().name(VIEW_NAME))
-				.andExpect(forwardedUrl(VIEW_PREFIX + VIEW_NAME + VIEW_SUFFIX));
+				.andExpect(forwardedUrl(VIEW_PREFIX + VIEW_NAME + VIEW_SUFFIX))
+				.andExpect(model().attribute(USERNAME_MODEL_OBJECT_NAME, EXISTING_PRINCIPAL_USERNAME))
+				.andExpect(model().attribute(BOARD_LIST_MODEL_OBJECT_NAME, Lists.newArrayList()))
+				.andExpect(model().attribute(CARD_LIST_MODEL_OBJECT_NAME, Lists.newArrayList()));
 	}
-
 }
