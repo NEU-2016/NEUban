@@ -11,35 +11,33 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(MockitoJUnitRunner.class)
 public class LoginControllerTest extends AbstractControllerTest {
 
-    private static final String REQUEST_URL = "/login";
-    private static final String VIEW_NAME = "login";
-    private static final String LOGIN_ERROR_URL = "/login/error";
+	private static final String REQUEST_URL = "/login";
+	private static final String VIEW_NAME = "login";
 
-    @InjectMocks
-    private LoginController loginController;
+	private static final String LOGIN_ERROR_URL = "/login/error";
+	private static final String EXPECTED_ERROR_MESSAGE_MODEL_OBJECT = "LoginFailureException: Failed to log in!";
 
-    @Override
-    protected Object[] controllerUnderTest() {
-        return new Object[]{this.loginController};
-    }
+	@InjectMocks
+	private LoginController loginController;
 
-    @Test
-    public void loadLoginViewShouldRenderLoginView() throws Exception {
-        this.mockMvc.perform(get(REQUEST_URL))
-                .andExpect(status().isOk())
-                .andExpect(view().name(VIEW_NAME))
-                .andExpect(forwardedUrl(VIEW_PREFIX + VIEW_NAME + VIEW_SUFFIX));
-    }
+	@Override
+	protected Object[] controllerUnderTest() {
+		return new Object[]{this.loginController};
+	}
 
-    //TODO fix tests
-    /*
-    @Test
-    public void loginErrorShouldRenderLoginViewWithLoginErrorAttribute() throws Exception {
-        this.mockMvc.perform(get(LOGIN_ERROR_URL))
-                .andExpect(status().isOk())
-                .andExpect(view().name(VIEW_NAME))
-                .andExpect(forwardedUrl(VIEW_PREFIX + VIEW_NAME + VIEW_SUFFIX))
-                .andExpect(model().attribute("loginError", true));
-    }
-    */
+	@Test
+	public void loadLoginViewShouldRenderLoginView() throws Exception {
+		this.mockMvc.perform(get(REQUEST_URL))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_NAME))
+				.andExpect(forwardedUrl(VIEW_PREFIX + VIEW_NAME + VIEW_SUFFIX));
+	}
+
+	@Test
+	public void loginErrorShouldRenderErrorView() throws Exception {
+		this.mockMvc.perform(get(LOGIN_ERROR_URL))
+				.andExpect(status().isOk())
+				.andExpect(view().name(ERROR_VIEW))
+		.andExpect(model().attribute(ERROR_MESSAGE_MODEL_OBJECT_NAME, EXPECTED_ERROR_MESSAGE_MODEL_OBJECT));
+	}
 }
