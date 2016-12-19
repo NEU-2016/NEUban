@@ -1,24 +1,22 @@
 package hu.unideb.inf.rft.neuban.service.impl;
 
-import com.google.common.collect.Lists;
-import hu.unideb.inf.rft.neuban.persistence.entities.CardEntity;
-import hu.unideb.inf.rft.neuban.persistence.repositories.CardRepository;
-import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
-import hu.unideb.inf.rft.neuban.service.domain.CardDto;
-import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
-import hu.unideb.inf.rft.neuban.service.domain.UserDto;
-import hu.unideb.inf.rft.neuban.service.exceptions.CardAlreadyExistsException;
-import hu.unideb.inf.rft.neuban.service.exceptions.ColumnAlreadyExistsException;
-import hu.unideb.inf.rft.neuban.service.exceptions.data.BoardNotFoundException;
-import hu.unideb.inf.rft.neuban.service.exceptions.data.CardNotFoundException;
-import hu.unideb.inf.rft.neuban.service.exceptions.data.ColumnNotFoundException;
-import hu.unideb.inf.rft.neuban.service.exceptions.data.ColumnNotInSameBoardException;
-import hu.unideb.inf.rft.neuban.service.exceptions.data.DataNotFoundException;
-import hu.unideb.inf.rft.neuban.service.impl.shared.SingleDataUpdateServiceImpl;
-import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
-import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
-import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
-import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -27,17 +25,24 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import com.google.common.collect.Lists;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.*;
+import hu.unideb.inf.rft.neuban.persistence.entities.CardEntity;
+import hu.unideb.inf.rft.neuban.persistence.repositories.CardRepository;
+import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
+import hu.unideb.inf.rft.neuban.service.domain.CardDto;
+import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
+import hu.unideb.inf.rft.neuban.service.domain.UserDto;
+import hu.unideb.inf.rft.neuban.service.exceptions.CardAlreadyExistsException;
+import hu.unideb.inf.rft.neuban.service.exceptions.ColumnAlreadyExistsException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.CardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.ColumnNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.DataNotFoundException;
+import hu.unideb.inf.rft.neuban.service.impl.shared.SingleDataUpdateServiceImpl;
+import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
+import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
+import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
+import hu.unideb.inf.rft.neuban.service.interfaces.shared.SingleDataGetService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CardServiceImplTest {
@@ -385,7 +390,7 @@ public class CardServiceImplTest {
 		// Given
 
 		// When
-		this.cardService.moveCardToAnotherColumn(null, FIRST_CARD_ID, BOARD_ID);
+		this.cardService.moveCardToAnotherColumn(null, FIRST_CARD_ID);
 
 		// Then
 	}
@@ -396,18 +401,7 @@ public class CardServiceImplTest {
 		// Given
 
 		// When
-		this.cardService.moveCardToAnotherColumn(COLUMN_ID, null, BOARD_ID);
-
-		// Then
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void moveCardToAnotherColumnShouldThrowIllegalArgumentExceptionWhenParamBoardIdDoesNotExist()
-			throws DataNotFoundException, ColumnAlreadyExistsException {
-		// Given
-
-		// When
-		this.cardService.moveCardToAnotherColumn(COLUMN_ID, FIRST_CARD_ID, null);
+		this.cardService.moveCardToAnotherColumn(COLUMN_ID, null);
 
 		// Then
 	}
@@ -416,11 +410,10 @@ public class CardServiceImplTest {
 	public void moveCardToAnotherColumnShouldThrowCardNotFoundExceptionWhenCardDoesNotExist()
 			throws DataNotFoundException, ColumnAlreadyExistsException {
 		// Given
-		given(this.boardService.get(BOARD_ID)).willReturn(Optional.of(boardDtoWithoutColumn));
 		given(this.columnService.get(COLUMN_ID)).willReturn(Optional.of(columnDto));
 		given(this.cardService.get((FIRST_CARD_ID))).willReturn(null);
 		// When
-		this.cardService.moveCardToAnotherColumn(COLUMN_ID, FIRST_CARD_ID, BOARD_ID);
+		this.cardService.moveCardToAnotherColumn(COLUMN_ID, FIRST_CARD_ID);
 
 		// Then
 	}
@@ -432,42 +425,31 @@ public class CardServiceImplTest {
 		given(this.boardService.get(BOARD_ID)).willReturn(Optional.of(boardDtoWithoutColumn));
 		given(this.columnService.get(COLUMN_ID)).willReturn(null);
 		// When
-		this.cardService.moveCardToAnotherColumn(COLUMN_ID, FIRST_CARD_ID, BOARD_ID);
+		this.cardService.moveCardToAnotherColumn(COLUMN_ID, FIRST_CARD_ID);
 
 		// Then
 	}
 
-	@Test(expected = BoardNotFoundException.class)
-	public void moveCardToAnotherColumnShouldThrowBoardNotFoundExceptionWhenBoardDoesNotExist()
-			throws DataNotFoundException, ColumnAlreadyExistsException {
-		// Given
-		given(this.boardService.get(BOARD_ID)).willReturn(null);
-		// When
-		this.cardService.moveCardToAnotherColumn(COLUMN_ID, FIRST_CARD_ID, BOARD_ID);
-
-		// Then
-	}
-
-	@Test
-	public void moveCardToAnotherColumnShouldColumnNotInSameBoardExceptionWhenBoardDoesNotHaveColumn()
-			throws DataNotFoundException, ColumnAlreadyExistsException {
-		// Given
-		given(this.boardService.get(BOARD_ID)).willReturn(Optional.of(boardDtoWithColumn));
-		given(this.columnService.get(COLUMN_ID)).willReturn(Optional.of(columnDtoBeforeSave),
-				Optional.of(columnDtoAfterSave));
-		given(this.cardService.get((FIRST_CARD_ID))).willReturn(Optional.of(firstCardDto));
-		// When
-		Optional<ColumnDto> actualColumnDtoBeforeSave = this.columnService.get(COLUMN_ID);
-
-		this.cardService.moveCardToAnotherColumn(COLUMN_ID, FIRST_CARD_ID, BOARD_ID);
-
-		Optional<ColumnDto> actualColumnDtoAfterSave = this.columnService.get(COLUMN_ID);
-
-		// Then
-		assertThat(actualColumnDtoAfterSave, notNullValue());
-		assertThat(actualColumnDtoAfterSave.get().getCards(), is(columnDtoAfterSave.getCards()));
-		assertThat(actualColumnDtoBeforeSave, notNullValue());
-		assertThat(actualColumnDtoBeforeSave.get().getCards(), is(columnDtoBeforeSave.getCards()));
-	}
+//	@Test
+//	public void moveCardToAnotherColumnShouldColumnNotInSameBoardExceptionWhenBoardDoesNotHaveColumn()
+//			throws DataNotFoundException, ColumnAlreadyExistsException {
+//		// Given
+//		given(this.boardService.get(BOARD_ID)).willReturn(Optional.of(boardDtoWithColumn));
+//		given(this.columnService.get(COLUMN_ID)).willReturn(Optional.of(columnDtoBeforeSave),
+//				Optional.of(columnDtoAfterSave));
+//		given(this.cardService.get((FIRST_CARD_ID))).willReturn(Optional.of(firstCardDto));
+//		// When
+//		Optional<ColumnDto> actualColumnDtoBeforeSave = this.columnService.get(COLUMN_ID);
+//
+//		this.cardService.moveCardToAnotherColumn(COLUMN_ID, FIRST_CARD_ID, BOARD_ID);
+//
+//		Optional<ColumnDto> actualColumnDtoAfterSave = this.columnService.get(COLUMN_ID);
+//
+//		// Then
+//		assertThat(actualColumnDtoAfterSave, notNullValue());
+//		assertThat(actualColumnDtoAfterSave.get().getCards(), is(columnDtoAfterSave.getCards()));
+//		assertThat(actualColumnDtoBeforeSave, notNullValue());
+//		assertThat(actualColumnDtoBeforeSave.get().getCards(), is(columnDtoBeforeSave.getCards()));
+//	}
 
 }
