@@ -2,6 +2,7 @@ package hu.unideb.inf.rft.neuban.web.controllers;
 
 import com.google.common.collect.Lists;
 import hu.unideb.inf.rft.neuban.service.domain.UserDto;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.BoardNotFoundException;
 import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
 import org.junit.Test;
@@ -15,17 +16,23 @@ import java.util.Optional;
 
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WelcomeControllerTest extends AbstractControllerTest {
 
+	private static final Long VALID_USER_ID = 1L;
+	private static final Long VALID_BOARD_ID = 666L;
+	private static final Long INVALID_BOARD_ID = 667L;
+	private static final String VALID_BOARD_TITLE = "Valid board title";
+
 	private static final String WELCOME_URL = "/secure/welcome";
 	private static final String WELCOME_CREATE_BOARD_URL = WELCOME_URL + "/createboard";
+	private static final String WELCOME_REMOVE_BOARD_WITH_VALID_BOARD_ID_URL = WELCOME_URL + "/removeboard/" + String.valueOf(VALID_BOARD_ID);
+	private static final String WELCOME_REMOVE_BOARD_WITH_INVALID_BOARD_ID_URL = WELCOME_URL + "/removeboard/" + String.valueOf(INVALID_BOARD_ID);
 	private static final String WELCOME_VIEW_NAME = "secure/welcome";
 	private static final String REDIRECT_TO_WELCOME_VIEW = "redirect:/" + WELCOME_VIEW_NAME;
 
@@ -40,13 +47,7 @@ public class WelcomeControllerTest extends AbstractControllerTest {
 	private static final String NON_EXISTING_PRINCIPAL_USERNAME = "admin_but_this_time_it_does_not_exist_haha";
 
 	private static final String PRINCIPAL_ERROR_MESSAGE_MODEL_OBJECT = "NonExistentPrincipalUserException: Non-existent logged in user :" + NON_EXISTING_PRINCIPAL_USERNAME;
-
-	private static final Long VALID_USER_ID = 1L;
-	private static final Long VALID_BOARD_ID = 666L;
-	private static final String VALID_BOARD_TITLE = "Valid board title";
-
-	private static final String WELCOME_REMOVE_BOARD_URL = WELCOME_URL + "/removeboard/" + String.valueOf(VALID_BOARD_ID);
-
+	private static final String DATA_NOT_FOUND_ERROR_MESSAGE_MODEL_OBJECT = "BoardNotFoundException: Board not found: " + INVALID_BOARD_ID;
 
 	@InjectMocks
 	private WelcomeController welcomeController;
@@ -124,13 +125,27 @@ public class WelcomeControllerTest extends AbstractControllerTest {
 	@Test
 	public void removeBoardShouldRenderWelcomeViewIfBoardIdIsValid() throws Exception {
 		doNothing().when(boardService).remove(VALID_BOARD_ID);
-		this.mockMvc.perform(delete(WELCOME_REMOVE_BOARD_URL)
-						.principal(principal)
-						.param(
-								BOARD_ID_REQUEST_PARAM_NAME,
-								String.valueOf(VALID_BOARD_ID)
-						))
+		this.mockMvc.perform(delete(WELCOME_REMOVE_BOARD_WITH_VALID_BOARD_ID_URL)
+				.principal(principal)
+				.param(
+						BOARD_ID_REQUEST_PARAM_NAME,
+						String.valueOf(VALID_BOARD_ID)
+				))
 				.andExpect(status().is3xxRedirection())
 				.andExpect(view().name(REDIRECT_TO_WELCOME_VIEW));
+	}
+
+	@Test
+	public void removeBoardShouldRenderErrorViewIfBoardIdIsInvalid() throws Exception {
+		doThrow(new BoardNotFoundException(String.valueOf(INVALID_BOARD_ID))).when(boardService).remove(INVALID_BOARD_ID);
+		this.mockMvc.perform(delete(WELCOME_REMOVE_BOARD_WITH_INVALID_BOARD_ID_URL)
+				.principal(principal)
+				.param(
+						BOARD_ID_REQUEST_PARAM_NAME,
+						String.valueOf(INVALID_BOARD_ID)
+				))
+				.andExpect(status().isOk())
+				.andExpect(view().name(ERROR_VIEW))
+				.andExpect(model().attribute(ERROR_MESSAGE_MODEL_OBJECT_NAME, DATA_NOT_FOUND_ERROR_MESSAGE_MODEL_OBJECT));
 	}
 }
