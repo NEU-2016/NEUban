@@ -21,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class BoardControllerTest extends AbstractControllerTest {
 
 	private static final String EXISTING_PRINCIPAL_USERNAME = "admin";
+	private static final String NON_EXISTING_PRINCIPAL_USERNAME = "admin_but_this_time_it_does_not_exist_haha";
 
 	private static final Long VALID_BOARD_ID = 1L;
 	private static final Long INVALID_BOARD_ID = 667L;
@@ -34,6 +35,8 @@ public class BoardControllerTest extends AbstractControllerTest {
 
 	private static final String USERNAME_MODEL_OBJECT_NAME = "username";
 	private static final String BOARD_MODEL_OBJECT_NAME = "board";
+
+	private static final String PRINCIPAL_ERROR_MESSAGE_MODEL_OBJECT = "NonExistentPrincipalUserException: Non-existent logged in user :" + NON_EXISTING_PRINCIPAL_USERNAME;
 
 	@InjectMocks
 	private BoardController boardController;
@@ -68,5 +71,20 @@ public class BoardControllerTest extends AbstractControllerTest {
 				.andExpect(forwardedUrl(VIEW_PREFIX + BOARD_VIEW_NAME + VIEW_SUFFIX))
 				.andExpect(model().attribute(USERNAME_MODEL_OBJECT_NAME, EXISTING_PRINCIPAL_USERNAME))
 				.andExpect(model().attribute(BOARD_MODEL_OBJECT_NAME, BoardDto.builder().build()));
+	}
+
+	@Test
+	public void loadBoardViewShouldRenderErrorViewIfPrincipalIsInvalid() throws Exception {
+		when(principal.getName()).thenReturn(NON_EXISTING_PRINCIPAL_USERNAME);
+		when(userService.getByUserName(NON_EXISTING_PRINCIPAL_USERNAME)).thenReturn(Optional.empty());
+		this.mockMvc.perform(
+				get(VALID_BOARD_URL)
+						.principal(principal)
+						.param(
+								BOARD_ID_REQUEST_PARAM_NAME, String.valueOf(VALID_BOARD_ID)
+						))
+				.andExpect(status().isOk())
+				.andExpect(view().name(ERROR_VIEW))
+				.andExpect(model().attribute(ERROR_MESSAGE_MODEL_OBJECT_NAME, PRINCIPAL_ERROR_MESSAGE_MODEL_OBJECT));
 	}
 }
