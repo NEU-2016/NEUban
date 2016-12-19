@@ -16,6 +16,7 @@ import java.util.Optional;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -33,6 +34,7 @@ public class WelcomeControllerTest extends AbstractControllerTest {
 	private static final String CARD_LIST_MODEL_OBJECT_NAME = "cardList";
 
 	private static final String BOARD_TITLE_REQUEST_PARAM_NAME = "boardTitle";
+	private static final String BOARD_ID_REQUEST_PARAM_NAME = "boardId";
 
 	private static final String EXISTING_PRINCIPAL_USERNAME = "admin";
 	private static final String NON_EXISTING_PRINCIPAL_USERNAME = "admin_but_this_time_it_does_not_exist_haha";
@@ -40,7 +42,11 @@ public class WelcomeControllerTest extends AbstractControllerTest {
 	private static final String PRINCIPAL_ERROR_MESSAGE_MODEL_OBJECT = "NonExistentPrincipalUserException: Non-existent logged in user :" + NON_EXISTING_PRINCIPAL_USERNAME;
 
 	private static final Long VALID_USER_ID = 1L;
+	private static final Long VALID_BOARD_ID = 666L;
 	private static final String VALID_BOARD_TITLE = "Valid board title";
+
+	private static final String WELCOME_REMOVE_BOARD_URL = WELCOME_URL + "/removeboard/" + String.valueOf(VALID_BOARD_ID);
+
 
 	@InjectMocks
 	private WelcomeController welcomeController;
@@ -113,5 +119,18 @@ public class WelcomeControllerTest extends AbstractControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(view().name(ERROR_VIEW))
 				.andExpect(model().attribute(ERROR_MESSAGE_MODEL_OBJECT_NAME, PRINCIPAL_ERROR_MESSAGE_MODEL_OBJECT));
+	}
+
+	@Test
+	public void removeBoardShouldRenderWelcomeViewIfBoardIdIsValid() throws Exception {
+		doNothing().when(boardService).remove(VALID_BOARD_ID);
+		this.mockMvc.perform(delete(WELCOME_REMOVE_BOARD_URL)
+						.principal(principal)
+						.param(
+								BOARD_ID_REQUEST_PARAM_NAME,
+								String.valueOf(VALID_BOARD_ID)
+						))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name(REDIRECT_TO_WELCOME_VIEW));
 	}
 }
