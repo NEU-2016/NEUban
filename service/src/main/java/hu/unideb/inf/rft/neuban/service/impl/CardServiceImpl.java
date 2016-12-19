@@ -15,6 +15,7 @@ import org.springframework.util.Assert;
 import com.google.common.collect.Lists;
 
 import hu.unideb.inf.rft.neuban.persistence.entities.BoardEntity;
+import hu.unideb.inf.rft.neuban.persistence.entities.ColumnEntity;
 import hu.unideb.inf.rft.neuban.persistence.repositories.BoardRepository;
 import hu.unideb.inf.rft.neuban.persistence.repositories.CardRepository;
 import hu.unideb.inf.rft.neuban.persistence.repositories.ColumnRepository;
@@ -28,6 +29,8 @@ import hu.unideb.inf.rft.neuban.service.exceptions.data.CardNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.data.ColumnNotFoundException;
 import hu.unideb.inf.rft.neuban.service.exceptions.data.ColumnNotInSameBoardException;
 import hu.unideb.inf.rft.neuban.service.exceptions.data.DataNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.ParentBoardNotFoundException;
+import hu.unideb.inf.rft.neuban.service.exceptions.data.ParentColumnNotFoundException;
 import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.CardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
@@ -115,7 +118,15 @@ public class CardServiceImpl implements CardService {
 		Assert.notNull(cardId);
 
 		final BoardEntity boardDto = Optional.ofNullable(this.boardRepository.findParentBoardbyColumnId(columnId))
-				.orElseThrow(() -> new BoardNotFoundException(String.valueOf(boardId)));
+				.orElseThrow(() -> new ParentBoardNotFoundException());
+
+		final ColumnEntity parentColumnEntity = Optional
+				.ofNullable(this.columnRepository.findParentColumnByCardId(cardId))
+				.orElseThrow(() -> new ParentColumnNotFoundException());
+
+		final BoardEntity parentBoardEntityOfParentColumnEntity = Optional
+				.ofNullable(this.boardRepository.findParentBoardbyColumnId(parentColumnEntity.getId()))
+				.orElseThrow(() -> new ParentBoardNotFoundException());
 
 		final ColumnDto columnDto = this.columnService.get(columnId)
 				.orElseThrow(() -> new ColumnNotFoundException(String.valueOf(columnId)));
@@ -124,9 +135,9 @@ public class CardServiceImpl implements CardService {
 
 		if (boardDto.getColumns().contains(columnDto)) {
 			columnDto.getCards().add(cardDto);
-			columnService.save(boardId, columnDto);
-			oldColumDto.getCards().remove(cardDto);
-			columnService.save(oldBoardId, oldColumDto);
+		//	columnService.save(boardId, columnDto);
+		//	oldColumDto.getCards().remove(cardDto);
+		//	columnService.save(oldBoardId, oldColumDto);
 		} else {
 			throw new ColumnNotInSameBoardException(columnId.toString());
 		}
