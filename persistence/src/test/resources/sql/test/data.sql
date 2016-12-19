@@ -65,6 +65,9 @@ values (3,'QA',1);
 insert into board_column (id,title,board_id)
 values (4,'DONE',1);
 
+insert into board_column (id,title,board_id)
+values (5,'Test',2);
+
 -- Cards
 
 delete from card where id <= 8;

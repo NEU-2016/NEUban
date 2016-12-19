@@ -328,49 +328,49 @@ public class CardServiceImplTest {
         verifyNoMoreInteractions(this.cardRepository);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getAllByTitleContainingShouldThrowIllegalArgumentExceptionWhenParamSearchStringIsNull()
-            throws CardNotFoundException {
-        // Given
-
-        // When
-        this.cardService.getAllByTitleContaining(null);
-
-        // Then
-    }
-
-    @Test
-    public void getAllByTitleContainingShouldReturnEmptyListWhenParamSearchStringDoesNotFindAnyCard()
-            throws CardNotFoundException {
-        // Given
-        final String searchString = "No Title Like This";
-
-        given(cardDataListConverter.convertToTargets(cardRepository.findByTitleContaining(searchString)))
-                .willReturn(Lists.newArrayList());
-
-        // When
-        List<CardDto> actualDtoList = this.cardService.getAllByTitleContaining("No Title Like This");
-
-        // Then
-        assertThat(actualDtoList, notNullValue());
-        assertThat(actualDtoList.isEmpty(), is(true));
-
-    }
-
-    @Test
-    public void getAllByTitleContainingShouldReturnCardDtoListWhenParamSearchStringDoesFindCardWithContainingTitle()
-            throws CardNotFoundException {
-        // Given
-        given(cardDataListConverter.convertToTargets(cardRepository.findByTitleContaining(CARD_TITLE)))
-                .willReturn(Lists.newArrayList(cardDtoList));
-
-        // When
-        final List<CardDto> actualDtoList = this.cardService.getAllByTitleContaining(CARD_TITLE);
-
-        // Then
-        assertThat(actualDtoList, notNullValue());
-        assertThat(actualDtoList.size(), equalTo(3));
-        assertThat(actualDtoList, is(cardDtoList));
-
-    }
+//    @Test(expected = IllegalArgumentException.class)
+//    public void getAllByTitleContainingShouldThrowIllegalArgumentExceptionWhenParamSearchStringIsNull()
+//            throws CardNotFoundException {
+//        // Given
+//
+//        // When
+//        this.cardService.getAllByTitleContaining(null);
+//
+//        // Then
+//    }
+//
+//    @Test
+//    public void getAllByTitleContainingShouldReturnEmptyListWhenParamSearchStringDoesNotFindAnyCard()
+//            throws CardNotFoundException {
+//        // Given
+//        final String searchString = "No Title Like This";
+//
+//        given(cardDataListConverter.convertToTargets(cardRepository.findByTitleContaining(searchString)))
+//                .willReturn(Lists.newArrayList());
+//
+//        // When
+//        List<CardDto> actualDtoList = this.cardService.getAllByTitleContaining("No Title Like This");
+//
+//        // Then
+//        assertThat(actualDtoList, notNullValue());
+//        assertThat(actualDtoList.isEmpty(), is(true));
+//
+//    }
+//
+//    @Test
+//    public void getAllByTitleContainingShouldReturnCardDtoListWhenParamSearchStringDoesFindCardWithContainingTitle()
+//            throws CardNotFoundException {
+//        // Given
+//        given(cardDataListConverter.convertToTargets(cardRepository.findByTitleContaining(CARD_TITLE)))
+//                .willReturn(Lists.newArrayList(cardDtoList));
+//
+//        // When
+//        final List<CardDto> actualDtoList = this.cardService.getAllByTitleContaining(CARD_TITLE);
+//
+//        // Then
+//        assertThat(actualDtoList, notNullValue());
+//        assertThat(actualDtoList.size(), equalTo(3));
+//        assertThat(actualDtoList, is(cardDtoList));
+//
+//    }
 }
