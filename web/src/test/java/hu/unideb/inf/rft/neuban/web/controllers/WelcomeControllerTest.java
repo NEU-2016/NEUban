@@ -67,7 +67,7 @@ public class WelcomeControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void loadWelcomeViewShouldRenderWelcomeViewIfPrincipalExists() throws Exception {
+	public void loadWelcomeViewShouldRenderWelcomeViewIfPrincipalIsValid() throws Exception {
 		when(principal.getName()).thenReturn(EXISTING_PRINCIPAL_USERNAME);
 		when(userService.getByUserName(EXISTING_PRINCIPAL_USERNAME)).thenReturn(Optional.of(UserDto.builder().userName(EXISTING_PRINCIPAL_USERNAME).build()));
 		when(boardService.getAllByUserId(anyLong())).thenReturn(Lists.newArrayList());
