@@ -109,21 +109,19 @@ public class CardServiceImpl implements CardService {
 		Assert.notNull(cardId);
 		Assert.notNull(boardId);
 
-		final Optional<BoardDto> boardDto = Optional.ofNullable(this.boardService.get(boardId))
+		final BoardDto boardDto = this.boardService.get(boardId)
 				.orElseThrow(() -> new BoardNotFoundException(String.valueOf(boardId)));
 
-		final Optional<ColumnDto> columnDto = Optional.ofNullable(this.columnService.get(columnId))
+		final ColumnDto columnDto = this.columnService.get(columnId)
 				.orElseThrow(() -> new ColumnNotFoundException(String.valueOf(columnId)));
 
-		final Optional<CardDto> cardDto = Optional.ofNullable(get(cardId))
-				.orElseThrow(() -> new CardNotFoundException(String.valueOf(cardId)));
+		final CardDto cardDto = this.get(cardId).orElseThrow(() -> new CardNotFoundException(String.valueOf(cardId)));
 
-		final boolean isBoardContainsColumn = boardDto.get().getColumns().stream()
-				.anyMatch(id -> id.getId().equals(columnDto.get().getId()));
-
-		if (isBoardContainsColumn) {
-			columnDto.get().getCards().add(cardDto.get());
-			columnService.save(boardId, columnDto.get());
+		if (boardDto.getColumns().contains(columnDto)) {
+			columnDto.getCards().add(cardDto);
+			columnDto.columnService.save(boardId, columnDto);
+			oldColumDto.getCards().remove(cardDto);
+			columnService.save(oldBoardId, oldColumDto);
 		} else {
 			throw new ColumnNotInSameBoardException(columnId.toString());
 		}
