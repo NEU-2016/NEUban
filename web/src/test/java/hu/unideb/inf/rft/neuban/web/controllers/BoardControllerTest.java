@@ -28,6 +28,7 @@ public class BoardControllerTest extends AbstractControllerTest {
 
 	private static final String BOARD_URL = "/secure/board";
 	private static final String VALID_BOARD_URL = BOARD_URL + "/" + String.valueOf(VALID_BOARD_ID);
+	private static final String INVALID_BOARD_URL = BOARD_URL + "/" + String.valueOf(INVALID_BOARD_ID);
 
 	private static final String BOARD_VIEW_NAME = "secure/board";
 
@@ -37,6 +38,7 @@ public class BoardControllerTest extends AbstractControllerTest {
 	private static final String BOARD_MODEL_OBJECT_NAME = "board";
 
 	private static final String PRINCIPAL_ERROR_MESSAGE_MODEL_OBJECT = "NonExistentPrincipalUserException: Non-existent logged in user :" + NON_EXISTING_PRINCIPAL_USERNAME;
+	private static final String BOARD_NOT_FOUND_ERROR_MESSAGE_MODEL_OBJECT = "BoardNotFoundException: Board not found: " + INVALID_BOARD_ID;
 
 	@InjectMocks
 	private BoardController boardController;
@@ -86,5 +88,21 @@ public class BoardControllerTest extends AbstractControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(view().name(ERROR_VIEW))
 				.andExpect(model().attribute(ERROR_MESSAGE_MODEL_OBJECT_NAME, PRINCIPAL_ERROR_MESSAGE_MODEL_OBJECT));
+	}
+
+	@Test
+	public void loadBoardViewShouldRenderErrorViewIfBoardIdIsInvalid() throws Exception {
+		when(principal.getName()).thenReturn(EXISTING_PRINCIPAL_USERNAME);
+		when(userService.getByUserName(EXISTING_PRINCIPAL_USERNAME)).thenReturn(Optional.of(UserDto.builder().userName(EXISTING_PRINCIPAL_USERNAME).build()));
+		when(boardService.get(INVALID_BOARD_ID)).thenReturn(Optional.empty());
+		this.mockMvc.perform(
+				get(INVALID_BOARD_URL)
+						.principal(principal)
+						.param(
+								BOARD_ID_REQUEST_PARAM_NAME, String.valueOf(INVALID_BOARD_ID)
+						))
+				.andExpect(status().isOk())
+				.andExpect(view().name(ERROR_VIEW))
+				.andExpect(model().attribute(ERROR_MESSAGE_MODEL_OBJECT_NAME, BOARD_NOT_FOUND_ERROR_MESSAGE_MODEL_OBJECT));
 	}
 }

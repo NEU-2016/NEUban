@@ -47,7 +47,7 @@ public class WelcomeControllerTest extends AbstractControllerTest {
 	private static final String NON_EXISTING_PRINCIPAL_USERNAME = "admin_but_this_time_it_does_not_exist_haha";
 
 	private static final String PRINCIPAL_ERROR_MESSAGE_MODEL_OBJECT = "NonExistentPrincipalUserException: Non-existent logged in user :" + NON_EXISTING_PRINCIPAL_USERNAME;
-	private static final String DATA_NOT_FOUND_ERROR_MESSAGE_MODEL_OBJECT = "BoardNotFoundException: Board not found: " + INVALID_BOARD_ID;
+	private static final String BOARD_NOT_FOUND_ERROR_MESSAGE_MODEL_OBJECT = "BoardNotFoundException: Board not found: " + INVALID_BOARD_ID;
 
 	@InjectMocks
 	private WelcomeController welcomeController;
@@ -146,6 +146,6 @@ public class WelcomeControllerTest extends AbstractControllerTest {
 				))
 				.andExpect(status().isOk())
 				.andExpect(view().name(ERROR_VIEW))
-				.andExpect(model().attribute(ERROR_MESSAGE_MODEL_OBJECT_NAME, DATA_NOT_FOUND_ERROR_MESSAGE_MODEL_OBJECT));
+				.andExpect(model().attribute(ERROR_MESSAGE_MODEL_OBJECT_NAME, BOARD_NOT_FOUND_ERROR_MESSAGE_MODEL_OBJECT));
 	}
 }
