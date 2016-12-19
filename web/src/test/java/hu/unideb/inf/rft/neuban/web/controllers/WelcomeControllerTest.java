@@ -37,7 +37,7 @@ public class WelcomeControllerTest extends AbstractControllerTest {
 	private static final String EXISTING_PRINCIPAL_USERNAME = "admin";
 	private static final String NON_EXISTING_PRINCIPAL_USERNAME = "admin_but_this_time_it_does_not_exist_haha";
 
-	private static final String EXPECTED_PRINCIPAL_ERROR_MESSAGE_MODEL_OBJECT = "NonExistentPrincipalUserException: Non-existent logged in user :" + NON_EXISTING_PRINCIPAL_USERNAME;
+	private static final String PRINCIPAL_ERROR_MESSAGE_MODEL_OBJECT = "NonExistentPrincipalUserException: Non-existent logged in user :" + NON_EXISTING_PRINCIPAL_USERNAME;
 
 	private static final Long VALID_USER_ID = 1L;
 	private static final String VALID_BOARD_TITLE = "Valid board title";
@@ -80,7 +80,7 @@ public class WelcomeControllerTest extends AbstractControllerTest {
 		this.mockMvc.perform(get(WELCOME_URL).principal(principal))
 				.andExpect(status().isOk())
 				.andExpect(view().name(ERROR_VIEW))
-				.andExpect(model().attribute(ERROR_MESSAGE_MODEL_OBJECT_NAME, EXPECTED_PRINCIPAL_ERROR_MESSAGE_MODEL_OBJECT));
+				.andExpect(model().attribute(ERROR_MESSAGE_MODEL_OBJECT_NAME, PRINCIPAL_ERROR_MESSAGE_MODEL_OBJECT));
 	}
 
 	@Test
@@ -97,5 +97,21 @@ public class WelcomeControllerTest extends AbstractControllerTest {
 						))
 				.andExpect(status().is3xxRedirection())
 				.andExpect(view().name(REDIRECT_TO_WELCOME_VIEW));
+	}
+
+	@Test
+	public void createBoardShouldRenderErrorViewIfPrincipalIsInvalid() throws Exception {
+		when(principal.getName()).thenReturn(NON_EXISTING_PRINCIPAL_USERNAME);
+		when(userService.getByUserName(NON_EXISTING_PRINCIPAL_USERNAME)).thenReturn(Optional.empty());
+		this.mockMvc.perform(
+				post(WELCOME_CREATE_BOARD_URL)
+						.principal(principal)
+						.param(
+								BOARD_TITLE_REQUEST_PARAM_NAME,
+								VALID_BOARD_TITLE
+						))
+				.andExpect(status().isOk())
+				.andExpect(view().name(ERROR_VIEW))
+				.andExpect(model().attribute(ERROR_MESSAGE_MODEL_OBJECT_NAME, PRINCIPAL_ERROR_MESSAGE_MODEL_OBJECT));
 	}
 }
