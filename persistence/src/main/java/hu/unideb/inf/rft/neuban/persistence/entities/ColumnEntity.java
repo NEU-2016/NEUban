@@ -15,7 +15,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @Table(name = "board_column")
 @Entity
-@NamedQueries(@NamedQuery(name = "ColumnEntity.findParentColumn", 
+@NamedQueries(@NamedQuery(name = "ColumnEntity.findParentColumnByCardId", 
 query = "SELECT column FROM ColumnEntity column INNER JOIN column.cards card WHERE card.id = :cardId"))
 public class ColumnEntity extends SuperEntity<Long> {
 

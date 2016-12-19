@@ -7,5 +7,5 @@ import hu.unideb.inf.rft.neuban.persistence.entities.ColumnEntity;
 
 public interface ColumnRepository extends JpaRepository<ColumnEntity, Long> {
 
-	ColumnEntity findParentColumn(@Param("cardId") Long cardId);
+	ColumnEntity findParentColumnByCardId(@Param("cardId") Long cardId);
 }

@@ -27,35 +27,35 @@ public class ColumnRepositoryIT {
 	private CardRepository cardRepository;
 
 	@Test
-    public void findParentColumnShouldReturnNullWhenCardDoesNotExist() {
+    public void findParentColumnByCardIdShouldReturnNullWhenCardDoesNotExist() {
         // When
-		ColumnEntity findParentColumn = this.columnRepository.findParentColumn(-1L);
+		ColumnEntity findParentColumn = this.columnRepository.findParentColumnByCardId(-1L);
         // Then
 		assertThat(findParentColumn, nullValue());
     }
 	
 	@Test
-    public void findParentColumnShouldReturnNullWhenParamIsNull() {
+    public void findParentColumnByCardIdShouldReturnNullWhenParamIsNull() {
         // When
-		ColumnEntity findParentColumn = this.columnRepository.findParentColumn(null);
+		ColumnEntity findParentColumn = this.columnRepository.findParentColumnByCardId(null);
         // Then
 		assertThat(findParentColumn, nullValue());
     }
 	
 	@Test
-    public void findParentColumnShouldReturnColumnWhenCardDoesExistsWithColumn() {
+    public void findParentColumnByCardIdShouldReturnColumnWhenCardDoesExistsWithColumn() {
 		
 		CardEntity expectedCard = cardRepository.findOne(5L); 
 		ColumnEntity expectedParentColumn = columnRepository.findOne(5L);
 		
         // When
-		ColumnEntity findParentColumn = this.columnRepository.findParentColumn(5L);
+		ColumnEntity findParentColumn = this.columnRepository.findParentColumnByCardId(5L);
         // Then
 		assertThat(findParentColumn, notNullValue());
 		assertThat(findParentColumn, is(expectedParentColumn));
 		
-		assertThat(findParentColumn.getCards().get(0), notNullValue());
-		assertThat(findParentColumn.getCards().get(0), is(expectedCard));
+		assertThat(findParentColumn.getCards(), notNullValue());
+		assertThat(findParentColumn.getCards().contains(expectedCard), is(true));
     }
 	
 }

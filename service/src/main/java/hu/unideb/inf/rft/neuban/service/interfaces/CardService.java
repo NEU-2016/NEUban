@@ -18,6 +18,6 @@ public interface CardService extends SingleDataGetService<CardDto, Long>, Single
 
 	void remove(Long cardId) throws CardNotFoundException;
 
-	void moveCardToAnotherColumn(Long columnId, Long cardId, Long boardId) throws DataNotFoundException, ColumnAlreadyExistsException;
+	void moveCardToAnotherColumn(Long columnId, Long cardId) throws DataNotFoundException, ColumnAlreadyExistsException;
 
 }

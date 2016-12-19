@@ -14,7 +14,10 @@ import org.springframework.util.Assert;
 
 import com.google.common.collect.Lists;
 
+import hu.unideb.inf.rft.neuban.persistence.entities.BoardEntity;
+import hu.unideb.inf.rft.neuban.persistence.repositories.BoardRepository;
 import hu.unideb.inf.rft.neuban.persistence.repositories.CardRepository;
+import hu.unideb.inf.rft.neuban.persistence.repositories.ColumnRepository;
 import hu.unideb.inf.rft.neuban.service.domain.BoardDto;
 import hu.unideb.inf.rft.neuban.service.domain.CardDto;
 import hu.unideb.inf.rft.neuban.service.domain.ColumnDto;
@@ -40,6 +43,10 @@ public class CardServiceImpl implements CardService {
 	private ColumnService columnService;
 	@Autowired
 	private CardRepository cardRepository;
+	@Autowired
+	private BoardRepository boardRepository;
+	@Autowired
+	private ColumnRepository columnRepository;
 
 	@Autowired
 	@Qualifier(SINGLE_CARD_DATA_GET_SERVICE)
@@ -102,14 +109,12 @@ public class CardServiceImpl implements CardService {
 
 	@Transactional
 	@Override
-	public void moveCardToAnotherColumn(final Long columnId, final Long cardId, final Long boardId)
+	public void moveCardToAnotherColumn(Long columnId, Long cardId)
 			throws DataNotFoundException, ColumnAlreadyExistsException {
-
 		Assert.notNull(columnId);
 		Assert.notNull(cardId);
-		Assert.notNull(boardId);
 
-		final BoardDto boardDto = this.boardService.get(boardId)
+		final BoardEntity boardDto = Optional.ofNullable(this.boardRepository.findParentBoardbyColumnId(columnId))
 				.orElseThrow(() -> new BoardNotFoundException(String.valueOf(boardId)));
 
 		final ColumnDto columnDto = this.columnService.get(columnId)
@@ -119,12 +124,12 @@ public class CardServiceImpl implements CardService {
 
 		if (boardDto.getColumns().contains(columnDto)) {
 			columnDto.getCards().add(cardDto);
-			columnDto.columnService.save(boardId, columnDto);
+			columnService.save(boardId, columnDto);
 			oldColumDto.getCards().remove(cardDto);
 			columnService.save(oldBoardId, oldColumDto);
 		} else {
 			throw new ColumnNotInSameBoardException(columnId.toString());
 		}
-
 	}
+
 }
