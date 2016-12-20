@@ -165,13 +165,12 @@ public class CardServiceImpl implements CardService {
 		final CardEntity cardEntity = cardRepository.findOne(cardId);
 
 		int indexOfCol = parentBoardEntityOfParentColumnEntityOfCard.getColumns().indexOf(parentColumnEntity);
-
-		if (indexOfCol < parentBoardEntityOfParentColumnEntityOfCard.getColumns().size() && direction == true) {
+		if (indexOfCol < parentBoardEntityOfParentColumnEntityOfCard.getColumns().size()-1 && direction == true) {
 			final ColumnEntity targetColumn = parentBoardEntityOfParentColumnEntityOfCard.getColumns()
 					.get(indexOfCol + 1);
 			parentColumnEntity.getCards().remove(cardEntity);
-			columnRepository.saveAndFlush(parentColumnEntity);
 			cardRepository.delete(cardEntity);
+			columnRepository.saveAndFlush(parentColumnEntity);
 			targetColumn.getCards().add(cardEntity);
 			columnRepository.saveAndFlush(targetColumn);
 		}
@@ -180,8 +179,8 @@ public class CardServiceImpl implements CardService {
 			final ColumnEntity targetColumn = parentBoardEntityOfParentColumnEntityOfCard.getColumns()
 					.get(indexOfCol - 1);
 			parentColumnEntity.getCards().remove(cardEntity);
-			columnRepository.saveAndFlush(parentColumnEntity);
 			cardRepository.delete(cardEntity);
+			columnRepository.saveAndFlush(parentColumnEntity);
 			targetColumn.getCards().add(cardEntity);
 			columnRepository.saveAndFlush(targetColumn);
 		}
