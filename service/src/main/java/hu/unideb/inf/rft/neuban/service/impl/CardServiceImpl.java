@@ -165,8 +165,7 @@ public class CardServiceImpl implements CardService {
 		final CardEntity cardEntity = cardRepository.findOne(cardId);
 
 		int indexOfCol = parentBoardEntityOfParentColumnEntityOfCard.getColumns().indexOf(parentColumnEntity);
-
-		if (indexOfCol < parentBoardEntityOfParentColumnEntityOfCard.getColumns().size() && direction == true) {
+		if (indexOfCol < parentBoardEntityOfParentColumnEntityOfCard.getColumns().size()-1 && direction == true) {
 			final ColumnEntity targetColumn = parentBoardEntityOfParentColumnEntityOfCard.getColumns()
 					.get(indexOfCol + 1);
 			parentColumnEntity.getCards().remove(cardEntity);
