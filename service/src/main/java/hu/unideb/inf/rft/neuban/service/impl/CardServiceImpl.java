@@ -134,15 +134,15 @@ public class CardServiceImpl implements CardService {
 		final CardDto cardDto = this.get(cardId).orElseThrow(() -> new CardNotFoundException(String.valueOf(cardId)));
 
 		if (parentBoardEntity.equals(parentBoardEntityOfParentColumnEntityOfCard)) {
+			List<CardDto> oldCardList = oldColumnDto.getCards();	
+			oldCardList.remove(cardDto);
+			oldColumnDto.setCards(oldCardList);
+			columnService.update(oldColumnDto);
 			
 			List<CardDto> newCardList = newColumnDto.getCards();
 			newCardList.add(cardDto);
 			newColumnDto.setCards(newCardList);
 			columnService.update(newColumnDto);
-			List<CardDto> oldCardList = oldColumnDto.getCards();	
-			oldCardList.remove(cardDto);
-			oldColumnDto.setCards(oldCardList);
-			columnService.update(oldColumnDto);
 			
 		} else {
 			throw new ColumnNotInSameBoardException(columnId.toString());
