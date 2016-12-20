@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="comment (comment)">
+    <div class="media">
+        <div class="media-left">
+            <img th:src="@{/images/neulogo.png}" class="media-object"/>
+        </div>
+        <div class="media-body">
+            <h4 th:text="${comment.user.userName}" class="media-heading"></h4>
+            <div th:text="${comment.content}"></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
