@@ -85,7 +85,7 @@ insert into card (id,description,title,column_id)
 values (4,'Sample description for task 4','Task 4',3);
 
 insert into card (id,description,title,column_id)
-values (5,'Sample description for task 5','Task 5',3);
+values (5,'Sample description for task 5','Task 5',5);
 
 insert into card (id,description,title,column_id)
 values (6,'Sample description for task 6','Task 6',4);
