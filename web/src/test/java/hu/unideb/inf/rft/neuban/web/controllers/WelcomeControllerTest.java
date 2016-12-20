@@ -91,7 +91,7 @@ public class WelcomeControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void createBoardShouldRenderWelcomeViewIfPrincipalAndBoardTitleAreValid() throws Exception {
+	public void createBoardShouldRedirectToWelcomeViewIfPrincipalAndBoardTitleAreValid() throws Exception {
 		when(principal.getName()).thenReturn(EXISTING_PRINCIPAL_USERNAME);
 		when(userService.getByUserName(EXISTING_PRINCIPAL_USERNAME)).thenReturn(Optional.of(UserDto.builder().id(VALID_USER_ID).userName(EXISTING_PRINCIPAL_USERNAME).build()));
 		doNothing().when(boardService).createBoard(VALID_USER_ID, VALID_BOARD_TITLE);
@@ -123,7 +123,7 @@ public class WelcomeControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void removeBoardShouldRenderWelcomeViewIfBoardIdIsValid() throws Exception {
+	public void removeBoardShouldRedirectToWelcomeViewIfBoardIdIsValid() throws Exception {
 		doNothing().when(boardService).remove(VALID_BOARD_ID);
 		this.mockMvc.perform(delete(WELCOME_REMOVE_BOARD_WITH_VALID_BOARD_ID_URL)
 				.principal(principal)

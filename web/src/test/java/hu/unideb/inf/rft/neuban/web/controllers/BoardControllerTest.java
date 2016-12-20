@@ -8,6 +8,7 @@ import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.CardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
+import hu.unideb.inf.rft.neuban.web.mail.NotificationService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -34,15 +35,17 @@ public class BoardControllerTest extends AbstractControllerTest {
 	private static final String VALID_COLUMN_TITLE = "Valid column title";
 	private static final Long VALID_CARD_ID = 1L;
 	private static final String VALID_CARD_TITLE = "Valid card title";
+	private static final Long VALID_USER_ID = 1L;
+	private static final String VALID_USERNAME = "validname";
 
 	private static final String BOARD_URL = "/secure/board";
 	private static final String VALID_BOARD_URL = BOARD_URL + "/" + String.valueOf(VALID_BOARD_ID);
 	private static final String INVALID_BOARD_URL = BOARD_URL + "/" + String.valueOf(INVALID_BOARD_ID);
-
 	private static final String CREATE_COLUMN_URL = BOARD_URL + "/" + String.valueOf(VALID_BOARD_ID) + "/createcolumn";
 	private static final String REMOVE_COLUMN_URL = BOARD_URL + "/" + String.valueOf(VALID_BOARD_ID) + "/removecolumn/" + String.valueOf(VALID_COLUMN_ID);
 	private static final String ADD_CARD_URL = BOARD_URL + "/" + String.valueOf(VALID_BOARD_ID) + "/" + String.valueOf(VALID_COLUMN_ID) + "/addcard";
 	private static final String REMOVE_CARD_URL = BOARD_URL + "/" + String.valueOf(VALID_BOARD_ID) + "/removecard/" + String.valueOf(VALID_CARD_ID);
+	private static final String ADD_USER_URL = BOARD_URL + "/" + String.valueOf(VALID_BOARD_ID) + "/adduser";
 
 	private static final String BOARD_VIEW = "secure/board";
 	private static final String REDIRECT_TO_BOARD_VIEW = "redirect:/" + BOARD_VIEW + "/" + String.valueOf(VALID_BOARD_ID);
@@ -52,6 +55,7 @@ public class BoardControllerTest extends AbstractControllerTest {
 	private static final String COLUMN_TITLE_REQUEST_PARAM_NAME = "columnTitle";
 	private static final String CARD_ID_REQUEST_PARAM_NAME = "cardId";
 	private static final String CARD_TITLE_REQUEST_PARAM_NAME = "cardTitle";
+	private static final String USERNAME_REQUEST_PARAM_NAME = "username";
 
 	private static final String USERNAME_MODEL_OBJECT_NAME = "username";
 	private static final String BOARD_MODEL_OBJECT_NAME = "board";
@@ -76,6 +80,9 @@ public class BoardControllerTest extends AbstractControllerTest {
 
 	@Mock
 	private CardService cardService;
+
+	@Mock
+	private NotificationService notificationService;
 
 	@Override
 	protected Object[] controllerUnderTest() {
@@ -132,7 +139,7 @@ public class BoardControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void createColumnShouldRenderBoardViewIfBoardIdAndColumnTitleAreValid() throws Exception {
+	public void createColumnShouldRedirectToBoardViewIfBoardIdAndColumnTitleAreValid() throws Exception {
 		doNothing().when(columnService).save(VALID_BOARD_ID, ColumnDto.builder().title(VALID_COLUMN_TITLE).build());
 		this.mockMvc.perform(
 				post(CREATE_COLUMN_URL)
@@ -145,7 +152,7 @@ public class BoardControllerTest extends AbstractControllerTest {
 	// TODO Invalid tests
 
 	@Test
-	public void removeColumnShouldRenderBoardViewIfBoardIdAndColumnIdAreValid() throws Exception {
+	public void removeColumnShouldRedirectToBoardViewIfBoardIdAndColumnIdAreValid() throws Exception {
 		doNothing().when(columnService).remove(VALID_COLUMN_ID);
 		this.mockMvc.perform(
 				delete(REMOVE_COLUMN_URL)
@@ -158,7 +165,7 @@ public class BoardControllerTest extends AbstractControllerTest {
 	// TODO Invalid tests
 
 	@Test
-	public void addCardShouldRenderBoardViewIfBoardIdAndColumnIdAndCardTitleAreValid() throws Exception {
+	public void addCardShouldRedirectToBoardViewIfBoardIdAndColumnIdAndCardTitleAreValid() throws Exception {
 		doNothing().when(cardService).save(VALID_COLUMN_ID, CardDto.builder().title(VALID_CARD_TITLE).build());
 		this.mockMvc.perform(
 				post(ADD_CARD_URL)
@@ -172,12 +179,26 @@ public class BoardControllerTest extends AbstractControllerTest {
 	// TODO Invalid tests
 
 	@Test
-	public void removeCardShouldRenderBoardViewIfBoardIdAndCardIdAreValid() throws Exception {
+	public void removeCardShouldRedirectToBoardViewIfBoardIdAndCardIdAreValid() throws Exception {
 		doNothing().when(cardService).remove(VALID_CARD_ID);
 		this.mockMvc.perform(
 				delete(REMOVE_CARD_URL)
 						.param(BOARD_ID_REQUEST_PARAM_NAME, String.valueOf(VALID_BOARD_ID))
 						.param(CARD_ID_REQUEST_PARAM_NAME, String.valueOf(VALID_CARD_ID)))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name(REDIRECT_TO_BOARD_VIEW));
+	}
+
+	// TODO Invalid tests
+
+	@Test
+	public void addUserShouldRedirectToBoardViewIfBoardIdAndUsernameAreValid() throws Exception {
+		when(userService.getByUserName(VALID_USERNAME)).thenReturn(Optional.of(UserDto.builder().id(VALID_USER_ID).build()));
+		doNothing().when(boardService).removeUserFromBoardByUserIdAndByBoardId(VALID_USER_ID, VALID_BOARD_ID);
+		this.mockMvc.perform(
+				post(ADD_USER_URL)
+						.param(BOARD_ID_REQUEST_PARAM_NAME, String.valueOf(VALID_BOARD_ID))
+						.param(USERNAME_REQUEST_PARAM_NAME, String.valueOf(VALID_USERNAME)))
 				.andExpect(status().is3xxRedirection())
 				.andExpect(view().name(REDIRECT_TO_BOARD_VIEW));
 	}
