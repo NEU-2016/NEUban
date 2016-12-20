@@ -86,6 +86,20 @@ public class BoardController {
 		return modelAndView;
 	}
 
+	@GetMapping(path = "/movecardleft/{cardId}")
+	public ModelAndView moveCardLeft(@PathVariable final Long boardId, @PathVariable final Long cardId) throws CardNotFoundException, ParentBoardNotFoundException, ParentColumnNotFoundException {
+		final ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_BOARD_VIEW + "/" + boardId);
+		cardService.moveCardToAnotherColumnByDirection(cardId, false);
+		return modelAndView;
+	}
+
+	@GetMapping(path = "/movecardright/{cardId}")
+	public ModelAndView moveCardRight(@PathVariable final Long boardId, @PathVariable final Long cardId) throws CardNotFoundException, ParentBoardNotFoundException, ParentColumnNotFoundException {
+		final ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_BOARD_VIEW + "/" + boardId);
+		cardService.moveCardToAnotherColumnByDirection(cardId, true);
+		return modelAndView;
+	}
+
 	@PostMapping(path = "/adduser")
 	public ModelAndView addUser(@PathVariable final Long boardId, @RequestParam final String username) throws DataNotFoundException, NonExistentUserIdException, NonExistentBoardIdException {
 		final ModelAndView modelAndView = new ModelAndView(REDIRECT_URL_TO_BOARD_VIEW + "/" + boardId);
