@@ -14,7 +14,13 @@
 <div th:fragment="card-board (board, card)">
     <div class="panel panel-primary">
         <div class="panel-heading">
+            <a th:href="@{/secure/board/__${board.id}__/movecardleft/__${card.id}__}">
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+            </a>
             <a th:href="@{/secure/card/__${card.id}__}" th:text="${card.title}" class="panel-title"></a>
+            <a th:href="@{/secure/board/__${board.id}__/movecardright/__${card.id}__}">
+                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+            </a>
         </div>
         <div class="panel-body">
             <p th:text="${card.description}"></p>
