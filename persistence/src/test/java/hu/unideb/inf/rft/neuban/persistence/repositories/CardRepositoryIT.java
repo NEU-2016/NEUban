@@ -14,13 +14,18 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import hu.unideb.inf.rft.neuban.persistence.annotations.JPARepositoryTest;
 import hu.unideb.inf.rft.neuban.persistence.entities.CardEntity;
+import hu.unideb.inf.rft.neuban.persistence.entities.ColumnEntity;
 
 @RunWith(SpringRunner.class)
 @JPARepositoryTest
 public class CardRepositoryIT {
 
+
 	@Autowired
 	private CardRepository cardRepository;
+
+	@Autowired
+	private ColumnRepository columnRepository;
 
 	@Test
 	public void findByTitleContainingShouldReturnListOfCardIfCardContainsSearchString() {
@@ -48,6 +53,23 @@ public class CardRepositoryIT {
 		// Then
 		assertThat(actualCardList, notNullValue());
 		assertThat(actualCardList.isEmpty(), is(true));
+	}
+	
+	@Test
+	public void csakTeszt(){
+		final ColumnEntity columnEntity = this.columnRepository.findParentColumnByCardId(5L);
+		final CardEntity cardEntity = this.cardRepository.findOne(5L);
+
+		columnEntity.getCards().remove(cardEntity);
+		columnRepository.saveAndFlush(columnEntity);
+		
+		final CardEntity nulle = this.cardRepository.findOne(5L);
+		assertThat(nulle, notNullValue());
+		assertThat(columnEntity.getId(), is(5L));
+		assertThat(nulle.getId(), is(5L));
+		//columentitynew.getCards().ad
+		
+		
 	}
 
 }

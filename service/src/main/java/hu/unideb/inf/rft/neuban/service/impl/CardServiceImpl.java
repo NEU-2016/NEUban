@@ -40,6 +40,8 @@ public class CardServiceImpl implements CardService {
 	@Autowired
 	private ColumnService columnService;
 	@Autowired
+	private CardService cardService;
+	@Autowired
 	private CardRepository cardRepository;
 	@Autowired
 	private BoardRepository boardRepository;
@@ -109,6 +111,7 @@ public class CardServiceImpl implements CardService {
 	@Override
 	public void moveCardToAnotherColumn(final Long columnId, final Long cardId)
 			throws DataNotFoundException, ColumnAlreadyExistsException {
+
 		Assert.notNull(columnId);
 		Assert.notNull(cardId);
 
@@ -133,10 +136,11 @@ public class CardServiceImpl implements CardService {
 		final CardDto cardDto = this.get(cardId).orElseThrow(() -> new CardNotFoundException(String.valueOf(cardId)));
 
 		if (parentBoardEntity.equals(parentBoardEntityOfParentColumnEntityOfCard)) {
-			newColumnDto.getCards().add(cardDto);
-			columnService.update(newColumnDto);
 			oldColumnDto.getCards().remove(cardDto);
 			columnService.update(oldColumnDto);
+			cardService.remove(cardDto.getId());
+			newColumnDto.getCards().add(cardDto);
+			columnService.update(newColumnDto);
 		} else {
 			throw new ColumnNotInSameBoardException(columnId.toString());
 		}
