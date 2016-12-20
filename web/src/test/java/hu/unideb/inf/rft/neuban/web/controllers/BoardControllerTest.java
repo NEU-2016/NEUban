@@ -6,7 +6,6 @@ import hu.unideb.inf.rft.neuban.service.domain.UserDto;
 import hu.unideb.inf.rft.neuban.service.interfaces.BoardService;
 import hu.unideb.inf.rft.neuban.service.interfaces.ColumnService;
 import hu.unideb.inf.rft.neuban.service.interfaces.UserService;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -18,6 +17,7 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -30,19 +30,21 @@ public class BoardControllerTest extends AbstractControllerTest {
 
 	private static final Long VALID_BOARD_ID = 1L;
 	private static final Long INVALID_BOARD_ID = 667L;
+	private static final Long VALID_COLUMN_ID = 1L;
 	private static final String VALID_COLUMN_TITLE = "Valid column title";
-	private static final String INVALID_COLUMN_TITLE = StringUtils.EMPTY;
 
 	private static final String BOARD_URL = "/secure/board";
 	private static final String VALID_BOARD_URL = BOARD_URL + "/" + String.valueOf(VALID_BOARD_ID);
 	private static final String INVALID_BOARD_URL = BOARD_URL + "/" + String.valueOf(INVALID_BOARD_ID);
 
 	private static final String CREATE_COLUMN_URL = BOARD_URL + "/" + String.valueOf(VALID_BOARD_ID) + "/createcolumn";
+	private static final String REMOVE_COLUMN_URL = BOARD_URL + "/" + String.valueOf(VALID_BOARD_ID) + "/removecolumn/" + String.valueOf(VALID_COLUMN_ID);
 
 	private static final String BOARD_VIEW = "secure/board";
 	private static final String REDIRECT_TO_BOARD_VIEW = "redirect:/" + BOARD_VIEW + "/" + String.valueOf(VALID_BOARD_ID);
 
 	private static final String BOARD_ID_REQUEST_PARAM_NAME = "boardId";
+	private static final String COLUMN_ID_REQUEST_PARAM_NAME = "columnId";
 	private static final String COLUMN_TITLE_REQUEST_PARAM_NAME = "columnTitle";
 
 	private static final String USERNAME_MODEL_OBJECT_NAME = "username";
@@ -127,6 +129,19 @@ public class BoardControllerTest extends AbstractControllerTest {
 				post(CREATE_COLUMN_URL)
 						.param(BOARD_ID_REQUEST_PARAM_NAME, String.valueOf(VALID_BOARD_ID))
 						.param(COLUMN_TITLE_REQUEST_PARAM_NAME, VALID_COLUMN_TITLE))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name(REDIRECT_TO_BOARD_VIEW));
+	}
+
+	// TODO Invalid tests
+
+	@Test
+	public void removeColumnShouldRenderBoardViewIfBoardIdAndColumnIdAndCardTitleAreValid() throws Exception {
+		doNothing().when(columnService).remove(VALID_COLUMN_ID);
+		this.mockMvc.perform(
+				delete(REMOVE_COLUMN_URL)
+						.param(BOARD_ID_REQUEST_PARAM_NAME, String.valueOf(VALID_BOARD_ID))
+						.param(COLUMN_ID_REQUEST_PARAM_NAME, String.valueOf(VALID_COLUMN_ID)))
 				.andExpect(status().is3xxRedirection())
 				.andExpect(view().name(REDIRECT_TO_BOARD_VIEW));
 	}
