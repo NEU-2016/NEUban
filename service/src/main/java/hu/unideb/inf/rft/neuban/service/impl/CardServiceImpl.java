@@ -15,6 +15,7 @@ import org.springframework.util.Assert;
 import com.google.common.collect.Lists;
 
 import hu.unideb.inf.rft.neuban.persistence.entities.BoardEntity;
+import hu.unideb.inf.rft.neuban.persistence.entities.CardEntity;
 import hu.unideb.inf.rft.neuban.persistence.entities.ColumnEntity;
 import hu.unideb.inf.rft.neuban.persistence.repositories.BoardRepository;
 import hu.unideb.inf.rft.neuban.persistence.repositories.CardRepository;
@@ -144,6 +145,47 @@ public class CardServiceImpl implements CardService {
 		} else {
 			throw new ColumnNotInSameBoardException(columnId.toString());
 		}
+	}
+	@Override
+	@Transactional
+	public void moveCardToAnotherColumnByDirection(final Long cardId, Boolean direction)
+			throws ParentColumnNotFoundException, ParentBoardNotFoundException {
+
+		Assert.notNull(cardId);
+		Assert.notNull(direction);
+
+		final ColumnEntity parentColumnEntity = Optional
+				.ofNullable(this.columnRepository.findParentColumnByCardId(cardId))
+				.orElseThrow(ParentColumnNotFoundException::new);
+
+		final BoardEntity parentBoardEntityOfParentColumnEntityOfCard = Optional
+				.ofNullable(this.boardRepository.findParentBoardbyColumnId(parentColumnEntity.getId()))
+				.orElseThrow(ParentBoardNotFoundException::new);
+
+		final CardEntity cardEntity = cardRepository.findOne(cardId);
+
+		int indexOfCol = parentBoardEntityOfParentColumnEntityOfCard.getColumns().indexOf(parentColumnEntity);
+
+		if (indexOfCol < parentBoardEntityOfParentColumnEntityOfCard.getColumns().size() && direction == true) {
+			final ColumnEntity targetColumn = parentBoardEntityOfParentColumnEntityOfCard.getColumns()
+					.get(indexOfCol + 1);
+			parentColumnEntity.getCards().remove(cardEntity);
+			columnRepository.saveAndFlush(parentColumnEntity);
+			cardRepository.delete(cardEntity);
+			targetColumn.getCards().add(cardEntity);
+			columnRepository.saveAndFlush(targetColumn);
+		}
+
+		if (indexOfCol > 0 && direction == false) {
+			final ColumnEntity targetColumn = parentBoardEntityOfParentColumnEntityOfCard.getColumns()
+					.get(indexOfCol - 1);
+			parentColumnEntity.getCards().remove(cardEntity);
+			columnRepository.saveAndFlush(parentColumnEntity);
+			cardRepository.delete(cardEntity);
+			targetColumn.getCards().add(cardEntity);
+			columnRepository.saveAndFlush(targetColumn);
+		}
+
 	}
 
 }
