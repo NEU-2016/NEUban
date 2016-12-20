@@ -46,6 +46,7 @@ public class BoardControllerTest extends AbstractControllerTest {
 	private static final String ADD_CARD_URL = BOARD_URL + "/" + String.valueOf(VALID_BOARD_ID) + "/" + String.valueOf(VALID_COLUMN_ID) + "/addcard";
 	private static final String REMOVE_CARD_URL = BOARD_URL + "/" + String.valueOf(VALID_BOARD_ID) + "/removecard/" + String.valueOf(VALID_CARD_ID);
 	private static final String ADD_USER_URL = BOARD_URL + "/" + String.valueOf(VALID_BOARD_ID) + "/adduser";
+	private static final String REMOVE_USER_URL = BOARD_URL + "/" + String.valueOf(VALID_BOARD_ID) + "/removeuser";
 
 	private static final String BOARD_VIEW = "secure/board";
 	private static final String REDIRECT_TO_BOARD_VIEW = "redirect:/" + BOARD_VIEW + "/" + String.valueOf(VALID_BOARD_ID);
@@ -194,9 +195,23 @@ public class BoardControllerTest extends AbstractControllerTest {
 	@Test
 	public void addUserShouldRedirectToBoardViewIfBoardIdAndUsernameAreValid() throws Exception {
 		when(userService.getByUserName(VALID_USERNAME)).thenReturn(Optional.of(UserDto.builder().id(VALID_USER_ID).build()));
-		doNothing().when(boardService).removeUserFromBoardByUserIdAndByBoardId(VALID_USER_ID, VALID_BOARD_ID);
+		doNothing().when(boardService).addUserToBoardByUserIdAndByBoardId(VALID_USER_ID, VALID_BOARD_ID);
 		this.mockMvc.perform(
 				post(ADD_USER_URL)
+						.param(BOARD_ID_REQUEST_PARAM_NAME, String.valueOf(VALID_BOARD_ID))
+						.param(USERNAME_REQUEST_PARAM_NAME, String.valueOf(VALID_USERNAME)))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name(REDIRECT_TO_BOARD_VIEW));
+	}
+
+	// TODO Invalid tests
+
+	@Test
+	public void removeUserShouldRedirectToBoardViewIfBoardIdAndUsernameAreValid() throws Exception {
+		when(userService.getByUserName(VALID_USERNAME)).thenReturn(Optional.of(UserDto.builder().id(VALID_USER_ID).build()));
+		doNothing().when(boardService).removeUserFromBoardByUserIdAndByBoardId(VALID_USER_ID, VALID_BOARD_ID);
+		this.mockMvc.perform(
+				delete(REMOVE_USER_URL)
 						.param(BOARD_ID_REQUEST_PARAM_NAME, String.valueOf(VALID_BOARD_ID))
 						.param(USERNAME_REQUEST_PARAM_NAME, String.valueOf(VALID_USERNAME)))
 				.andExpect(status().is3xxRedirection())
