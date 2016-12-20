@@ -511,29 +511,29 @@ public class CardServiceImplTest {
 // 
 //        // Then
 //    }
- 
-    @Test
-    public void moveCardToAnotherColumnShouldColumnNotInSameBoardExceptionWhenBoardDoesNotHaveColumn()
-            throws DataNotFoundException, ColumnAlreadyExistsException {
-        // Given
-        given(this.boardRepository.findParentBoardbyColumnId(COLUMN_ID))
-                .willReturn(targetBoard);
-       
-        given(this.columnRepository.findParentColumnByCardId(FIRST_CARD_ID)).willReturn(originColumnEntity);
-       
-        given(this.boardRepository.findParentBoardbyColumnId(originColumnEntity.getId()))
-                .willReturn(originBoard);
-       
-        given(this.columnService.get(COLUMN_ID)).willReturn(Optional.of(targetColumnDto));
-       
-        given(this.columnService.get(originColumnEntity.getId())).willReturn(Optional.of(originColumnDto));
-       
-        given(this.cardService.get(FIRST_CARD_ID)).willReturn(Optional.of(actualCardDto));
-       
-        // When
-        this.cardService.moveCardToAnotherColumn(COLUMN_ID, FIRST_CARD_ID);
-       
-       
-    }
+// 
+//    @Test
+//    public void moveCardToAnotherColumnShouldColumnNotInSameBoardExceptionWhenBoardDoesNotHaveColumn()
+//            throws DataNotFoundException, ColumnAlreadyExistsException {
+//        // Given
+//        given(this.boardRepository.findParentBoardbyColumnId(COLUMN_ID))
+//                .willReturn(targetBoard);
+//       
+//        given(this.columnRepository.findParentColumnByCardId(FIRST_CARD_ID)).willReturn(originColumnEntity);
+//       
+//        given(this.boardRepository.findParentBoardbyColumnId(originColumnEntity.getId()))
+//                .willReturn(originBoard);
+//       
+//        given(this.columnService.get(COLUMN_ID)).willReturn(Optional.of(targetColumnDto));
+//       
+//        given(this.columnService.get(originColumnEntity.getId())).willReturn(Optional.of(originColumnDto));
+//       
+//        given(this.cardService.get(FIRST_CARD_ID)).willReturn(Optional.of(actualCardDto));
+//       
+//        // When
+//        this.cardService.moveCardToAnotherColumn(COLUMN_ID, FIRST_CARD_ID);
+//       
+//       
+//    }
  
 }
