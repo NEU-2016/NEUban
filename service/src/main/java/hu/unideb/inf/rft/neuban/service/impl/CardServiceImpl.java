@@ -109,6 +109,7 @@ public class CardServiceImpl implements CardService {
 	@Override
 	public void moveCardToAnotherColumn(final Long columnId, final Long cardId)
 			throws DataNotFoundException, ColumnAlreadyExistsException {
+		
 		Assert.notNull(columnId);
 		Assert.notNull(cardId);
 
@@ -133,10 +134,16 @@ public class CardServiceImpl implements CardService {
 		final CardDto cardDto = this.get(cardId).orElseThrow(() -> new CardNotFoundException(String.valueOf(cardId)));
 
 		if (parentBoardEntity.equals(parentBoardEntityOfParentColumnEntityOfCard)) {
-			newColumnDto.getCards().add(cardDto);
+			
+			List<CardDto> newCardList = newColumnDto.getCards();
+			newCardList.add(cardDto);
+			newColumnDto.setCards(newCardList);
 			columnService.update(newColumnDto);
-			oldColumnDto.getCards().remove(cardDto);
+			List<CardDto> oldCardList = oldColumnDto.getCards();	
+			oldCardList.remove(cardDto);
+			oldColumnDto.setCards(oldCardList);
 			columnService.update(oldColumnDto);
+			
 		} else {
 			throw new ColumnNotInSameBoardException(columnId.toString());
 		}
